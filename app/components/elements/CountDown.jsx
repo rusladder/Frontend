@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react'
 import { Circle } from 'rc-progress';
-import { FIRST_DATE as firstDate } from 'config/client_config'
 // TODO add comment
 // TODO add function descriptions
 const _ms_in_day = 1000*60*60*24;
+const firstDate = new Date(Date.UTC(2016, 7, 1)); //1 september
+
 export default class CountDown extends React.Component {
 
 	static propTypes = {

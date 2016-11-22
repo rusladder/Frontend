@@ -26,6 +26,9 @@ export default function ServerHTML({ body, assets, locale, title, meta }) {
                 })
             }
             <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+            {/* this is 'intl' polyfill for safari browser */}
+            {/* it is must be loaded before main javascript file */}
+            <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en,Intl.~locale.ru,Intl.~locale.ua"></script>
             <link rel="apple-touch-icon-precomposed" sizes="57x57" href="/images/favicons/apple-touch-icon-57x57.png" type="image/png" />
             <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/favicons/apple-touch-icon-114x114.png" type="image/png" />
             <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/favicons/apple-touch-icon-72x72.png" type="image/png" />

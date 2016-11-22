@@ -1,4 +1,5 @@
 
+import {LIQUID_TICKER} from 'config/client_config'
 
 // Low-level types that make up operations
 
@@ -60,6 +61,7 @@ Types.asset = {
     },
     toObject(object, debug = {}){
         if (debug.use_default && object === undefined) { return "0.000 STEEM"; }
+        if (debug.use_default && object === undefined) { return ['0.000', LIQUID_TICKER].join(" "); }
         return object
     }
 }

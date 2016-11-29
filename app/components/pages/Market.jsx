@@ -293,7 +293,12 @@ class Market extends React.Component {
 
                 <div className="row">
                     <div className="column">
-                        <DepthChart bids={orderbook.bids} asks={orderbook.asks} />
+                      <p>
+                        <center>
+                          <i>Чарт временно отключен.</i>
+                        </center>
+                      </p>
+                      {/* <DepthChart bids={orderbook.bids} asks={orderbook.asks} /> */}
                     </div>
                 </div>
 

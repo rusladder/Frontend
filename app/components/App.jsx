@@ -229,11 +229,11 @@ class App extends React.Component {
                           {translate("APP_NAME_whitepaper")}
                       </a>
                   </li>
-                  {/* <li>
+                  <li>
                       <a onClick={() => depositSteem()}>
                           {translate("buy_LIQUID_TOKEN")}
                       </a>
-                  </li> */}
+                  </li>
                   <li>
                       <a href="/market" onClick={this.navigate}>
                           {translate("market")}
@@ -294,7 +294,7 @@ class App extends React.Component {
                 {children}
                 {lp ? <LpFooter /> : null}
                 {/* temporary disabled in favor of live chat */}
-                <RocketChat /> 
+                <RocketChat />
             </div>
             <Dialogs />
             <Modals />

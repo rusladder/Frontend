@@ -95,6 +95,7 @@ const ru = {
 	cancel: 'Отмена',
 	clear: 'Очистить',
 	save: 'Сохранить',
+    update: 'Обновить',
 	upvote_post: 'Проголосовать за пост',
 	update_post: 'Обновить пост',
 	markdown_is_supported: 'Поддерживается стилизация с Markdown',
@@ -532,6 +533,7 @@ const ru = {
 	choose_currency: 'Выберите валюту',
 	crowdsale: 'Краудсейл',
 	followers: 'Подписчики',
+	following: 'подписан',
 	// errors
 	vote_currently_exists_user_must_be_indicate_a_to_reject_witness: 'Голос уже существует, пользователь должен обозначить желание убрать делегата',
 	only_one_APP_NAME_account_allowed_per_ip_address_every_10_minutes: 'Только один Голос аккаунт разрешен с одного IP адреса каждые десять минут',
@@ -559,6 +561,11 @@ const ru = {
 		few {# неподтвержденныe транзакции}
 		many {# неподтвержденных транзакций}
 	}`,
+	profile_image_url: 'Добавьте url вашего изображения',
+	profile_name: 'Отоброжаемое имя',
+	profile_about: 'О себе',
+	profile_location: 'Место нахождения',
+	profile_website: 'Веб-сайт',
 	add_image_url: 'Добавьте url вашего изображения',
 	saved: 'Сохранено',
 	server_returned_error: 'ошибка сервера',
@@ -590,7 +597,9 @@ const ru = {
 	curation_rewards_by_user_name: 'Кураторские награды {user_name}',
 	author_rewards_by_user_name: 'Авторские награды {user_name}',
 	replies_by_user_name: 'Ответы {user_name}',
-	curation_rewards_by_user_name: 'Комментарии {user_name}',
+	comments_by_user_name: 'Комментарии {user_name}',
+	joined: 'Присоединился', // ex: "Joined September, 2016"
+
 }
 
 export { ru }

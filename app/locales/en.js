@@ -93,6 +93,7 @@ const en = 	{
 	cancel: 'Cancel',
 	clear: 'Clear',
 	save: 'Save',
+    update: 'Update',
 	upvote_post: 'Upvote post',
 	update_post: 'Update Post',
 	markdown_is_supported: 'Styling with Markdown is supported',
@@ -521,6 +522,7 @@ const en = 	{
 	choose_currency: 'Choose currency',
 	crowdsale: 'Crowdsale',
 	followers: 'Followers',
+	following: 'Following',
 	// errors
 	cannot_increase_reward_of_post_within_the_last_minute_before_payout: 'Cannot increase reward of post within the last minute before payout',
 	vote_currently_exists_user_must_be_indicate_a_to_reject_witness: 'vote currently exists, user must be indicate a desire to reject witness',
@@ -543,6 +545,11 @@ const en = 	{
 	by_verifying_you_agree_with_privacy_policy: 'Privacy Policy',
 	by_verifying_you_agree_with_privacy_policy_of_website_APP_URL: 'of ' + APP_URL,
 	add_image_url: 'Add image url',
+	profile_image_url: 'Profile picture url',
+	profile_name: 'Display Name',
+	profile_about: 'About',
+	profile_location: 'Location',
+	profile_website: 'Website',
 	saved: 'Saved',
 	server_returned_error: 'server returned error',
 	user_avatar: 'user\'s avatar',
@@ -573,8 +580,8 @@ const en = 	{
   curation_rewards_by_user_name: 'Curation rewards by {user_name}',
   author_rewards_by_user_name: 'Author rewards by {user_name}',
   replies_by_user_name: 'Replies by {user_name}',
-  curation_rewards_by_user_name: 'Comments by {user_name}',
-
+  comments_by_user_name: 'Comments by {user_name}',
+  joined: 'Joined', // ex: "Joined September, 2016"
 }
 
 export { en }

@@ -71,7 +71,7 @@ export default function resolveRoute(path)
     match = path.match(/^\/(best|updated|hot|votes|responses|trending|trending30|promoted|cashout|created|recent|active)\/?$/)
          || path.match(/^\/(best|updated|hot|votes|responses|trending|trending30|promoted|cashout|created|recent|active)\/([\w\d-]+)\/?$/);
     if (match) {
-        return {page: 'PostsIndex', params: match.slice(1)};
+        return {page: 'PostsIndex', params: ["hot", "ru--bm"]}; // match.slice(1)
     }
     return {page: 'NotFound'};
 }

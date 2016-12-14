@@ -28,7 +28,7 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-
+        this.props.history.push('/trending/ru--bm');
         if (process.env.BROWSER) localStorage.removeItem('autopost') // July 14 '16 compromise, renamed to autopost2
         this.props.loginUser();
         // SEGMENT.COM ANALYTICS INITIALIZATION

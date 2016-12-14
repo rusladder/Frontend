@@ -35,6 +35,7 @@ export default class RocketChat extends React.Component {
     }
 
     render() {
+        return null
         return <div className={this.chatikClass() + this.stateClass()}>
             <button className={this.stateClass()} onClick={this.toggle.bind(this)}><img src={this.iconUrl()}/></button>
             <div className="sidebar" style={{

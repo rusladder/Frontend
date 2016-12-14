@@ -58,9 +58,9 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
                     {/* <li className={lcn + ' buttons'}>
                         <a href="/ru--diskleijmer/@hipster/diskleimer-o-vyplatakh-i-o-cuti-platformy" className="button alert">Дисклеймер</a>
                     </li> */}
-                    <li className={lcn}>
+                    {/* <li className={lcn}>
                         <Link className="button success" to="/ico">Выплаты авторам</Link>
-                    </li>
+                    </li> */}
                     <li className={lcn}>
                         <a href="#what-is-golos">Видео</a>
                     </li>
@@ -129,9 +129,9 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
                 {/* <li className={lcn + ' buttons'}>
                     <a href="/ru--diskleijmer/@hipster/diskleimer-o-vyplatakh-i-o-cuti-platformy" className="button alert">Дисклеймер</a>
                 </li> */}
-                <li className={lcn + ' buttons'}>
+                {/* <li className={lcn + ' buttons'}>
                     <Link to="/ico" className="button success">Выплаты авторам</Link>
-                </li>
+                </li> */}
                 <li className={lcn}><a href="/static/search.html" title={search}>{vertical ? <span>{search}</span> : <Icon name="search" />}</a></li>
                 {submit_story}
                 <LinkWithDropdown
@@ -159,9 +159,9 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
                             {/* <li className={lcn + ' buttons'}>
                                 <a href="/ru--diskleijmer/@hipster/diskleimer-o-vyplatakh-i-o-cuti-platformy" className="button alert">Дисклеймер</a>
                             </li> */}
-                            <li className={lcn}>
+                            {/* <li className={lcn}>
                                 <Link className="button success" to="/ico">Выплаты авторам</Link>
-                            </li>
+                            </li> */}
                             <li className={lcn}>
                                 <a href="#what-is-golos">Видео</a>
                             </li>
@@ -192,9 +192,9 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
                 {/* <li className={lcn + ' buttons'}>
                     <a href="/ru--diskleijmer/@hipster/diskleimer-o-vyplatakh-i-o-cuti-platformy" className="button alert">Дисклеймер</a>
                 </li> */}
-                <li className={lcn + ' buttons'}>
+                {/* <li className={lcn + ' buttons'}>
                     <Link to="/ico" className="button success">Выплаты авторам</Link>
-                </li>
+                </li> */}
                 {!vertical && <li><a href="/static/search.html" title="Поиск"><Icon name="search" /></a></li>}
                 <li className={lcn}><LoadingIndicator type="circle" inline /></li>
                 {toggleOffCanvasMenu && <li className="toggle-menu"><a href="#" onClick={toggleOffCanvasMenu}>
@@ -209,9 +209,9 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
                     {/* <li className={lcn + ' buttons'}>
                         <a href="/ru--diskleijmer/@hipster/diskleimer-o-vyplatakh-i-o-cuti-platformy" className="button alert">Дисклеймер</a>
                     </li> */}
-                    <li className={lcn}>
+                    {/* <li className={lcn}>
                         <Link className="button success" to="/ico">Выплаты авторам</Link>
-                    </li>
+                    </li> */}
                     <li className={lcn}>
                         <a href="#what-is-golos">Видео</a>
                     </li>
@@ -240,9 +240,9 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
                 {/*<li className={lcn + ' buttons'}>
                      <a href="/ru--diskleijmer/@hipster/diskleimer-o-vyplatakh-i-o-cuti-platformy" className="button alert">Дисклеймер</a>
                 </li>*/}
-                <li className={lcn + ' buttons'}>
+                {/* <li className={lcn + ' buttons'}>
                     <Link to="/ico" className="button success">Выплаты авторам</Link>
-                </li>
+                </li> */}
                 {!vertical && <li><a href="/static/search.html" title="Поиск"><Icon name="search" /></a></li>}
                 <li className={lcn}><a href="/create_account" onClick={showSignUp}>{translate('sign_up')}</a></li>
                 <li className={lcn}><a href="/login.html" onClick={showLogin}>{translate('login')}</a></li>

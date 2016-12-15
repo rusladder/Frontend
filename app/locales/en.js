@@ -583,6 +583,7 @@ const en = 	{
   curation_rewards_by_user_name: 'Curation rewards by {user_name}',
   author_rewards_by_user_name: 'Author rewards by {user_name}',
   replies_by_user_name: 'Replies by {user_name}',
+  comments_by_user_name: 'Comments by {user_name}',
   looks_like_you_havent_posted_anything_yet: 'Looks like you haven\'t posted anything yet',
   read_the_beginners_guide: 'Read The Beginner\'s Guide',
   read_the_APP_NAME_welcome_guide: 'Read The ' + APP_NAME + ' Welcome Guide',

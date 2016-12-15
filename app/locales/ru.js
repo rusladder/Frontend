@@ -600,6 +600,7 @@ const ru = {
 	curation_rewards_by_user_name: 'Кураторские награды {user_name}',
 	author_rewards_by_user_name: 'Авторские награды {user_name}',
 	replies_by_user_name: 'Ответы {user_name}',
+    comments_by_user_name: 'Комментарии {user_name}',
     looks_like_you_havent_posted_anything_yet: 'Похоже, что вы еще ничего не постили',
     read_the_beginners_guide: 'Читать гайд для новичков',
     read_the_APP_NAME_welcome_guide: 'Читать привететственное руководство ' + APP_NAME,

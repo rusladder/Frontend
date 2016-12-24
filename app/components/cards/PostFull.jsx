@@ -3,8 +3,6 @@ import { Link } from 'react-router';
 import TimeAgoWrapper from 'app/components/elements/TimeAgoWrapper';
 import Icon from 'app/components/elements/Icon';
 import { connect } from 'react-redux';
-// import FormattedAsset from 'app/components/elements/FormattedAsset';
-// import Userpic from 'app/components/elements/Userpic';
 import user from 'app/redux/User';
 import transaction from 'app/redux/Transaction'
 import Voting from 'app/components/elements/Voting';
@@ -25,6 +23,7 @@ import { APP_NAME, APP_NAME_LATIN, APP_URL, APP_ICON } from 'config/client_confi
 import DMCAList from 'app/utils/DMCAList'
 import PageViewsCounter from 'app/components/elements/PageViewsCounter';
 import ShareMenu from 'app/components/elements/ShareMenu';
+import {serverApiRecordEvent} from 'app/utils/ServerApiClient';
 
 function TimeAuthorCategory({content, authorRepLog10, showTags}) {
     return (
@@ -105,6 +104,7 @@ class PostFull extends React.Component {
     }
 
     fbShare(e) {
+        serverApiRecordEvent('FbShare', this.share_params.link);
         e.preventDefault();
         window.FB.ui({
             method: 'share',
@@ -113,6 +113,7 @@ class PostFull extends React.Component {
     }
 
     twitterShare(e) {
+        serverApiRecordEvent('TwitterShare', this.share_params.link);
         e.preventDefault();
         const winWidth = 640;
         const winHeight = 320;
@@ -124,6 +125,7 @@ class PostFull extends React.Component {
     }
 
     linkedInShare(e) {
+        serverApiRecordEvent('LinkedInShare', this.share_params.link);
         e.preventDefault();
         const winWidth = 720;
         const winHeight = 480;
@@ -185,6 +187,7 @@ class PostFull extends React.Component {
             net_rshares.compare(Long.ZERO) <= 0
 
         this.share_params = {
+            link,
             url: 'https://' + APP_URL + link,
             title: title + ' — ' + APP_NAME,
             desc: p.desc
@@ -248,11 +251,12 @@ class PostFull extends React.Component {
         }
 
         const readonly = post_content.get('mode') === 'archived' || $STM_Config.read_only_mode
-        //const showPromote = username && post_content.get('mode') === "first_payout" && post_content.get('depth') == 0
-        const showPromote = false // TODO: revert when nodes are updated with https://github.com/steemit/steem/pull/550
+        const showPromote = username && post_content.get('mode') === "first_payout" && post_content.get('depth') == 0
         const showReplyOption = post_content.get('depth') < 6
         const showEditOption = username === author && post_content.get('mode') != 'archived'
         const authorRepLog10 = repLog10(content.author_reputation)
+        const isPreViewCount = Date.parse(post_content.get('created')) < 1480723200000 // check if post was created before view-count tracking began (2016-12-03)
+
         return (
             <article className="PostFull hentry" itemScope itemType="http://schema.org/blogPost">
                 {showEdit ?
@@ -269,32 +273,31 @@ class PostFull extends React.Component {
                     </span>
                 }
 
-                {/* {username && firstPayout && rootComment && <div className="float-right">
-                    <button className="button hollow tiny" onClick={this.showPromotePost}>{translate('promote')}</button>
-                </div>} */}
+                {/* disabled until promoting is fixed */}
+                {/* showPromote && <button className="Promote__button float-right button hollow tiny" onClick={this.showPromotePost}>{translate('promote')}</button> */}
                 <TagList post={content} horizontal />
-                <div className="PostFull__footer row align-middle">
+                <div className="PostFull__footer row">
                     <div className="column">
                         <TimeAuthorCategory content={content} authorRepLog10={authorRepLog10} />
                         <Voting post={post} />
                     </div>
-                    <div className="column shrink">
-                            {!readonly && <Reblog author={author} permlink={permlink} />}
-                            {!readonly &&
-                                <span className="PostFull__reply">
-                                    {showReplyOption && <a onClick={onShowReply}>{translate('reply')}</a>}
-                                    {' '}{showEditOption   && !showEdit  && <a onClick={onShowEdit}>{translate('edit')}</a>}
-                                    {' '}{showDeleteOption && !showReply && <a onClick={onDeletePost}>{translate('delete')}</a>}
-                                </span>}
-                            <span className="PostFull__responses">
-                                <Link to={link} title={translate('response_count', {responseCount: content.children})}>
-                                    <Icon name="chatboxes" className="space-right" />{content.children}
-                                </Link>
-                            </span>
-                            <span className="PostFull__views">
-                                <PageViewsCounter hidden={false} />
-                            </span>
-                            <ShareMenu onClick={this.trackAnalytics.bind(this, '"share" dropdown menu clicked')} menu={share_menu} />
+                    <div className="RightShare__Menu small-10 medium-5 large-5 columns text-right">
+                        {!readonly && <Reblog author={author} permlink={permlink} />}
+                        {!readonly &&
+                            <span className="PostFull__reply">
+                                {showReplyOption && <a onClick={onShowReply}>{translate('reply')}</a>}
+                                {' '}{showEditOption   && !showEdit  && <a onClick={onShowEdit}>{translate('edit')}</a>}
+                                {' '}{showDeleteOption && !showReply && <a onClick={onDeletePost}>{translate('delete')}</a>}
+                            </span>}
+                        <span className="PostFull__responses">
+                            <Link to={link} title={translate('response_count', {responseCount: content.children})}>
+                                <Icon name="chatboxes" className="space-right" />{content.children}
+                            </Link>
+                        </span>
+                        <span className="PostFull__views">
+                            <PageViewsCounter hidden={false} sinceDate={isPreViewCount ? 'Dec 2016' : null} />
+                        </span>
+                        <ShareMenu menu={share_menu} />
                     </div>
                 </div>
                 <div className="row">

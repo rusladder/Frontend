@@ -17,8 +17,8 @@
   color: $dark-gray;
   font-weight: 400;
   border-right: 1px solid $medium-gray;
-  padding-right: 1rem;
-  margin-right: 1rem;
+  padding-right: .6rem;
+  margin-right: .6rem;
   > span {
     white-space: nowrap;
   }
@@ -114,21 +114,21 @@
   }
 
   .Reblog__button {
-    padding-right: 1rem;
-    margin-right: 1rem;
+    padding-right: .6rem;
+    margin-right: .6rem;
     border-right: 1px solid $medium-gray;
   }
 }
 
 .PostFull__responses {
-  padding-right: 1rem;
+  padding-right: .6rem;
   //margin-right: 1rem;
   //border-right: 1px solid $medium-gray;
 }
 
 .PostFull__views {
-  padding-right: 1rem;
-  margin-right: 1rem;
+  padding-right: .6rem;
+  margin-right: .6rem;
   color: $dark-gray;
   font-size: 94%;
   font-weight: 600;
@@ -136,8 +136,8 @@
 }
 
 .PostFull__reply {
-  padding-right: 1rem;
-  margin-right: 1rem;
+  padding-right: .6rem;
+  margin-right: .6rem;
   border-right: 1px solid $medium-gray;
 }
 
@@ -153,6 +153,10 @@
   }
 }
 
+.Promote__button {
+  margin-right: 0px!important;
+}
+
 /* Small only */
 @media screen and (max-width: 39.9375em) {
   .Post {
@@ -163,5 +167,8 @@
     -webkit-box-flex: 0;
     -ms-flex: 0 0 100%;
     flex: 0 0 100%;
+  }
+  .PostFull__footer > .RightShare__Menu {
+    text-align: left;
   }
 }

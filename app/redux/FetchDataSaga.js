@@ -1,30 +1,43 @@
 import {takeLatest, takeEvery} from 'redux-saga';
 import {call, put, select, fork} from 'redux-saga/effects';
-import {loadFollows} from 'app/redux/FollowSaga';
+import {loadFollows, fetchFollowCount} from 'app/redux/FollowSaga';
+import {getContent} from 'app/redux/SagaShared';
 import Apis from 'shared/api_client/ApiInstances';
 import GlobalReducer from './GlobalReducer';
 import constants from './constants';
 import {fromJS, Map} from 'immutable'
 
-export const fetchDataWatches = [watchLocationChange, watchDataRequests, watchApiRequests, watchFetchJsonRequests, watchFetchState];
+export const fetchDataWatches = [watchLocationChange, watchDataRequests, watchApiRequests, watchFetchJsonRequests, watchFetchState, watchGetContent];
 
 export function* watchDataRequests() {
     yield* takeLatest('REQUEST_DATA', fetchData);
 }
 
+export function* watchGetContent() {
+    yield* takeEvery('GET_CONTENT', getContentCaller);
+}
+
+export function* getContentCaller(action) {
+    yield getContent(action.payload);
+}
+
+let is_initial_state = true;
 export function* fetchState(location_change_action) {
     const {pathname} = location_change_action.payload;
     const m = pathname.match(/^\/@([a-z0-9\.-]+)/)
     if(m && m.length === 2) {
         const username = m[1]
-        const hasFollows = yield select(state => state.global.hasIn(['follow', 'get_followers', username]))
-        if(!hasFollows) {
-            yield fork(loadFollows, "get_followers", username, 'blog')
-            yield fork(loadFollows, "get_following", username, 'blog')
-        }
+        yield fork(fetchFollowCount, username)
+        yield fork(loadFollows, "get_followers", username, 'blog')
+        yield fork(loadFollows, "get_following", username, 'blog')
     }
+
+    // `ignore_fetch` case should only trigger on initial page load. No need to call
+    // fetchState immediately after loading fresh state from the server. Details: #593
     const server_location = yield select(state => state.offchain.get('server_location'));
-    if (pathname === server_location) return;
+    const ignore_fetch = (pathname === server_location && is_initial_state)
+    is_initial_state = false;
+    if(ignore_fetch) return;
 
     let url = `${pathname}`;
     if (url === '/') url = 'trending';

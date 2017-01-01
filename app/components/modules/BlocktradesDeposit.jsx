@@ -9,7 +9,7 @@ import QRCode from 'react-qr'
 import {cleanReduxInput} from 'app/utils/ReduxForms'
 import { translate } from 'app/Translator.js';
 import { formatCoins } from 'app/utils/FormatCoins';
-import { APP_NAME, APP_ICON, DEBT_TOKEN, DEBT_TOKEN_SHORT, LIQUID_TOKEN, CURRENCY_SIGN, VESTING_TOKEN, VEST_TICKER, LIQUID_TICKER } from 'config/client_config';
+import { APP_NAME, APP_ICON, DEBT_TOKEN, DEBT_TOKEN_SHORT, LIQUID_TOKEN, CURRENCY_SIGN, VESTING_TOKEN, VEST_TICKER, LIQUID_TICKER, DEBT_TICKER } from 'config/client_config';
 
 const coinNames = {
     [LIQUID_TICKER]: LIQUID_TOKEN,

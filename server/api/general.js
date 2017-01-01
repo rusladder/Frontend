@@ -11,7 +11,10 @@ import secureRandom from 'secure-random'
 import {PublicKey, Signature, hash} from 'shared/ecc'
 import Mixpanel from 'mixpanel';
 import Tarantool from 'db/tarantool';
-import Mixpanel from 'mixpanel';
+import {Apis} from 'shared/api_client';
+import {createTransaction, signTransaction} from 'shared/chain/transactions';
+import {ops} from 'shared/serializer';
+import {getLogger} from '../../app/utils/Logger'
 
 const {signed_transaction} = ops;
 const print = getLogger('API - general').print
@@ -451,61 +454,28 @@ export default function useGeneralApi(app) {
         });
     });
 
-/**
- @arg signingKey {string|PrivateKey} - WIF or PrivateKey object
- */
-function* createAccount({
-    signingKey,
-    fee,
-    creator,
-    new_account_name,
-    json_metadata = '',
-    owner,
-    active,
-    posting,
-    memo,
-    broadcast = false,
-}) {
-    const operations = [
-        ['account_create', {
-            fee,
-            creator,
-            new_account_name,
-            json_metadata,
-            owner: {
-                weight_threshold: 1,
-                account_auths: [],
-                key_auths: [
-                    [owner, 1]
-                ]
-            },
-            active: {
-                weight_threshold: 1,
-                account_auths: [],
-                key_auths: [
-                    [active, 1]
-                ]
-            },
-            posting: {
-                weight_threshold: 1,
-                account_auths: [],
-                key_auths: [
-                    [posting, 1]
-                ]
-            },
+    const {signed_transaction} = ops;
+    /**
+     @arg signingKey {string|PrivateKey} - WIF or PrivateKey object
+     */
+    function* createAccount({
+        signingKey, fee, creator, new_account_name, json_metadata = '',
+        owner, active, posting, memo, broadcast = false,
+    }) {
+        const operations = [['account_create', {
+            fee, creator, new_account_name, json_metadata,
+            owner: {weight_threshold: 1, account_auths: [], key_auths: [[owner, 1]]},
+            active: {weight_threshold: 1, account_auths: [], key_auths: [[active, 1]]},
+            posting: {weight_threshold: 1, account_auths: [], key_auths: [[posting, 1]]},
             memo_key: memo,
-        }]
-    ]
-    const tx = yield createTransaction(operations)
-    const sx = signTransaction(tx, signingKey)
-    if (!broadcast) return signed_transaction.toObject(sx)
-    return yield new Promise((resolve, reject) =>
-        Apis.broadcastTransaction(sx, () => {
-            resolve()
-        }).catch(e => {
-            reject(e)
-        })
-    )
-}
+        }]]
+        const tx = yield createTransaction(operations)
+        const sx = signTransaction(tx, signingKey)
+        if (!broadcast) return signed_transaction.toObject(sx)
+        return yield new Promise((resolve, reject) =>
+            Apis.broadcastTransaction(sx, () => {resolve()}).catch(e => {reject(e)})
+        )
+    }
+    }
 
-const parseSig = hexSig => {try {return Signature.fromHex(hexSig)} catch(e) {return null}}
+    const parseSig = hexSig => {try {return Signature.fromHex(hexSig)} catch(e) {return null}}

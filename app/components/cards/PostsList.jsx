@@ -9,7 +9,6 @@ import Callout from 'app/components/elements/Callout';
 import CloseButton from 'react-foundation-components/lib/global/close-button';
 import {findParent} from 'app/utils/DomUtils';
 import Icon from 'app/components/elements/Icon';
-import shouldComponentUpdate from 'app/utils/shouldComponentUpdate';
 
 function topPosition(domElt) {
     if (!domElt) {
@@ -269,7 +268,7 @@ class PostsList extends React.Component {
         return (
             <div id="posts_list" className="PostsList">
                 <ul className="PostsList__summaries hfeed" itemScope itemType="http://schema.org/blogPosts">
-                    {renderSummary(comments)}
+                    {renderSummary(postsInfo)}
                 </ul>
                 {loading && <center><LoadingIndicator type="circle" /></center>}
                 {showPost && <div id="post_overlay" className="PostsList__post_overlay" tabIndex={0}>

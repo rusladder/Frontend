@@ -221,9 +221,11 @@ export default class UserProfile extends React.Component {
         } else if(!section || section === 'blog') {
             if (account.blog) {
                 let posts = accountImm.get('blog');
+                posts = posts.map(post => post = accountname + '/' + post)
                 const emptyText = isMyAccount ? <div>
                     {translate('looks_like_you_havent_posted_anything_yet')}.<br /><br />
                     <Link to="/submit.html">{translate('submit_a_story')}</Link><br />
+                    // TODO
                     <a href="/steemit/@thecryptofiend/the-missing-faq-a-beginners-guide-to-using-steemit">{translate('read_the_beginners_guide')}</a><br />
                     <a href="/welcome">{translate('read_the_beginners_guide')}</a>
                 </div>:

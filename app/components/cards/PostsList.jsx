@@ -2,13 +2,13 @@ import React, {PropTypes} from 'react';
 import PostSummary from 'app/components/cards/PostSummary';
 import Post from 'app/components/pages/Post';
 import LoadingIndicator from 'app/components/elements/LoadingIndicator';
+import shouldComponentUpdate from 'app/utils/shouldComponentUpdate';
 import debounce from 'lodash.debounce';
-import {findIndex} from 'lodash';
+import {find, findIndex} from 'lodash';
+import Callout from 'app/components/elements/Callout';
 import CloseButton from 'react-foundation-components/lib/global/close-button';
 import {findParent} from 'app/utils/DomUtils';
 import Icon from 'app/components/elements/Icon';
-import {List} from "immutable";
-import shouldComponentUpdate from 'app/utils/shouldComponentUpdate';
 
 function topPosition(domElt) {
     if (!domElt) {
@@ -20,10 +20,11 @@ function topPosition(domElt) {
 class PostsList extends React.Component {
 
     static propTypes = {
-        posts: PropTypes.object.isRequired,
+        posts: PropTypes.array.isRequired,
         loading: PropTypes.bool.isRequired,
         category: PropTypes.string,
         loadMore: PropTypes.func,
+        emptyText: PropTypes.string,
         showSpam: PropTypes.bool,
         fetchState: PropTypes.func.isRequired,
         pathname: PropTypes.string,
@@ -38,6 +39,7 @@ class PostsList extends React.Component {
         this.state = {
             thumbSize: 'desktop',
             showNegativeComments: false,
+            nsfwPref: 'warn',
             showPost: null
         }
         this.scrollListener = this.scrollListener.bind(this);
@@ -49,15 +51,37 @@ class PostsList extends React.Component {
         this.onPrevClick = this.onPrevClick.bind(this);
     }
 
+    componentWillMount() {
+        this.readNsfwPref()
+    }
+
+    readNsfwPref() {
+        if(!process.env.BROWSER) return
+        const {username} = this.props
+        const key = 'nsfwPref' + (username ? '-' + username : '')
+        const nsfwPref = localStorage.getItem(key) || 'warn'
+        this.setState({nsfwPref})
+    }
+
     componentDidMount() {
         this.attachScrollListener();
     }
 
-    componentWillUpdate() {
+    componentWillUnmount() {
+        this.detachScrollListener();
+        window.removeEventListener('popstate', this.onBackButton);
+        window.removeEventListener('keydown', this.onBackButton);
+        const post_overlay = document.getElementById('post_overlay');
+        if (post_overlay) post_overlay.removeEventListener('click', this.closeOnOutsideClick);
+        document.getElementsByTagName('body')[0].className = "";
+    }
+
+    componentWillUpdate(nextProps) {
         const location = `${window.location.pathname}${window.location.search}${window.location.hash}`;
         if (this.state.showPost && (location !== this.post_url)) {
             this.setState({showPost: null});
         }
+        this.readNsfwPref();
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -81,17 +105,8 @@ class PostsList extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        this.detachScrollListener();
-        window.removeEventListener('popstate', this.onBackButton);
-        window.removeEventListener('keydown', this.onBackButton);
-        const post_overlay = document.getElementById('post_overlay');
-        if (post_overlay) post_overlay.removeEventListener('click', this.closeOnOutsideClick);
-        document.getElementsByTagName('body')[0].className = "";
-    }
-
     onBackButton(e) {
-        if ('keyCode' in e && e.keyCode !== 27) return;
+        if (e.keyCode && e.keyCode !== 27) return;
         window.removeEventListener('popstate', this.onBackButton);
         window.removeEventListener('keydown', this.onBackButton);
         this.setState({showPost: null});
@@ -105,14 +120,9 @@ class PostsList extends React.Component {
             if (!inside_top_bar && !inside_nav) {
                 const post_overlay = document.getElementById('post_overlay');
                 if (post_overlay) post_overlay.removeEventListener('click', this.closeOnOutsideClick);
-                this.closePostModal();
+                this.setState({showPost: null});
             }
         }
-    }
-
-    closePostModal = () => {
-        window.document.title = this.state.prevTitle;
-        this.setState({showPost: null, prevTitle: null});
     }
 
     fetchIfNeeded() {
@@ -132,11 +142,11 @@ class PostsList extends React.Component {
             (document.documentElement || document.body.parentNode || document.body).scrollTop;
         if (topPosition(el) + el.offsetHeight - scrollTop - window.innerHeight < 10) {
             const {loadMore, posts, category} = this.props;
-            if (loadMore && posts && posts.size) loadMore(posts.last(), category);
+            if (loadMore && posts && posts.length > 0) loadMore(posts[posts.length - 1], category);
         }
 
         // Detect if we're in mobile mode (renders larger preview imgs)
-        const mq = window.matchMedia('screen and (max-width: 39.9375em)');
+        var mq = window.matchMedia('screen and (max-width: 39.9375em)');
         if(mq.matches) {
             this.setState({thumbSize: 'mobile'})
         } else {
@@ -158,6 +168,7 @@ class PostsList extends React.Component {
     onPostClick(post, url) {
         this.post_url = url;
         this.props.fetchState(url);
+        this.props.removeHighSecurityKeys();
         this.setState({showPost: post, prevTitle: window.document.title});
         window.history.pushState({}, '', url);
     }
@@ -225,8 +236,8 @@ class PostsList extends React.Component {
 
     render() {
         const {posts, showSpam, loading, category, content,
-            follow, account} = this.props;
-        const {thumbSize, showPost} = this.state
+            ignore_result, account} = this.props;
+        const {thumbSize, showPost, nsfwPref} = this.state
         const postsInfo = [];
         posts.forEach(item => {
             const cont = content.get(item);
@@ -234,13 +245,13 @@ class PostsList extends React.Component {
                 console.error('PostsList --> Missing cont key', item)
                 return
             }
-            const key = [cont.get('author')]
-            const ignore = follow ? follow.getIn(key, List()).contains('ignore') : false
+            const ignore = ignore_result && ignore_result.has(cont.get('author'))
+            // if(ignore) console.log('ignored post by', cont.get('author'), '\t', item)
+
             const {hide, netVoteSign, authorRepLog10} = cont.get('stats').toJS()
             if(!(ignore || hide) || showSpam) // rephide
                 postsInfo.push({item, ignore, netVoteSign, authorRepLog10})
         });
-
         const renderSummary = items => items.map(item => <li key={item.item}>
             <PostSummary
                 account={account}
@@ -251,9 +262,9 @@ class PostsList extends React.Component {
                 netVoteSign={item.netVoteSign}
                 authorRepLog10={item.authorRepLog10}
                 onClick={this.onPostClick}
+                nsfwPref={nsfwPref}
             />
         </li>)
-
         return (
             <div id="posts_list" className="PostsList">
                 <ul className="PostsList__summaries hfeed" itemScope itemType="http://schema.org/blogPosts">
@@ -266,7 +277,7 @@ class PostsList extends React.Component {
                             <button className="back-button" type="button" title="Назад" onClick={() => {this.setState({showPost: null})}}>
                                 <span aria-hidden="true"><Icon name="chevron-left" /></span>
                             </button>
-                            <CloseButton onClick={this.closePostModal} />
+                            <CloseButton onClick={() => {this.setState({showPost: null})}} />
                         </div>
                     </div>
                     <div className="PostsList__post_container">
@@ -282,40 +293,55 @@ class PostsList extends React.Component {
     }
 }
 
-// import {List, Map} from 'immutable'
+import {List} from 'immutable'
 import {connect} from 'react-redux'
 
 export default connect(
     (state, props) => {
-        /* if content fails, use the code below
 
-        let content = state.global.get('content').get(item);
-        // when you go to 'blog' tab in user profile content is not getting picked up properly,
-        // due to bad content key (it's 'sometitle' instead of 'username/sometitle')
-        // no idead how this did happanen. But this workaround fixes the issue
-
-        // if there is no content add username to content key
-        if(!content) {
-            item = props.accountName + '/' + item
-            content = state.global.get('content').get(item)
-            // only if content is still missing throw actual error
-            if(!content) {
-                console.error('PostsList --> Missing content key', item)
-                return
-            }
-        }
-
-         */
+        const {posts, showSpam} = props;
+        const comments = []
         const pathname = state.app.get('location').pathname;
         const current = state.user.get('current')
-        const username = current ? current.get('username') : null
+        // const username = current ? current.get('username') : null
+        //
+        // posts.forEach(item => {
+        //     let content = state.global.get('content').get(item);
+        //
+        //     // when you go to 'blog' tab in user profile content is not getting picked up properly,
+        //     // due to bad content key (it's 'sometitle' instead of 'username/sometitle')
+        //     // no idead how this did happanen. But this workaround fixes the issue
+        //
+        //     // if there is no content add username to content key
+        //     if(!content) {
+        //         item = props.account + '/' + item
+        //         content = state.global.get('content').get(item)
+        //         // only if content is still missing throw actual error
+        //         if(!content) {
+        //             console.error('PostsList --> Missing content key', item)
+        //             return
+        //         }
+        //     }
+        //
+        //     const key = ['follow', 'get_following', username, 'result', content.get('author')]
+        //     const ignore = username ? state.global.getIn(key, List()).contains('ignore') : false
+        //     const {hide, netVoteSign, authorRepLog10} = content.get('stats').toJS()
+        //     if(!(ignore || hide) || showSpam) // rephide
+        //         comments.push({item, ignore, netVoteSign, authorRepLog10})
+        // })
+        // return {...props, comments, pathname};
+
+        const username = current ? current.get('username') : state.offchain.get('account')
         const content = state.global.get('content');
-        const follow = state.global.getIn(['follow', 'get_following', username, 'result']);
-        return {...props, username, content, follow, pathname};
+        const ignore_result = state.global.getIn(['follow', 'get_following', username, 'ignore_result']);
+        return {...props, username, content, ignore_result, pathname};
     },
     dispatch => ({
         fetchState: (pathname) => {
             dispatch({type: 'FETCH_STATE', payload: {pathname}})
+        },
+        removeHighSecurityKeys: () => {
+            dispatch({type: 'user/REMOVE_HIGH_SECURITY_KEYS'})
         }
     })
 )(PostsList)

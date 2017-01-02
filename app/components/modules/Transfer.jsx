@@ -129,17 +129,36 @@ class TransferForm extends Component {
                 </div>}
 
                 <div className="row">
-                    <div className="column small-2">{translate('from')}</div>
+                    <div className="column small-2" style={{paddingTop: 5}}>{translate('from')}</div>
                     <div className="column small-10">
-                        <b>{currentUser.get('username')}</b>
+                        <div className="input-group" style={{marginBottom: "1.25rem"}}>
+                            <span className="input-group-label">@</span>
+                            <input
+                                className="input-group-field bold"
+                                type="text"
+                                disabled
+                                value={currentUser.get('username')}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {(advanced || !toVesting) && <div className="row">
-                    <div className="column small-2">{translate('to')}</div>
+                {advanced && <div className="row">
+                    <div className="column small-2" style={{paddingTop: 5}}>{translate('to')}</div>
                     <div className="column small-10">
-                        <input type="text" placeholder={translate('send_to_account')} {...to.props}
-                            onChange={this.onChangeTo} ref="to" autoComplete="off" disabled={loading} />
+                        <div className="input-group" style={{marginBottom: "1.25rem"}}>
+                            <span className="input-group-label">@</span>
+                            <input
+                                className="input-group-field"
+                                ref="to"
+                                type="text"
+                                placeholder={translate('send_to_account')}
+                                onChange={this.onChangeTo}
+                                autoComplete="off"
+                                disabled={loading}
+                                {...to.props}
+                            />
+                        </div>
                         {to.touched && to.blur && to.error ?
                             <div className="error">{to.error}&nbsp;</div> :
                             <p>{toVesting && powerTip3}</p>
@@ -148,24 +167,29 @@ class TransferForm extends Component {
                 </div>}
 
                 <div className="row">
-                    <div className="column small-2">{translate('amount')}</div>
+                    <div className="column small-2" style={{paddingTop: 5}}>{translate('amount')}</div>
                     <div className="column small-10">
-                        <input type="text" placeholder={translate('amount')} {...amount.props} ref="amount" autoComplete="off" disabled={loading} />
-                        <div className="error">{amount.touched && amount.error && amount.error}&nbsp;</div>
-                        {asset && <span>
-                            <select {...asset.props} placeholder={translate('asset')} disabled={loading}>
-                                <option></option>
-                                <option value={LIQUID_TICKER}>{LIQUID_TOKEN}</option>
-                                {/* TODO */}
-                                <option value={DEBT_TICKER}>{DEBT_TOKEN_SHORT}</option>
-                            </select>
-                        </span>}
-                        <AssetBalance balanceValue={this.balanceValue()} onClick={this.assetBalanceClick} />
-                        <div className="error">{asset && asset.touched && asset.error && asset.error}&nbsp;</div>
+                        <div className="input-group" style={{marginBottom: 5}}>
+                            <input type="text" placeholder={translate('amount')} {...amount.props} ref="amount" autoComplete="off" disabled={loading} />
+                            {asset && <span className="input-group-label" style={{paddingLeft: 0, paddingRight: 0}}>
+                                <select {...asset.props} placeholder={translate('asset')} disabled={loading} style={{minWidth: "5rem", height: "inherit", backgroundColor: "transparent", border: "none"}}>
+                                    <option value={LIQUID_TICKER}>{LIQUID_TICKER}</option>
+                                    <option value={DEBT_TICKER}>{DEBT_TICKER}</option>
+                                </select>
+                            </span>}
+                        </div>
+                        <div style={{marginBottom: "0.6rem"}}>
+                            <AssetBalance balanceValue={this.balanceValue()} onClick={this.assetBalanceClick} />
+                        </div>
+                        {(asset && asset.touched && asset.error ) || (amount.touched && amount.error) ?
+                        <div className="error">
+                            {asset && asset.touched && asset.error && asset.error}&nbsp;
+                            {amount.touched && amount.error && amount.error}&nbsp;
+                        </div> : null}
                     </div>
                 </div>
                 {memo && <div className="row">
-                    <div className="column small-2">{translate('memo')}</div>
+                    <div className="column small-2" style={{paddingTop: 33}}>{translate('memo')}</div>
                     <div className="column small-10">
                         <small>{translate(isMemoPrivate ? 'this_memo_is_private' : 'this_memo_is_public')}</small>
                         <input type="text" placeholder={translate('memo')} {...memo.props}

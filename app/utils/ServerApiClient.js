@@ -10,9 +10,9 @@ const request_base = {
     }
 };
 
-export function serverApiLogin(account) {
+export function serverApiLogin(account, signatures) {
     if (!process.env.BROWSER || window.$STM_ServerBusy) return;
-    const request = Object.assign({}, request_base, {body: JSON.stringify({csrf: $STM_csrf, account})});
+    const request = Object.assign({}, request_base, {body: JSON.stringify({account, signatures, csrf: $STM_csrf})});
     fetch('/api/v1/login_account', request);
 }
 
@@ -49,23 +49,25 @@ export function markNotificationRead(account, fields) {
     });
 }
 
-let last_page, last_views;
+let last_page, last_views, last_page_promise;
 export function recordPageView(page, ref) {
-    if (page === last_page) return Promise.resolve(last_views);
+    if (last_page_promise && page === last_page) return last_page_promise;
     if (window.ga) { // virtual pageview
         window.ga('set', 'page', page);
         window.ga('send', 'pageview');
     }
     if (!process.env.BROWSER || window.$STM_ServerBusy) return Promise.resolve(0);
     const request = Object.assign({}, request_base, {body: JSON.stringify({csrf: $STM_csrf, page, ref})});
-    return fetch(`/api/v1/page_view`, request).then(r => r.json()).then(res => {
-        last_page = page;
+    last_page_promise = fetch(`/api/v1/page_view`, request).then(r => r.json()).then(res => {
         last_views = res.views;
         return last_views;
     });
+    last_page = page;
+    return last_page_promise;
 }
 
 if (process.env.BROWSER) {
     window.getNotifications = getNotifications;
     window.markNotificationRead = markNotificationRead;
 }
+

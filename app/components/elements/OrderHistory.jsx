@@ -1,8 +1,8 @@
 import React from "react";
 import HistoryRow from "./OrderhistoryRow.jsx";
 import { translate } from 'app/Translator';
-import { localizedCurrency, localCurrencySymbol } from 'app/components/elements/LocalizedCurrency';
-import { LIQUID_TOKEN, CURRENCY_SIGN } from 'config/client_config';
+import { DEBT_TOKEN_SHORT, LIQUID_TOKEN, CURRENCY_SIGN } from 'config/client_config';
+// import { localizedCurrency, localCurrencySymbol } from 'app/components/elements/LocalizedCurrency';
 
 export default class OrderHistory extends React.Component {
 
@@ -73,7 +73,7 @@ export default class OrderHistory extends React.Component {
                             <th>{translate('date')}</th>
                             <th>{translate('price')}</th>
                             <th>{LIQUID_TOKEN}</th>
-                            <th>{`${LIQUID_TOKEN} (${localCurrencySymbol})`}</th>
+                            <th>{`${DEBT_TOKEN_SHORT} (${CURRENCY_SIGN})`}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,13 +84,13 @@ export default class OrderHistory extends React.Component {
                 <nav>
                   <ul className="pager">
                     <li>
-                        <div className={"button tiny hollow float-left " + (historyIndex === 0 ? " disabled" : "")}  onClick={this._setHistoryPage.bind(this, false)} aria-label="Previous">
-                            <span aria-hidden="true">&larr; {' ' + translate('newer')}</span>
+                        <div className={"button tiny hollow float-left " + (historyIndex === 0 ? " disabled" : "")}  onClick={this._setHistoryPage.bind(this, false)} aria-label={translate('previous')}>
+                            <span aria-hidden="true">&larr; {translate('newer')}</span>
                         </div>
                     </li>
                     <li>
-                        <div className={"button tiny hollow float-right " + (historyIndex >= (history.length - 10) ? " disabled" : "")}  onClick={this._setHistoryPage.bind(this, true)} aria-label="Next">
-                            <span aria-hidden="true">{translate('older') + ' '} &rarr;</span>
+                        <div className={"button tiny hollow float-right " + (historyIndex >= (history.length - 10) ? " disabled" : "")}  onClick={this._setHistoryPage.bind(this, true)} aria-label={translate('next')}>
+                            <span aria-hidden="true">{translate('older')} &rarr;</span>
                         </div>
                     </li>
                   </ul>

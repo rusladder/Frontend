@@ -40,10 +40,19 @@ npm install
 В настоящий момент Вам придётся связаться с командой запуска, чтобы получить внятные инструкции.
 
 
+
 ```bash
 cd config
 cp steem-example.json steem-dev.json
 ```
+
+Generate a new crypto_key and save under server_session_secret in ./steem-dev.json.
+
+```bash
+node
+> crypto.randomBytes(32).toString('base64')
+```
+
 (note: it's steem.json in production)
 
 #### Установка базы данных (mysql)

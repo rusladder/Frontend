@@ -49,7 +49,6 @@ class UserWallet extends React.Component {
         const gprops = this.props.gprops.toJS();
 
         if (!account) return null;
-
         let vesting_steemf = vestingSteem(account.toJS(), gprops);
         let vesting_steem = vesting_steemf.toFixed(3);
 
@@ -79,20 +78,50 @@ class UserWallet extends React.Component {
             this.props.withdrawVesting({account: name, vesting_shares, errorCallback, successCallback})
         }
 
+        // Sum savings withrawals
+        let savings_pending = 0, savings_sbd_pending = 0
+        if(savings_withdraws) {
+            savings_withdraws.forEach(withdraw => {
+                const [amount, asset] = withdraw.get('amount').split(' ')
+                if(asset === 'STEEM') // TODO add golos specific currencies
+                    savings_pending += parseFloat(amount)
+                else {
+                    if(asset === 'SBD') // TODO add golos specific currencies
+                        savings_sbd_pending += parseFloat(amount)
+                }
+            })
+        }
+
+        // Sum conversions
+        let conversionValue = 0;
+        const conversions = account.get('other_history').filter(a => {
+            return a.getIn([1, 'op', 0]) === 'convert';
+        }).map(c => {
+            const timestamp = new Date(c.getIn([1, 'timestamp'])).getTime();
+            const finishTime = timestamp + (86400000 * (timestamp <= 1481040000000 ? 7 : 3.5)); // add conversion delay before/after hardfork change
+            const amount = parseFloat(c.getIn([1, 'op', 1, 'amount']).replace(" SBD", ""));
+            conversionValue += amount;
+            return (
+                <div key={c.get(0)}>
+                    <Tooltip t={translate('conversion_complete_tip') + ": " + new Date(finishTime).toLocaleString()}>
+                        <span>(+{translate('in_conversion', {amount: numberWithCommas('$' + amount.toFixed(3))})})</span>
+                    </Tooltip>
+                </div>
+            );
+        })
 
         const balance_steem = parseFloat(account.get('balance').split(' ')[0]);
         const saving_balance_steem = parseFloat(savings_balance.split(' ')[0]);
-        const total_steem = (vesting_steemf + balance_steem + saving_balance_steem + savings_pending).toFixed(3);
         const divesting = parseFloat(account.get('vesting_withdraw_rate').split(' ')[0]) > 0.000000;
         const sbd_balance = parseFloat(account.get('sbd_balance'))
         const sbd_balance_savings = parseFloat(savings_sbd_balance.split(' ')[0]);
-        const total_sbd = sbd_balance + sbd_balance_savings + savings_sbd_pending
         const sbdOrders = (!open_orders || !isMyAccount) ? 0 : open_orders.reduce((o, order) => {
             if (order.sell_price.base.indexOf("SBD") !== -1) {
                 o += order.for_sale;
             }
             return o;
         }, 0) / assetPrecision;
+
         const steemOrders = (!open_orders || !isMyAccount) ? 0 : open_orders.reduce((o, order) => {
             if (order.sell_price.base.indexOf("STEEM") !== -1) {
                 o += order.for_sale;
@@ -101,6 +130,8 @@ class UserWallet extends React.Component {
         }, 0) / assetPrecision;
 
         // set displayed estimated value
+        const total_sbd = sbd_balance + sbd_balance_savings + savings_sbd_pending + sbdOrders + conversionValue;
+        const total_steem = vesting_steemf + balance_steem + saving_balance_steem + savings_pending + steemOrders;
         let total_value = '$' + numberWithCommas(
             ((total_steem * price_per_steem) + total_sbd
         ).toFixed(2))
@@ -194,14 +225,13 @@ class UserWallet extends React.Component {
                     {isMyAccount ?
                     <FoundationDropdownMenu onClick={this.trackAnalytics.bind(this, 'golos dropdown in user\'s profile clicked')} className="Wallet_dropdown" dropdownPosition="bottom" dropdownAlignment="right" label={steem_balance_str + ' STEEM'} menu={steem_menu} />
                     : steem_balance_str + ' STEEM'}
-                    {steemOrders ? <div style={{paddingRight: "0.85rem"}}><Link to="/market"><Tooltip t={translate('open_orders')}>(+{steem_orders_balance_str} STEEM)</Tooltip></Link></div> : null}
+                    {steemOrders ? <div style={{paddingRight: isMyAccount ? "0.85rem" : null}}><Link to="/market"><Tooltip t={translate('open_orders')}>(+{steem_orders_balance_str} STEEM)</Tooltip></Link></div> : null}
                 </div>
                 {/* {isMyAccount && <div className="column small-12 medium-4">
                     <button className="UserWallet__buysp button hollow float-right" onClick={this.onShowDepositSteem}>{translate('buy_LIQUID_TOKEN_or_INVEST_TOKEN')}</button>
                 </div>} */}
             </div>
-            <br />
-            <div className="UserWallet__balance row">
+            <div className="UserWallet__balance row zebra">
                 <div className="column small-12 medium-8">
                     <span className="uppercase">
                       <img src="/images/golos-badge.jpg" width="36px" height="36px" alt="символ Голоса" />
@@ -239,10 +269,11 @@ class UserWallet extends React.Component {
                     {isMyAccount ?
                     <FoundationDropdownMenu onClick={this.trackAnalytics.bind(this, 'golos power dropdown in user\'s profile clicked')} className="Wallet_dropdown" dropdownPosition="bottom" dropdownAlignment="right" label={sbd_balance_str} menu={dollar_menu} />
                     : sbd_balance_str}
-                    {sbdOrders ? <div style={{paddingRight: "0.85rem"}}><Link to="/market"><Tooltip t={translate('open_orders')}>(+{sbd_orders_balance_str})</Tooltip></Link></div> : null}
+                    {sbdOrders ? <div style={{paddingRight: isMyAccount ? "0.85rem" : null}}><Link to="/market"><Tooltip t={translate('open_orders')}>(+{sbd_orders_balance_str})</Tooltip></Link></div> : null}
+                    {conversions}
                 </div>
             </div>
-            <div className="UserWallet__balance row">
+            <div className="UserWallet__balance row zebra">
                 <div className="column small-12 medium-8">
                     <span className="uppercase">
                       <img src="/images/zolotoy-badge.jpg" width="32px" height="32px" alt="символ Золотого" />
@@ -255,12 +286,6 @@ class UserWallet extends React.Component {
                     {isMyAccount ?
                     <DropdownMenu onClick={this.trackAnalytics.bind(this, 'gbg dropdown in user\'s profile clicked')} selected={sbd_balance_str} items={dollar_menu} el="span" className="Header__sort-order-menu" />
                     : sbd_balance_str}
-                </div>
-            </div>
-            <div className="row">
-                <div className="column small-12">
-                    <div style={{borderTop: '1px solid #eee', paddingTop: '0.25rem', marginTop: '0.25rem'}}>
-                    </div>
                 </div>
             </div>
             <div className="UserWallet__balance row">

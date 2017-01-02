@@ -61,6 +61,8 @@ export default {
         ],
         extensions: ['', '.js', '.json', '.jsx'],
         modulesDirectories: ['node_modules']
+    },
+    externals: {
     }
 };
 /* medium-editor, add to plugins[]

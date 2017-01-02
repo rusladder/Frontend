@@ -79,7 +79,7 @@ class Market extends React.Component {
         const min_to_receive = parseFloat(ReactDOM.findDOMNode(this.refs.buySteem_amount).value)
         const price = (amount_to_sell / min_to_receive).toFixed(6)
         const {lowest_ask} = this.props.ticker;
-        placeOrder(user, amount_to_sell + " SBD", min_to_receive + " STEEM", "$" + price + "/STEEM", !!this.state.buy_price_warning, lowest_ask, (msg) => {
+        placeOrder(user, `${amount_to_sell} ${DEBT_TICKER}`,`${min_to_receive} ${LIQUID_TICKER}`, `${CURRENCY_SIGN}${price}/${LIQUID_TICKER}`, !!this.state.buy_price_warning, lowest_ask, (msg) => {
             this.props.notify(msg)
             this.props.reload(owner)
         })
@@ -93,7 +93,7 @@ class Market extends React.Component {
         const amount_to_sell = parseFloat(ReactDOM.findDOMNode(this.refs.sellSteem_amount).value)
         const price = (min_to_receive / amount_to_sell).toFixed(6)
         const {highest_bid} = this.props.ticker;
-        placeOrder(user, amount_to_sell + " STEEM", min_to_receive + " SBD", "$" + price + "/STEEM", !!this.state.sell_price_warning, highest_bid, (msg) => {
+        placeOrder(user, `${amount_to_sell} ${LIQUID_TICKER}`, `${min_to_receive} ${DEBT_TICKER}`, `${CURRENCY_SIGN}${price}/${LIQUID_TICKER}`, !!this.state.sell_price_warning, highest_bid, (msg) => {
             this.props.notify(msg)
             this.props.reload(owner)
         })
@@ -250,7 +250,7 @@ class Market extends React.Component {
                   <td>{translate(o.type == 'ask' ? 'sell' : 'buy')}</td>
                   <td>{localizedCurrency(o.price.toFixed(6))}</td>
                   <td>{o.steem}</td>
-                  <td metaTask="//TODO">{localCurrencySymbol(o.sbd.replace('SBD', DEBT_TOKEN_SHORT), {noSymbol: true})}</td>
+                  <td>{localCurrencySymbol(o.sbd.replace('SBD', DEBT_TOKEN_SHORT), {noSymbol: true})}</td>
                   <td><a href="#" onClick={e => cancelOrderClick(e, o.orderid)}>{translate('cancel')}</a></td>
               </tr> )
 
@@ -261,7 +261,7 @@ class Market extends React.Component {
                         <th>{translate('type')}</th>
                         <th>{translate('price')}</th>
                         <th className="uppercase">{LIQUID_TOKEN}</th>
-                        <th>{`${DEBT_TOKEN_SHORT} (${localCurrencySymbol})`}</th>
+                        <th>{`${DEBT_TOKEN_SHORT} (${CURRENCY_SIGN})`}</th>
                         <th>{translate('action')}</th>
                     </tr>
                 </thead>
@@ -292,12 +292,10 @@ class Market extends React.Component {
                 <div className="row">
                     <div className="column">
                         <ul className="Market__ticker">
-                            {/* .toFixed() modifiers are not neccesery, currencies are formatted properly behind the scene */}
-                            {/* i left them in place just incase, so you will not have to look them up */}
-                            <li><b>{translate('last_price')}</b> {localizedCurrency(ticker.latest.toFixed(6))} ({pct_change})</li>
-                            <li><b>{translate('24h_volume')}</b> {localizedCurrency(ticker.sbd_volume.toFixed(2))}</li>
-                            <li><b>{translate('bid')}</b> {localizedCurrency(ticker.highest_bid.toFixed(6))}</li>
-                            <li><b>{translate('ask')}</b> {localizedCurrency(ticker.lowest_ask.toFixed(6))}</li>
+                            <li><b>{translate('last_price')}</b> {CURRENCY_SIGN}{ticker.latest.toFixed(6)} ({pct_change})</li>
+                            <li><b>{translate('24h_volume')}</b> {CURRENCY_SIGN}{ticker.sbd_volume.toFixed(2)}</li>
+                            <li><b>{translate('bid')}</b> {CURRENCY_SIGN}{ticker.highest_bid.toFixed(6)}</li>
+                            <li><b>{translate('ask')}</b> {CURRENCY_SIGN}{ticker.lowest_ask.toFixed(6)}</li>
                             {ticker.highest_bid > 0 &&
                                 <li><b>{translate('spread')}</b> {(200 * (ticker.lowest_ask - ticker.highest_bid) / (ticker.highest_bid + ticker.lowest_ask)).toFixed(3)}%</li>}
                             {/*<li><b>Feed price</b> ${ticker.feed_price.toFixed(3)}</li>*/}
@@ -335,7 +333,7 @@ class Market extends React.Component {
                                             if(amount >= 0 && price >= 0) this.refs.buySteem_total.value = roundUp(price * amount, 3)
                                             validateBuySteem()
                                         }} />
-                                    <span className="input-group-label uppercase">{`${DEBT_TOKEN_SHORT}/${LIQUID_TOKEN}`}</span>
+                                        <span className="input-group-label uppercase">{`${DEBT_TOKEN_SHORT}/${LIQUID_TOKEN}`}</span>
                                     </div>
                                 </div>
                             </div>
@@ -352,7 +350,7 @@ class Market extends React.Component {
                                             if(price >= 0 && amount >= 0) this.refs.buySteem_total.value = roundUp(price * amount, 3)
                                             validateBuySteem()
                                         }} />
-                                    <span className="input-group-label uppercase"> {LIQUID_TOKEN}</span>
+                                        <span className="input-group-label uppercase"> {LIQUID_TOKEN}</span>
                                     </div>
                                 </div>
                             </div>
@@ -369,7 +367,7 @@ class Market extends React.Component {
                                             if(total >= 0 && price >= 0) this.refs.buySteem_amount.value = roundUp(total / price, 3)
                                             validateBuySteem()
                                         }} />
-                                    <span className="input-group-label">{`${DEBT_TOKEN_SHORT} (${CURRENCY_SIGN})`}</span>
+                                        <span className="input-group-label">{`${DEBT_TOKEN_SHORT} (${CURRENCY_SIGN})`}</span>
                                     </div>
                                 </div>
                             </div>
@@ -425,7 +423,7 @@ class Market extends React.Component {
                                           if(amount >= 0 && price >= 0) this.refs.sellSteem_total.value = roundDown(price * amount, 3)
                                           validateSellSteem()
                                         }} />
-                                    <span className="input-group-label uppercase">{`${DEBT_TOKEN_SHORT}/${LIQUID_TOKEN}`}</span>
+                                        <span className="input-group-label uppercase">{`${DEBT_TOKEN_SHORT}/${LIQUID_TOKEN}`}</span>
                                     </div>
                                 </div>
                             </div>
@@ -442,7 +440,7 @@ class Market extends React.Component {
                                           if(price >= 0 && amount >= 0) this.refs.sellSteem_total.value = roundDown(price * amount, 3)
                                           validateSellSteem()
                                         }} />
-                                    <span className="input-group-label uppercase">{LIQUID_TOKEN}</span>
+                                        <span className="input-group-label uppercase">{LIQUID_TOKEN}</span>
                                     </div>
                                 </div>
                             </div>
@@ -534,15 +532,18 @@ class Market extends React.Component {
 const DEFAULT_EXPIRE = 0xFFFFFFFF//Math.floor((Date.now() / 1000) + (60 * 60 * 24)) // 24 hours
 module.exports = {
     path: 'market',
-    component: connect(state => ({
-        orderbook:   state.market.get('orderbook'),
-        open_orders: process.env.BROWSER ? state.market.get('open_orders') : [],
-        ticker:      state.market.get('ticker'),
-        account:     state.market.get('account'),
-        history:     state.market.get('history'),
-        user:        state.user.get('current'),
-        feed:        state.global.get('feed_price').toJS()
-    }),
+    component: connect(state => {
+        const username = state.user.get('current') ? state.user.get('current').get('username') : null;
+        return {
+            orderbook:   state.market.get('orderbook'),
+            open_orders: process.env.BROWSER ? state.market.get('open_orders') : [],
+            ticker:      state.market.get('ticker'),
+            account:     state.global.getIn(['accounts', username]),
+            history:     state.market.get('history'),
+            user:        username,
+            feed:        state.global.get('feed_price').toJS()
+        }
+    },
     dispatch => ({
         notify: (message) => {
             dispatch({type: 'ADD_NOTIFICATION', payload:
@@ -556,8 +557,8 @@ module.exports = {
           dispatch({type: 'market/UPDATE_MARKET', payload: {username: username}})
         },
         cancelOrder: (owner, orderid, successCallback) => {
-            const confirm = `Cancel order #${orderid} from ${owner}?`
-            const successMessage = `Order #${orderid} cancelled.`
+            const confirm = translate('order_cancel_confirm', {order_id: orderid, user: owner})
+            const successMessage = translate('order_cancelled', {order_id: orderid})
             dispatch(transaction.actions.broadcastOperation({
                 type: 'limit_order_cancel',
                 operation: {owner, orderid/*, __config: {successMessage}*/},
@@ -575,18 +576,15 @@ module.exports = {
             min_to_receive = min_to_receive.replace(min_to_receive.split(' ')[0],
                 String(parseFloat(min_to_receive).toFixed(3)))
 
-
-            const confirmStr = translate(
-                                // which translated string to use
-                                regex.test(isSell)
+            const isSell = amount_to_sell.indexOf(LIQUID_TICKER) > 0;
+            const confirmStr = translate(isSell
                                 ? 'sell_amount_for_atleast'
                                 : 'buy_atleast_amount_for',
-                                // with this values
                                 {amount_to_sell, min_to_receive, effectivePrice}
                             )
-            const successMessage = translate('order_placed' + ': ' + confirmStr)
+            const successMessage = translate('order_placed') + ': ' + confirmStr
             const confirm = confirmStr + '?'
-            const warning = priceWarning ? "This price is well " + (isSell ? "below" : "above") + " the current market price of $" + parseFloat(marketPrice).toFixed(4) + "/STEEM, are you sure?" : null;
+            const warning = priceWarning ? translate('price_warning_'+(isSell ? "below" : "above"), {marketPrice: CURRENCY_SIGN + parseFloat(marketPrice).toFixed(4) + "/" + LIQUID_TOKEN_UPPERCASE}) : null;
             const orderid = Math.floor(Date.now() / 1000)
             dispatch(transaction.actions.broadcastOperation({
                 type: 'limit_order_create',

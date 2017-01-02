@@ -1,3 +1,5 @@
+// newrelic is not working with latest npm if(process.env.NEW_RELIC_APP_NAME) require('newrelic');
+
 import path from 'path';
 import Koa from 'koa';
 import mount from 'koa-mount';
@@ -13,14 +15,18 @@ import useAccountRecoveryApi from './api/account_recovery';
 import useIcoApi from './api/ico'
 import useNotificationsApi from './api/notifications';
 import useEnterAndConfirmEmailPages from './server_pages/enter_confirm_email';
+import useEnterAndConfirmMobilePages from './server_pages/enter_confirm_mobile';
+import useUserJson from './json/user_json';
 import isBot from 'koa-isbot';
-import session from 'koa-session';
+import session from '@steem/crypto-session';
 import csrf from 'koa-csrf';
 import flash from 'koa-flash';
 import minimist from 'minimist';
 import Grant from 'grant-koa';
 import config from '../config';
 import {APP_NAME} from 'config/client_config'
+import {routeRegex} from 'app/ResolveRoute';
+import secureRandom from 'secure-random';
 
 const grant = new Grant(config.grant);
 // import uploadImage from 'server/upload-image' //medium-editor
@@ -32,8 +38,10 @@ const env = process.env.NODE_ENV || 'development';
 const cacheOpts = {maxAge: 86400000, gzip: true};
 
 app.keys = [config.session_key];
-app.use(session({maxAge: 1000 * 3600 * 24 * 7}, app));
+const crypto_key = config.server_session_secret;
+session(app, {maxAge: 1000 * 3600 * 24 * 60, crypto_key, key: config.session_cookie_key});
 csrf(app);
+
 app.use(mount(grant));
 app.use(flash({key: 'flash'}));
 
@@ -47,20 +55,20 @@ app.use(function *(next) {
         return;
     }
     // normalize user name url from cased params
-    if (this.method === 'GET' && /^\/(@[\w\.\d-]+)\/?$/.test(this.url)) {
+    if (this.method === 'GET' && (routeRegex.UserProfile1.test(this.url) || routeRegex.PostNoCategory.test(this.url))) {
         const p = this.originalUrl.toLowerCase();
         if(p !== this.originalUrl) {
+            this.status = 301;
             this.redirect(p);
             return;
         }
     }
     // normalize top category filtering from cased params
-    if (this.method === 'GET' && /^\/(hot|created|trending|active)\//.test(this.url)) {
-        const segments = this.url.split('/')
-        const category = segments[2]
-        if(category !== category.toLowerCase()) {
-            segments[2] = category.toLowerCase()
-            this.redirect(segments.join('/'));
+    if (this.method === 'GET' && routeRegex.CategoryFilters.test(this.url)) {
+        const p = this.originalUrl.toLowerCase();
+        if(p !== this.originalUrl) {
+            this.status = 301;
+            this.redirect(p);
             return;
         }
     }
@@ -109,6 +117,9 @@ app.use(mount('/robots.txt', function* () {
 
 useRedirects(app);
 useEnterAndConfirmEmailPages(app);
+useEnterAndConfirmMobilePages(app);
+useUserJson(app);
+
 
 if (env === 'production') {
     app.use(helmet.contentSecurityPolicy(config.helmet));

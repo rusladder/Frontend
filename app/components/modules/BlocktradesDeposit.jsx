@@ -7,9 +7,9 @@ import DropdownMenu from 'app/components/elements/DropdownMenu'
 import g from 'app/redux/GlobalReducer'
 import QRCode from 'react-qr'
 import {cleanReduxInput} from 'app/utils/ReduxForms'
-import { translate } from 'app/Translator';
+import { translate } from 'app/Translator.js';
 import { formatCoins } from 'app/utils/FormatCoins';
-import { APP_URL, APP_ICON, LIQUID_TOKEN, VESTING_TOKEN, VEST_TICKER, LIQUID_TICKER, DEBT_TICKER } from 'config/client_config';
+import { APP_NAME, APP_ICON, DEBT_TOKEN, DEBT_TOKEN_SHORT, LIQUID_TOKEN, CURRENCY_SIGN, VESTING_TOKEN, VEST_TICKER, LIQUID_TICKER, DEBT_TICKER } from 'config/client_config';
 
 const coinNames = {
     [LIQUID_TICKER]: LIQUID_TOKEN,
@@ -158,7 +158,7 @@ class BlocktradesDeposit extends React.Component {
                 translate('LIQUID_TOKEN_can_be_converted_to_VESTING_TOKEN_in_a_process_called_powering_up')
             : outputCoin.value === VEST_TICKER ? <div>
                 <p>{translate('influence_tokens_which_earn_more_power_by_holding_long_term') + ' ' + translate('the_more_you_hold_the_more_you_influence_post_rewards')}</p>
-                <p>{translate('INVEST_TOKEN_is_non_transferrable_and_will_require_2_years_and_104_payments_to_convert_back_to_LIQUID_TOKEN')}</p>
+                <p>{translate('VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN')}</p>
             </div>
             : null
 
@@ -383,7 +383,8 @@ const coinTypes = new RegExp(`${LIQUID_TICKER}|${VEST_TICKER}|${DEBT_TICKER}`)
 const trHashLink = (coin, hash) =>
     !hash ? null :
     coin === 'BTC' ? <a href={`https://blockchain.info/tx/${hash}`} target="_blank"><Icon name="extlink" /></a> :
-    coinTypes.test(coin) ? <a href={`https://____${APP_URL}/tx/${hash}`} target="_blank"><Icon name="extlink" /></a> :
+    /STEEM|VESTS|SBD/.test(coin) ? <a href={`https://steemd.com/tx/${hash}`} target="_blank"><Icon name="extlink" /></a> :
+    /GOLOS|GESTS|GBG/.test(coin) ? <a href={`http://golosd.com/tx/${hash}`} target="_blank"><Icon name="extlink" /></a> :
     <span t={hash}>hash.substring(0, 10) + '...'</span>
 
 /** Memory backed local storage.  Assumes this is the sole maintainer of this key.

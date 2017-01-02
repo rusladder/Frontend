@@ -12,6 +12,12 @@ import {checkCSRF} from '../utils';
 import config from '../../config';
 import { APP_ICON, APP_NAME } from 'config/client_config';
 import { translate } from 'app/Translator';
+import SignupProgressBar from 'app/components/elements/SignupProgressBar';
+import MiniHeader from 'app/components/modules/MiniHeader';
+import secureRandom from 'secure-random';
+import Mixpanel from 'mixpanel';
+
+const mixpanel = config.mixpanel ? Mixpanel.init(config.mixpanel) : null;
 
 let assets;
 if (process.env.NODE_ENV === 'production') {
@@ -101,6 +107,7 @@ export default function useEnterAndConfirmEmailPages(app) {
         </div>);
         const props = { body, title: translate('email_address'), assets, meta: [] };
         this.body = '<!DOCTYPE html>' + renderToString(<ServerHTML { ...props } />);
+        if (mixpanel) mixpanel.track('SignupStep1', {distinct_id: this.session.uid});
     });
 
     router.post('/submit_email', koaBody, function *() {

@@ -37,14 +37,13 @@ class Topics extends React.Component {
     };
 
     render() {
+        return null
         const {
             props: {order, current, compact, className},
             state: {expanded, search},
             onChangeSearch, expand
         } = this;
-
         let categories = this.props.categories.get('trending');
-
         if (!(expanded || search) || compact) categories = categories.take(50);
 
         const cn = 'Topics' + (className ? ` ${className}` : '');
@@ -83,6 +82,5 @@ class Topics extends React.Component {
 }
 
 export default connect(state => ({
-    // TODO: use 'tag_idx' after shared-db upgrade
-    categories: state.global.get('tag_idx') || state.global.get('category_idx')
+    categories: state.global.get('tag_idx')
 }))(Topics);

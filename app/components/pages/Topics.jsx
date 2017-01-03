@@ -37,7 +37,6 @@ class Topics extends React.Component {
     };
 
     render() {
-        return null
         const {
             props: {order, current, compact, className},
             state: {expanded, search},
@@ -82,5 +81,6 @@ class Topics extends React.Component {
 }
 
 export default connect(state => ({
-    categories: state.global.get('tag_idx')
+    // TODO: after shared-db upgrade this must be a "tag_idx" instead of 'category_idx'
+    categories: state.global.get('category_idx')
 }))(Topics);

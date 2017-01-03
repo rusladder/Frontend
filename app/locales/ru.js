@@ -647,6 +647,7 @@ const ru = {
     always_hide: 'Всегда скрывать',
     always_warn: 'Всегда предупреждать',
     always_show: 'Всегда показывать',
+	adult_content_NSFW: 'Взрослый контент (NSFW)',
 }
 
 export { ru }

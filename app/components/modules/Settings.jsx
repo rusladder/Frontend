@@ -133,7 +133,7 @@ class Settings extends React.Component {
                     <div className="row">
                         {/* PROFILE SETTINGS */}
                         <form onSubmit={this.handleSubmitForm} className="small-12 medium-6 large-4 columns">
-                            <h3>{translate('profile')}</h3>
+                            <strong>{translate('profile')}</strong>
                             <label>
                                 {translate('profile_image_url')}
                                 <input type="url" {...profile_image.props} autoComplete="off" />
@@ -199,23 +199,19 @@ class Settings extends React.Component {
                                 </select>
                             </label>
                         </div>
+                        {/* NSFW SETTINGS */}
+                        {isOwnAccount &&
+                            <div className="small-12 medium-6 large-4 columns">
+                                <strong>{translate('content_preferences')}</strong>
+                                <label>{translate('adult_content_NSFW')}
+                                  <select value={this.state.nsfwPref} onChange={this.onNsfwPrefChange}>
+                                      <option value="hide">{translate('always_hide')}</option>
+                                      <option value="warn">{translate('always_warn')}</option>
+                                      <option value="show">{translate('always_show')}</option>
+                                  </select>
+                                </label>
+                            </div>}
                     </div>
-                    {/* NSFW SETTINGS */}
-                    {isOwnAccount &&
-                        <div className="row">
-                            <div className="small-12 columns">
-                                <br /><br />
-                                <h3>{translate('content_preferences')}</h3>
-                                <div>
-                                    Взрослый контент (NSFW)
-                                </div>
-                                <select value={this.state.nsfwPref} onChange={this.onNsfwPrefChange}>
-                                    <option value="hide">{translate('always_hide')}</option>
-                                    <option value="warn">{translate('always_warn')}</option>
-                                    <option value="show">{translate('always_show')}</option>
-                                </select>
-                            </div>
-                        </div>}
                     {ignores && ignores.size > 0 &&
                         <div className="row">
                             <div className="small-12 columns">

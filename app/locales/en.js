@@ -637,6 +637,7 @@ const en = 	{
   always_hide: 'Always hide',
   always_warn: 'Always warn',
   always_show: 'Always show',
+  adult_content_NSFW: 'Adult Content (NSFW)',
 }
 
 export { en }

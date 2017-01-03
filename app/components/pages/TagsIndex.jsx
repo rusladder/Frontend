@@ -44,14 +44,16 @@ export default class TagsIndex extends React.Component {
         }).map(tag => {
             const name = tag.get('name');
             const link = order ? `/${order}/${name}` : `/hot/${name}`;
-            console.log('tag.toJS()', tag.toJS())
             // const tag_info = tagsAll.get(tag);
             return (<tr key={name}>
                 <td>
                     <Link to={link} activeClassName="active">{detransliterate(name)}</Link>
                 </td>
-                <td>{tag.get('top_posts')}</td>
-                <td>{tag.get('comments')}</td>
+                {/* disabled until shared-db upgrade
+                    <td>{tag.get('top_posts')}</td>
+                    <td>{tag.get('comments')}</td> <-- use this instead of 'discussions'
+                */}
+                <td>{tag.get('discussions')}</td>
                 <td>{tag.get('total_payouts')}</td>
             </tr>);
         }).toArray();
@@ -66,7 +68,9 @@ export default class TagsIndex extends React.Component {
                         <thead>
                         <tr>
                             <th>{translate("tag")}</th>
-                            <th>{translate('posts')}</th>
+                            {/* disabled until shared-db upgrade
+                                <th>{translate('posts')}</th>
+                            */}
                             <th>{translate('comments')}</th>
                             <th>{translate("payouts")}</th>
                         </tr>

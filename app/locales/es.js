@@ -10,7 +10,7 @@ const es = 	{
 	stolen_account_recovery: "Recuperación de Cuentas Robadas",
 	change_account_password: "Cambiar Contraseña",
 	steemit_chat: "Chat de Steemit",
-    steemit_api_docs: "Steemit API Docs",
+	steemit_api_docs: "Steemit API Docs",
 	witnesses: "Testigos",
 	vote_for_witnesses: "Votar por Testigos",
 	privacy_policy: "Política de Privacidad",
@@ -30,7 +30,7 @@ const es = 	{
 	submit_email_to_get_on_waiting_list: 'Submit your email to get on the waiting list',
 	login: 'Entrar',
 	logout: 'Salir',
-	show_less_low_value_posts: "Show less low value posts",
+	show_less_low_value_posts: "Show fewer low value posts",
 	show_more_low_value_posts: "Show more low value posts",
 	select_topic: 'Seleccionar Tópicos',
 	tags_and_topics: "Tags y Tópicos",
@@ -92,7 +92,7 @@ const es = 	{
 	all_accounts_refunded: 'All Recovered Accounts have been fully Refunded',
 	steemit_is_now_open_source: 'Steemit.com es ahora Software Libre',
 	// this is mainly from ReplyEditor
-	tag_your_story: 'Tag (up to 5 tags), the first tag is your main category.',
+	tag_your_story: 'Tag (up to 4 tags), the first tag is your main category.',
 	select_a_tag: 'Selecciona una etiqueta',
 	required: 'Requerido',
 	shorten_title: 'Acortar título!',
@@ -170,6 +170,7 @@ const es = 	{
 	generated_password: 'Contraseña generada',
 	recover_account: 'Recuperar cuenta',
 	new: 'new', // ex. 'Generated Password (new)', but not exclusively
+	age: 'age',
 	backup_password_by_storing_it: 'Back it up by storing in your password manager or a text file',
 	click_to_generate_password: 'Click to generate password',
 	re_enter_generate_password: 'Re-enter Generated Password',
@@ -188,13 +189,13 @@ const es = 	{
 	i_understand_dont_show_again: "I understand, don't show me again",
 	ok: 'Ok',
 	convert_to_steem: 'Convertir a Steem',
-	steem_dollars_will_be_unavailable: 'This action will take place one week from now and can not be canceled. These Steem Dollars will immediatly become unavailable',
+	steem_dollars_will_be_unavailable: 'This action will take place 3.5 days from now and can not be canceled. These Steem Dollars will immediately become unavailable',
 	amount: 'Cantidad',
 	steem_dollars: 'STEEM DOLLARS',
 	convert: 'Convertir',
 	invalid_amount: 'Invalid amount',
 	insufficent_balance: 'Balance insuficiente',
-	in_week_convert_steem_dollars_to_steem: 'In one week, convert {amount} STEEM DOLLARS into STEEM',
+	in_week_convert_steem_dollars_to_steem: 'In 3.5 days, convert {amount} STEEM DOLLARS into STEEM',
 	order_placed: 'Order placed', // ex.: "Order placed: Sell {someamount_to_sell} for atleast {min_to_receive}"
 	follow: 'Seguir',
 	unfollow: 'No seguir',
@@ -223,6 +224,10 @@ const es = 	{
 	open_orders: 'Ordenes abiertas',
 	sell_amount_for_atleast: 'Sell {amount_to_sell} for at least {min_to_receive} ({effectivePrice})',
 	buy_atleast_amount_for: 'Buy at least {min_to_receive} for {amount_to_sell} ({effectivePrice})',
+	price_warning_above: 'This price is well above the current market price of {marketPrice}, are you sure?', //FIXME
+	price_warning_below: 'This price is well below the current market price of {marketPrice}, are you sure?', //FIXME
+	order_cancel_confirm: 'Cancel order {order_id} from {user}?', //FIXME
+	order_cancelled: 'Order {order_id} cancelled.', //FIXME
 	higher: 'Más alto', // context is about prices
 	lower: 'Más bajo', // context is about prices
 	total_sd_dollars: "Total SD ($)",
@@ -235,7 +240,7 @@ const es = 	{
 	request_already_submitted_contact_support: 'Your request has been already submitted and we are working on it. Please contact support@steemit.com for the status of your request.',
 	recover_account_intro: "From time to time, a Steemian’s owner key may be compromised. Stolen Account Recovery gives the rightful account owner 30 days to recover their account from the moment the thief changed their owner key. Stolen Account Recovery can only be used on steemit.com if the account owner had perviously listed ‘Steemit’ as their account trustee and complied with Steemit’s Terms of Service.",
 	login_with_facebook_or_reddit_media_to_verify_identity: 'Please login with Facebook or Reddit to verify your identity',
-	login_with_social_media_to_verify_identity: 'Please login with {show_social_login} to verify you identity',
+	login_with_social_media_to_verify_identity: 'Please login with {provider} to verify your identity',
 	enter_email_toverify_identity: 'We need to verify your identity. Please enter your email address below to begin the verification.',
 	email: 'Correo electrónico',
 	continue_with_email: "Continuar con correo",
@@ -346,7 +351,7 @@ const es = 	{
 	connection_lost_reconnecting: 'Conexión perdida, reconectando',
 	// Voting.jsx
 	stop_seeing_content_from_this_user: 'Stop seeing content from this user',
-	flagging_post_can_remove_rewards_the_flag_should_be_used_for_the_following: 'Flagging a post can remove rewards and make this material less visible. The flag should be used for the following',
+	flagging_post_can_remove_rewards_the_flag_should_be_used_for_the_following: 'Flagging a post can remove rewards and make this material less visible. Some common reasons to flag',
 	fraud_or_plagiarism: 'Fraud or Plagiarism',
 	hate_speech_or_internet_trolling: 'Hate Speech or Internet Trolling',
 	intentional_miss_categorized_content_or_spam: 'Intentional miss-categorized content or Spam',
@@ -372,12 +377,17 @@ const es = 	{
 	witness_thread: 'witness thread',
 	you_have_votes_remaining: 'You have {votesCount} votes remaining',
 	you_can_vote_for_maximum_of_witnesses: 'You can vote for a maximum of 30 witnesses',
+	set_witness_proxy: "You can also choose a proxy that will vote for witnesses for you. This will reset your current witness selection.", // FIXME
+	witness_set: "You have set a voting proxy. If you would like to reenable manual voting, please clear your proxy.", // FIXME
+	witness_proxy_current: "Your current proxy is", // FIXME
+	witness_proxy_set: "Set proxy", // FIXME
+	witness_proxy_clear: "Clear proxy", // FIXME
 	information: 'Información',
 	if_you_want_to_vote_outside_of_top_enter_account_name: 'If you would like to vote for a witness outside of the top 50, enter the account name below to cast a vote',
 	view_the_direct_parent: 'Vista directa del padre',
 	you_are_viewing_single_comments_thread_from: 'You are viewing a single comment&#39;s thread from',
 	view_the_full_context: 'View the full context',
-	this_is_a_price_feed_conversion: 'This is a price feed conversion. The one week day delay is necessary to prevent abuse from gaming the price feed average',
+	this_is_a_price_feed_conversion: 'This is a price feed conversion. The 3.5 day delay is necessary to prevent abuse from gaming the price feed average',
 	your_existing_SD_are_liquid_and_transferable: 'Your existing Steem Dollars are liquid and transferable.  Instead you may wish to trade Steem Dollars directly in this site under {link} or transfer to an external market.',
 	buy_or_sell: 'Buy or Sells',
 	trending_30_day: 'trending (30 day)',

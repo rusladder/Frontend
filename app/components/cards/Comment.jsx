@@ -13,38 +13,27 @@ import Userpic from 'app/components/elements/Userpic';
 import transaction from 'app/redux/Transaction'
 import {List} from 'immutable'
 import { translate } from 'app/Translator';
+import {parsePayoutAmount} from 'app/utils/ParsersAndFormatters';
 
 export function sortComments( cont, comments, sort_order ) {
 
   function netNegative(a)  {
       return a.get("net_rshares") < 0;
   }
+  function totalPayout(a) {
+      return parsePayoutAmount(a.get('pending_payout_value'))
+             + parsePayoutAmount(a.get('total_payout_value'))
+             + parsePayoutAmount(a.get('curator_payout_value'));
+  }
 
+  /** sorts replies by upvotes, age, or payout */
   let sort_orders = {
-  /** sort replies by active */
-      active: (a,b) => {
+      votes: (a,b) => {
                 let acontent = cont.get(a);
                 let bcontent = cont.get(b);
-                if (netNegative(acontent)) {
-                    return 1;
-                } else if (netNegative(bcontent)) {
-                    return -1;
-                }
-                let aactive = Date.parse( acontent.get('active') );
-                let bactive = Date.parse( bcontent.get('active') );
+                let aactive = acontent.get('active_votes').filter(vote => vote.get('percent') > 0).size;
+                let bactive = bcontent.get('active_votes').filter(vote => vote.get('percent') > 0).size;
                 return bactive - aactive;
-              },
-      update: (a,b) => {
-                let acontent = cont.get(a);
-                let bcontent = cont.get(b);
-                if (netNegative(acontent)) {
-                    return 1;
-                } else if (netNegative(bcontent)) {
-                    return -1;
-                }
-                let aactive = Date.parse( acontent.get('last_update') );
-                let bactive = Date.parse( bcontent.get('last_update') );
-                return bactive.getTime() - aactive.getTime();
               },
       new:  (a,b) =>  {
                 let acontent = cont.get(a);
@@ -66,13 +55,9 @@ export function sortComments( cont, comments, sort_order ) {
                 } else if (netNegative(bcontent)) {
                     return -1;
                 }
-                let aactive = acontent.get('children_rshares2');
-                let bactive = bcontent.get('children_rshares2');
-                aactive = ("0").repeat( 100 - aactive.length ) + aactive;
-                bactive = ("0").repeat( 100 - bactive.length ) + bactive;
-                if( bactive < aactive ) return -1;
-                if( bactive > aactive ) return 1;
-                return 0;
+                let apayout = totalPayout(acontent)
+                let bpayout = totalPayout(bcontent)
+                return bpayout - apayout;
               }
   }
   comments.sort( sort_orders[sort_order] );
@@ -84,7 +69,7 @@ class CommentImpl extends React.Component {
         // html props
         cont: React.PropTypes.object.isRequired,
         content: React.PropTypes.string.isRequired,
-        sort_order: React.PropTypes.oneOf(['active', 'updated', 'new', 'trending']).isRequired,
+        sort_order: React.PropTypes.oneOf(['votes', 'new', 'trending']).isRequired,
         root: React.PropTypes.bool,
         showNegativeComments: React.PropTypes.bool,
         onHide: React.PropTypes.func,
@@ -309,8 +294,16 @@ class CommentImpl extends React.Component {
             </div>
         }
 
+        let depth_indicator = [];
+        if (depth > 1) {
+            for (let i = 1; i < depth; ++i) {
+                depth_indicator.push(<div key={i} className={`depth di-${i}`}>&middot;</div>);
+            }
+        }
+
         return (
             <div className={commentClasses.join(' ')} id={anchor_link} itemScope itemType ="http://schema.org/comment">
+                {depth_indicator}
                 <div className="Comment__Userpic show-for-medium">
                     <Userpic account={comment.author} />
                 </div>
@@ -368,8 +361,11 @@ const Comment = connect(
         }
         const current = state.user.get('current')
         const username = current ? current.get('username') : null
-        const key = ['follow', 'get_following', username, 'result', c.get('author')]
-        const ignore = username ? state.global.getIn(key, List()).contains('ignore') : false
+
+        const key = ['follow', 'get_following', username, 'ignore_result', c.get('author')]
+        const ignore = username ? state.global.hasIn(key) : false
+        // if(ignore) console.log(username, 'ignored comment by', c.get('author'), '\t', comment_link)
+
         return {
             ...ownProps,
             comment_link,

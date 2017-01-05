@@ -40,17 +40,19 @@ export default class UserProfile extends React.Component {
 
     shouldComponentUpdate(np) {
         const {follow} = this.props;
+        const {follow_count} = this.props;
+
         let followersLoading = false, npFollowersLoading = false;
         let followingLoading = false, npFollowingLoading = false;
 
         const account = np.routeParams.accountname.toLowerCase();
         if (follow) {
-            followersLoading = follow.getIn(['get_followers', account, 'blog', 'loading'], false);
-            followingLoading = follow.getIn(['get_following', account, 'blog', 'loading'], false);
+            followersLoading = follow.getIn(['get_followers', account, 'blog_loading'], false);
+            followingLoading = follow.getIn(['get_following', account, 'blog_loading'], false);
         }
         if (np.follow) {
-            npFollowersLoading = np.follow.getIn(['get_followers', account, 'blog', 'loading'], false);
-            npFollowingLoading = np.follow.getIn(['get_following', account, 'blog', 'loading'], false);
+            npFollowersLoading = np.follow.getIn(['get_followers', account, 'blog_loading'], false);
+            npFollowingLoading = np.follow.getIn(['get_following', account, 'blog_loading'], false);
         }
 
         return (
@@ -62,7 +64,8 @@ export default class UserProfile extends React.Component {
             ((npFollowingLoading !== followingLoading) && !npFollowingLoading) ||
             np.loading !== this.props.loading ||
             np.location.pathname !== this.props.location.pathname ||
-            np.routeParams.accountname !== this.props.routeParams.accountname
+            np.routeParams.accountname !== this.props.routeParams.accountname ||
+            np.follow_count !== this.props.follow_count
         )
     }
 
@@ -104,31 +107,34 @@ export default class UserProfile extends React.Component {
         if( section == 'posts' ) section = 'comments';
 
         // const isMyAccount = current_user ? current_user.get('username') === accountname : false;
+
+        // Loading status
+        const status = global_status ? global_status.getIn([section, 'by_author']) : null;
+        const fetching = (status && status.fetching) || this.props.loading;
+
         let account
         let accountImm = this.props.accounts.get(accountname);
         if( accountImm ) {
             account = accountImm.toJS();
-        }
-        else {
+        } else if (fetching) {
+            return <center><LoadingIndicator type="circle" /></center>;
+        } else {
             return <div><center>{translate('unknown_account')}</center></div>
         }
+        const followers = follow && follow.getIn(['get_followers', accountname]);
+        const following = follow && follow.getIn(['get_following', accountname]);
 
-        let followerCount, followingCount;
-        const followers = follow ? follow.getIn( ['get_followers', accountname] ) : null;
-        const following = follow ? follow.getIn( ['get_following', accountname] ) : null;
-        if(followers && followers.has('result') && followers.has('blog')) {
-            const status_followers = followers.get('blog')
-            const followers_loaded = status_followers.get('loading') === false && status_followers.get('error') == null
-            if (followers_loaded) {
-                followerCount = followers.get('count');
-            }
-        }
+        // instantiate following items
+        let totalCounts = this.props.follow_count;
+        let followerCount = "";
+        let followingCount = "";
 
-        if (following && following.has('result') && following.has('blog')) {
-            const status_following = following.get('blog')
-            const following_loaded = status_following.get('loading') === false && status_following.get('error') == null
-            if (following_loaded) {
-                followingCount = following.get('count');
+        if (totalCounts && accountname) {
+            totalCounts = totalCounts.get(accountname);
+            if (totalCounts) {
+                totalCounts    = totalCounts.toJS();
+                followerCount  = totalCounts.follower_count;
+                followingCount = totalCounts.following_count;
             }
         }
 
@@ -138,8 +144,7 @@ export default class UserProfile extends React.Component {
         let tab_content = null;
 
         // const global_status = this.props.global.get('status');
-        const status = global_status ? global_status.getIn([section, 'by_author']) : null;
-        const fetching = (status && status.fetching) || this.props.loading;
+
 
         // let balance_steem = parseFloat(account.balance.split(' ')[0]);
         // let vesting_steem = vestingSteem(account, gprops).toFixed(2);
@@ -153,54 +158,52 @@ export default class UserProfile extends React.Component {
             walletClass = 'active'
             tab_content = <div>
                 <UserWallet
-                          account={accountImm}
-                          showTransfer={this.props.showTransfer}
-                          current_user={current_user}
-                          withdrawVesting={this.props.withdrawVesting} />
+                    account={accountImm}
+                    showTransfer={this.props.showTransfer}
+                    current_user={current_user}
+                    withdrawVesting={this.props.withdrawVesting} />
                 {isMyAccount && <div><MarkNotificationRead fields="send,receive" account={account.name} /></div>}
                 </div>;
         }
         else if( section === 'curation-rewards' ) {
             rewardsClass = "active";
             tab_content = <CurationRewards
-                          account={account}
-                          current_user={current_user}
-                          />
+                account={account}
+                current_user={current_user}
+                />
         }
         else if( section === 'author-rewards' ) {
             rewardsClass = "active";
             tab_content = <AuthorRewards
-                          account={account}
-                          current_user={current_user}
-                          />
+                account={account}
+                current_user={current_user}
+                />
         }
         else if( section === 'followers' ) {
-            if (followers && followers.has('result')) {
+            if (followers && followers.has('blog_result')) {
                 tab_content = <div>
                     <UserList
-                          title={translate('followers')}
-                          account={account}
-                          users={followers} />
+                        title={translate('followers')}
+                        account={account}
+                        users={followers.get('blog_result')} />
                     {isMyAccount && <MarkNotificationRead fields="follow" account={account.name} />}
                     </div>
             }
         }
         else if( section === 'followed' ) {
-            if (following && following.has('result')) {
+            if (following && following.has('blog_result')) {
                 tab_content = <UserList
-                          title="Followed"
-                          account={account}
-                          users={following}
-                          />
+                    title="Followed"
+                    account={account}
+                    users={following.get('blog_result')}
+                    />
             }
         }
         else if( section === 'settings' ) {
             tab_content = <Settings routeParams={this.props.routeParams} />
         }
         else if( section === 'comments' && account.post_history ) {
-           // NOTE: `posts` key will be renamed to `comments` (https://github.com/steemit/steem/issues/507)
-           //   -- see also GlobalReducer.js
-           if( account.posts || account.comments )
+           if( account.comments )
            {
                 let posts = accountImm.get('posts') || accountImm.get('comments');
                 if (!fetching && (posts && !posts.size)) {
@@ -316,7 +319,7 @@ export default class UserProfile extends React.Component {
            }
         }
 
-        const wallet_tab_active = section === 'transfers' || section === 'password' || section === 'permissions' ? 'active' : ''; // className={wallet_tab_active}
+        // const wallet_tab_active = section === 'transfers' || section === 'password' || section === 'permissions' ? 'active' : ''; // className={wallet_tab_active}
 
         let rewardsMenu = [
             {link: `/@${accountname}/curation-rewards`, label: translate('curation_rewards'), value: translate('curation_rewards')},
@@ -332,7 +335,7 @@ export default class UserProfile extends React.Component {
                     <li><Link to={`/@${accountname}`} activeClassName="active">{translate('blog')}</Link></li>
                     <li><Link to={`/@${accountname}/comments`} activeClassName="active">{translate('comments')}</Link></li>
                     <li><Link to={`/@${accountname}/recent-replies`} activeClassName="active">
-                        {translate('replies')} {isMyAccount && <NotifiCounter fields="comment_reply"/>}
+                        {translate('replies')} {isMyAccount && <NotifiCounter fields="comment_reply" />}
                     </Link></li>
                     {/*<li><Link to={`/@${accountname}/feed`} activeClassName="active">Feed</Link></li>*/}
                     <li>
@@ -377,7 +380,7 @@ export default class UserProfile extends React.Component {
                     <div className="column">
                         <div style={{position: "relative"}}>
                             <div className="UserProfile__buttons hide-for-small-only">
-                                <Follow follower={username} following={accountname} what="blog" />
+                                <Follow follower={username} following={accountname} />
                             </div>
                         </div>
 
@@ -393,16 +396,16 @@ export default class UserProfile extends React.Component {
                             {about && <p className="UserProfile__bio">{about}</p>}
                             <div className="UserProfile__stats">
                                 <span>
-                                    <Link to={`/@${accountname}/followers`}>{followerCount ? translate('follower_count', {followerCount}) : translate('followers')}</Link>
+                                    <Link to={`/@${accountname}/followers`}>{translate('follower_count', {followerCount})}</Link>
                                     {isMyAccount && <NotifiCounter fields="follow" />}
                                 </span>
                                 <span><Link to={`/@${accountname}`}>{translate('post_count', {postCount: account.post_count || 0})}</Link></span>
-                                <span><Link to={`/@${accountname}/followed`}>{followingCount ? translate('followed_count', {followingCount}) : translate('following')}</Link></span>
+                                <span><Link to={`/@${accountname}/followed`}>{translate('followed_count', {followingCount})}</Link></span>
                             </div>
                             <p className="UserProfile__info">
                                 {location && <span><Icon name="location" /> {location}</span>}
                                 {website && <span><Icon name="link" /> <a href={website}>{website_label}</a></span>}
-                                <Icon name="calendar" /> <DateJoinWrapper date={accountjoin}></DateJoinWrapper>
+                                <Icon name="calendar" /> <DateJoinWrapper date={accountjoin} />
                             </p>
                         </div>
                         <div className="UserProfile__buttons_mobile show-for-small-only">
@@ -440,7 +443,8 @@ module.exports = {
                 loading: state.app.get('loading'),
                 global_status: state.global.get('status'),
                 accounts: state.global.get('accounts'),
-                follow: state.global.get('follow')
+                follow: state.global.get('follow'),
+                follow_count: state.global.get('follow_count')
             };
         },
         dispatch => ({

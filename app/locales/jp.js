@@ -10,7 +10,7 @@ const jp = 	{
 	stolen_account_recovery: "盗まれたアカウントの復旧",
 	change_account_password: "パスワードの変更",
 	steemit_chat: "Steemitでチャット",
-    steemit_api_docs: "Steemit API Docs",
+	steemit_api_docs: "Steemit API Docs",
 	witnesses: "Witnesses",
 	vote_for_witnesses: "Vote for Witnesses",
 	privacy_policy: "プライバシーポリシー",
@@ -170,6 +170,7 @@ const jp = 	{
 	generated_password: '生成するパスワード',
 	recover_account: 'アカウントの復元',
 	new: 'new', // ex. 'Generated Password (new)', but not exclusively
+	age: 'age',
 	backup_password_by_storing_it: 'パスワードマネジャーやテキストファイルでパスワードのバックアップを取ろう',
 	click_to_generate_password: 'パスワードを生成する',
 	re_enter_generate_password: '生成されたパスワードで入室する',
@@ -223,6 +224,10 @@ const jp = 	{
 	open_orders: '見計らい注文',
 	sell_amount_for_atleast: 'Sell {amount_to_sell} for at least {min_to_receive} ({effectivePrice})',
 	buy_atleast_amount_for: 'Buy at least {min_to_receive} for {amount_to_sell} ({effectivePrice})',
+	price_warning_above: 'This price is well above the current market price of {marketPrice}, are you sure?', //FIXME
+	price_warning_below: 'This price is well below the current market price of {marketPrice}, are you sure?', //FIXME
+	order_cancel_confirm: 'Cancel order {order_id} from {user}?', //FIXME
+	order_cancelled: 'Order {order_id} cancelled.', //FIXME
 	higher: 'Higher', // context is about prices
 	lower: 'Lower', // context is about prices
 	total_sd_dollars: "Total SD ($)",
@@ -235,7 +240,7 @@ const jp = 	{
 	request_already_submitted_contact_support: 'あなたの要望はすでに提出されており、ただいまSteemitメンバーで対応中です。状況を確認したい場合は、support@steemit.com にコンタクトをしてください。',
 	recover_account_intro: "From time to time, a Steemian’s owner key may be compromised. Stolen Account Recovery gives the rightful account owner 30 days to recover their account from the moment the thief changed their owner key. Stolen Account Recovery can only be used on steemit.com if the account owner had perviously listed ‘Steemit’ as their account trustee and complied with Steemit’s Terms of Service.",
 	login_with_facebook_or_reddit_media_to_verify_identity: '認証のため、FaccebookまたはRedditアカウントでログインしてください。',
-	login_with_social_media_to_verify_identity: '認証のため、 {show_social_login} でログインしてください。',
+	login_with_social_media_to_verify_identity: '認証のため、 {provider} でログインしてください。',
 	enter_email_toverify_identity: '認証する必要があります。認証を開始する為に、下記にメールアドレスを記入してください。',
 	email: 'Email',
 	continue_with_email: "メールアドレスで続行",
@@ -372,12 +377,17 @@ const jp = 	{
 	witness_thread: 'witnessのスレッド',
 	you_have_votes_remaining: 'あなたは {votesCount} votesが残っています',
 	you_can_vote_for_maximum_of_witnesses: '最大で30 Witnesses に投票することができます。',
+	set_witness_proxy: "You can also choose a proxy that will vote for witnesses for you. This will reset your current witness selection.", // FIXME
+	witness_set: "You have set a voting proxy. If you would like to reenable manual voting, please clear your proxy.", // FIXME
+	witness_proxy_current: "Your current proxy is", // FIXME
+	witness_proxy_set: "Set proxy", // FIXME
+	witness_proxy_clear: "Clear proxy", // FIXME
 	information: 'Information',
 	if_you_want_to_vote_outside_of_top_enter_account_name: 'もし、トップ50位以外のWitnessに投票したい場合、投票をする前に、アカウント名を入れてください。',
 	view_the_direct_parent: 'View the direct parent',
 	you_are_viewing_single_comments_thread_from: 'You are viewing a single comment&#39;s thread from',
 	view_the_full_context: 'View the full context',
-	this_is_a_price_feed_conversion: 'This is a price feed conversion. The one week day delay is necessary to prevent abuse from gaming the price feed average',
+	this_is_a_price_feed_conversion: 'This is a price feed conversion. The 3.5 day delay is necessary to prevent abuse from gaming the price feed average',
 	your_existing_SD_are_liquid_and_transferable: 'Your existing Steem Dollars are liquid and transferable.  Instead you may wish to trade Steem Dollars directly in this site under {link} or transfer to an external market.',
 	buy_or_sell: '買い/売り',
 	trending_30_day: '30日間のトレンド',

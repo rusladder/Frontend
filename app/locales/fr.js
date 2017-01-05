@@ -10,7 +10,7 @@ const fr = 	{
 	stolen_account_recovery: "Récuperation de compte volé",
 	change_account_password: "Changer mot de passe du compte",
 	steemit_chat: "Steemit Chat",
-    steemit_api_docs: "Steemit API Docs",
+	steemit_api_docs: "Steemit API Docs",
 	witnesses: "Témoins",
 	vote_for_witnesses: "Votez pour les Témoins",
 	privacy_policy: "Politique de Confidentialité",
@@ -92,13 +92,13 @@ const fr = 	{
 	all_accounts_refunded: 'Vous les comptes récupérés ont été remboursés.',
 	steemit_is_now_open_source: 'Steemit.com est maintenant Open Source',
 	// this is mainly from ReplyEditor
-	tag_your_story: 'Tag (jusqu\'à 5 tags), le premier tag est votre catégorie principale.',
+	tag_your_story: 'Tag (jusqu\'à 4 tags), le premier tag est votre catégorie principale.',
 	select_a_tag: 'Choisir un tag',
 	required: 'Obligatoire',
 	shorten_title: 'Raccourcir le titre',
 	exceeds_maximum_length: 'Depasse la taille maximum ({maxKb}KB)',
 	including_the_category: "(y compris la catégorie '{rootCategory}')",
-	use_limited_amount_of_tags: 'Vous avez {tagsLength} tags en tout{includingCategory}. Veuillez n\'utiliser que 5 tags en tout.',
+	use_limited_amount_of_tags: 'Vous avez {tagsLength} tags en tout{includingCategory}. Veuillez n\'utiliser que 4 tags en tout.',
 	// this is mainly used in CategorySelector
 	use_limitied_amount_of_categories: 'S\'il vous plait, n\'utilisez que {amount} catégories',
 	use_one_dash: 'N\'utilisez qu\'un seul signe dièse',
@@ -170,6 +170,7 @@ const fr = 	{
 	generated_password: 'Mot de Passe Généré',
 	recover_account: 'Récuperer Compte',
 	new: 'nouveau', // ex. 'Generated Password (new)', but not exclusively
+	age: 'nouveau',
 	backup_password_by_storing_it: 'Gardez une copie de votre mot de passe dans votre gestionnaire de mot de passe ou dans un fichier texte',
 	click_to_generate_password: 'Cliquez pour génerer un mot de passe',
 	re_enter_generate_password: 'Retaper le Mot de Passe Généré',
@@ -223,6 +224,10 @@ const fr = 	{
 	open_orders: 'Open Orders',
 	sell_amount_for_atleast: 'Sell {amount_to_sell} for at least {min_to_receive} ({effectivePrice})',
 	buy_atleast_amount_for: 'Buy at least {min_to_receive} for {amount_to_sell} ({effectivePrice})',
+	price_warning_above: 'This price is well above the current market price of {marketPrice}, are you sure?', //FIXME
+	price_warning_below: 'This price is well below the current market price of {marketPrice}, are you sure?', //FIXME
+	order_cancel_confirm: 'Cancel order {order_id} from {user}?', //FIXME
+	order_cancelled: 'Order {order_id} cancelled.', //FIXME
 	higher: 'Higher', // context is about prices
 	lower: 'Lower', // context is about prices
 	total_sd_dollars: "Total SD ($)",
@@ -235,7 +240,7 @@ const fr = 	{
 	request_already_submitted_contact_support: 'Votre demande a déjà été soumise et nous travaillons dessus. Veuillez contacter support@steemit.com à propos du status de votre demande.',
 	recover_account_intro: "From time to time, a Steemian’s owner key may be compromised. Stolen Account Recovery gives the rightful account owner 30 days to recover their account from the moment the thief changed their owner key. Stolen Account Recovery can only be used on steemit.com if the account owner had perviously listed ‘Steemit’ as their account trustee and complied with Steemit’s Terms of Service.",
 	login_with_facebook_or_reddit_media_to_verify_identity: 'Veuillez vous connecter avec Facebook ou Reddit pour verifier votre identité',
-	login_with_social_media_to_verify_identity: 'Veuillez vous connecter avec {show_social_login} pour verifier votre identité',
+	login_with_social_media_to_verify_identity: 'Veuillez vous connecter avec {provider} pour verifier votre identité',
 	enter_email_toverify_identity: 'Nous devons verifier votre identité. Veuillez entrer votre addresse email ci-dessous pour commencer la verification.',
 	email: 'Email',
 	continue_with_email: "Continuer par Email",
@@ -346,7 +351,7 @@ const fr = 	{
 	connection_lost_reconnecting: 'Connection lost, reconnecting',
 	// Voting.jsx
 	stop_seeing_content_from_this_user: 'Stop seeing content from this user',
-	flagging_post_can_remove_rewards_the_flag_should_be_used_for_the_following: 'Flagging a post can remove rewards and make this material less visible. The flag should be used for the following',
+	flagging_post_can_remove_rewards_the_flag_should_be_used_for_the_following: 'Flagging a post can remove rewards and make this material less visible. Some common reasons to flag',
 	fraud_or_plagiarism: 'Fraud or Plagiarism',
 	hate_speech_or_internet_trolling: 'Hate Speech or Internet Trolling',
 	intentional_miss_categorized_content_or_spam: 'Intentional miss-categorized content or Spam',
@@ -372,12 +377,17 @@ const fr = 	{
 	witness_thread: 'witness thread',
 	you_have_votes_remaining: 'You have {votesCount} votes remaining',
 	you_can_vote_for_maximum_of_witnesses: 'You can vote for a maximum of 30 witnesses',
+	set_witness_proxy: "You can also choose a proxy that will vote for witnesses for you. This will reset your current witness selection.", // FIXME
+	witness_set: "You have set a voting proxy. If you would like to reenable manual voting, please clear your proxy.", // FIXME
+	witness_proxy_current: "Your current proxy is", // FIXME
+	witness_proxy_set: "Set proxy", // FIXME
+	witness_proxy_clear: "Clear proxy", // FIXME
 	information: 'Information',
 	if_you_want_to_vote_outside_of_top_enter_account_name: 'If you would like to vote for a witness outside of the top 50, enter the account name below to cast a vote',
 	view_the_direct_parent: 'View the direct parent',
 	you_are_viewing_single_comments_thread_from: 'You are viewing a single comment&#39;s thread from',
 	view_the_full_context: 'View the full context',
-	this_is_a_price_feed_conversion: 'This is a price feed conversion. The one week day delay is necessary to prevent abuse from gaming the price feed average',
+	this_is_a_price_feed_conversion: 'This is a price feed conversion. The 3.5 day delay is necessary to prevent abuse from gaming the price feed average',
 	your_existing_SD_are_liquid_and_transferable: 'Your existing Steem Dollars are liquid and transferable.  Instead you may wish to trade Steem Dollars directly in this site under {link} or transfer to an external market.',
 	buy_or_sell: 'Buy or Sells',
 	trending_30_day: 'trending (30 day)',

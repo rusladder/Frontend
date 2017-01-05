@@ -71,7 +71,7 @@ class Topics extends React.Component {
                {categories}
                {!expanded && !search && <li className="show-more">
                    {/*<a href="#" onClick={expand}>Show more topics..</a>*/}
-                   <Link to={`/tags.html/${order}`}>Show more topics..</Link>
+                   <Link to={`/tags`}>Show more topics..</Link>
                </li>}
             </ul>
         );
@@ -79,6 +79,5 @@ class Topics extends React.Component {
 }
 
 export default connect(state => ({
-    // TODO: use 'tag_idx' after shared-db upgrade
-    categories: state.global.get('tag_idx') || state.global.get('category_idx')
+    categories: state.global.get('tag_idx')
 }))(Topics);

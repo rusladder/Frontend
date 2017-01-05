@@ -127,7 +127,7 @@ class Header extends React.Component {
                 page_title = `Author rewards by ${user_name} `;
             }
             if(route.params[1] === "recent-replies"){
-                page_title = `Replies by ${user_name} `;
+                page_title = `Replies to ${user_name} `;
             }
             // @user/"posts" is deprecated in favor of "comments" as of oct-2016 (#443)
             if(route.params[1] === "posts" || route.params[1] === "comments"){
@@ -143,7 +143,7 @@ class Header extends React.Component {
         }
 
 
-        if (process.env.BROWSER && route.page !== 'Post') document.title = page_title + ' — Steemit';
+        if (process.env.BROWSER && (route.page !== 'Post' && route.page !== 'PostNoCategory')) document.title = page_title + ' — Steemit';
 
         const logo_link = route.params && route.params.length > 1 && this.last_sort_order ? '/' + this.last_sort_order : (current_account_name ? `/@${current_account_name}/feed` : '/');
         let topic_link = topic ? <Link to={`/${this.last_sort_order || 'trending'}/${topic}`}>{topic}</Link> : null;
@@ -153,7 +153,7 @@ class Header extends React.Component {
             ['hot', 'hot'],
             ['trending', 'trending (24 hour)'],
             ['trending30', 'trending (30 day)'],
-            //['promoted', 'promoted'], //TODO: reenable after shared-db upgrade
+            ['promoted', 'promoted'],
             ['active', 'active']
         ];
         if (current_account_name) sort_orders.unshift(['home', 'home']);
@@ -164,7 +164,7 @@ class Header extends React.Component {
             ['created', 'new'],
             ['hot', 'hot'],
             ['trending', 'trending'],
-            //['promoted', 'promoted'], //TODO: reenable after shared-db upgrade
+            ['promoted', 'promoted'],
             ['active', 'active']
         ];
         if (current_account_name) sort_orders_horizontal.unshift(['home', 'home']);
@@ -196,7 +196,7 @@ class Header extends React.Component {
                                 <li className="Header__top-steemit show-for-medium noPrint"><Link to={logo_link}>steemit<span className="beta">beta</span></Link></li>
                                 {(topic_link || user_name || page_name) && <li className="delim show-for-medium">|</li>}
                                 {topic_link && <li className="Header__top-topic">{topic_link}</li>}
-                                {user_name && <li><Link to={`/@${user_name}`}>{user_name}</Link></li>}
+                                {user_name && <li><Link to={`/@${user_name}`}>@{user_name}</Link></li>}
                                 {page_name && <li><span>{page_name}</span></li>}
                                 {(topic_link || user_name || page_name) && sort_order && <li className="delim show-for-small-only">|</li>}
                                 {selected_sort_order && <DropdownMenu className="Header__sort-order-menu show-for-small-only" items={sort_order_menu} selected={selected_sort_order[1]} el="li" />}

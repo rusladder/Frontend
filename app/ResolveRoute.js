@@ -1,3 +1,13 @@
+export const routeRegex = {
+    PostsIndex: /^\/(@[\w\.\d-]+)\/feed\/?$/,
+    UserProfile1: /^\/(@[\w\.\d-]+)\/?$/,
+    UserProfile2: /^\/(@[\w\.\d-]+)\/(blog|posts|comments|recommended|transfers|curation-rewards|author-rewards|permissions|created|recent-replies|feed|password|followed|followers|settings)\/?$/,
+    UserEndPoints: /^(blog|posts|comments|recommended|transfers|curation-rewards|author-rewards|permissions|created|recent-replies|feed|password|followed|followers|settings)$/,
+    CategoryFilters: /^\/(hot|created|trending|active|promoted)\/?$/ig,
+    PostNoCategory: /^\/(@[\w\.\d-]+)\/([\w\d-]+)/,
+    UserJson: /^\/(@[\w\.\d-]+)(\/json)$/
+}
+
 export default function resolveRoute(path)
 {
     if (path === '/') {
@@ -24,7 +34,7 @@ export default function resolveRoute(path)
     if (path === '/xss/test' && process.env.NODE_ENV === 'development') {
         return {page: 'XSSTest'};
     }
-    if (path.match(/^\/tags\.html/)) {
+    if (path.match(/^\/tags\/?/)) {
         return {page: 'Tags'};
     }
     if (path === '/tos.html') {
@@ -54,15 +64,19 @@ export default function resolveRoute(path)
     if (path === '/submit.html') {
         return {page: 'SubmitPost'};
     }
-    let match = path.match(/^\/(@[\w\.\d-]+)\/feed\/?$/);
+    let match = path.match(routeRegex.PostsIndex);
     if (match) {
         return {page: 'PostsIndex', params: ['home', match[1]]};
     }
-    match = path.match(/^\/(@[\w\.\d-]+)\/?$/) ||
+    match = path.match(routeRegex.UserProfile1) ||
         // @user/"posts" is deprecated in favor of "comments" as of oct-2016 (#443)
-        path.match(/^\/(@[\w\.\d-]+)\/(blog|posts|comments|recommended|transfers|curation-rewards|author-rewards|permissions|created|recent-replies|feed|password|followed|followers|settings)\/?$/);
+        path.match(routeRegex.UserProfile2);
     if (match) {
         return {page: 'UserProfile', params: match.slice(1)};
+    }
+    match = path.match(routeRegex.PostNoCategory);
+    if (match) {
+        return {page: 'PostNoCategory', params: match.slice(1)};
     }
     match = path.match(/^\/(\@[\w\d-]+)\/([\w\d-]+)\/?$/) ||
         path.match(/^\/([\w\d\-\/]+)\/(\@[\w\d\.-]+)\/([\w\d-]+)\/?$/) ||

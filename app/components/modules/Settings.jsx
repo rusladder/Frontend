@@ -9,12 +9,14 @@ import o2j from 'shared/clash/object2json'
 import LoadingIndicator from 'app/components/elements/LoadingIndicator'
 import Userpic from 'app/components/elements/Userpic';
 import reactForm from 'app/utils/ReactForm'
+import UserList from 'app/components/elements/UserList';
 
 class Settings extends React.Component {
 
     constructor(props) {
         super()
         this.initForm(props)
+        this.onNsfwPrefChange = this.onNsfwPrefChange.bind(this)
     }
 
     state = {
@@ -30,14 +32,27 @@ class Settings extends React.Component {
             initialValues: props.profile,
             validation: values => ({
                 profile_image: values.profile_image && !/^https?:\/\//.test(values.profile_image) ? 'Invalid URL' : null,
-                name: values.name && values.name.length > 20 ? 'Name is too long' : null,
+                name: values.name && values.name.length > 20 ? 'Name is too long' : values.name && /^\s*@/.test(values.name) ? 'Name must not begin with @' : null,
                 about: values.about && values.about.length > 160 ? 'About is too long' : null,
                 location: values.location && values.location.length > 30 ? 'Location is too long' : null,
-                website: values.website && values.website.length > 100 ? 'Website URL is too long' : null,
+                website: values.website && values.website.length > 100 ? 'Website URL is too long' : values.website && !/^https?:\/\//.test(values.website) ? 'Invalid URL' : null,
             })
         })
         this.handleSubmitForm =
             this.state.accountSettings.handleSubmit(args => this.handleSubmit(args))
+    }
+
+    componentWillMount() {
+        const {accountname} = this.props
+        const nsfwPref = (process.env.BROWSER ? localStorage.getItem('nsfwPref-' + accountname) : null) || 'warn'
+        this.setState({nsfwPref})
+    }
+
+    onNsfwPrefChange(e) {
+        const nsfwPref = e.currentTarget.value;
+        const {accountname} = this.props;
+        localStorage.setItem('nsfwPref-'+accountname, nsfwPref)
+        this.setState({nsfwPref})
     }
 
     handleSubmit = ({updateInitialValues}) => {
@@ -110,6 +125,10 @@ class Settings extends React.Component {
 
         const {profile_image, name, about, location, website} = this.state
 
+        const {follow, account, isOwnAccount} = this.props
+        const following = follow && follow.getIn(['get_following', account.name]);
+        const ignores = isOwnAccount && following && following.get('ignore_result')
+
         return <div className="Settings">
 
             {/*<div className="row">
@@ -142,6 +161,7 @@ class Settings extends React.Component {
             </div>*/}
             <div className="row">
                 <form onSubmit={this.handleSubmitForm} className="small-12 medium-6 large-4 columns">
+                    <h3>Profile</h3>
                     <label>
                         {translate('profile_image_url')}
                         <input type="url" {...profile_image.props} autoComplete="off" />
@@ -168,9 +188,9 @@ class Settings extends React.Component {
 
                     <label>
                         {translate('profile_website')}
-                        <input type="text" {...website.props} maxLength="100" autoComplete="off" />
+                        <input type="url" {...website.props} maxLength="100" autoComplete="off" />
                     </label>
-                    <div className="error">{website.touched && website.error}</div>
+                    <div className="error">{website.blur && website.touched && website.error}</div>
 
                     <br />
                     {state.loading && <span><LoadingIndicator type="circle" /><br /></span>}
@@ -184,6 +204,29 @@ class Settings extends React.Component {
                         }
                 </form>
             </div>
+
+            {isOwnAccount &&
+                <div className="row">
+                    <div className="small-12 columns">
+                        <br /><br />
+                        <h3>Content Preferences</h3>
+                        <div>
+                            Not safe for work (NSFW)
+                        </div>
+                        <select value={this.state.nsfwPref} onChange={this.onNsfwPrefChange}>
+                            <option value="hide">Always hide</option>
+                            <option value="warn">Always warn</option>
+                            <option value="show">Always show</option>
+                        </select>
+                    </div>
+                </div>}
+            {ignores && ignores.size > 0 &&
+                <div className="row">
+                    <div className="small-12 columns">
+                        <br /><br />
+                        <UserList title="Muted Users" account={account} users={ignores} />
+                    </div>
+                </div>}
         </div>
     }
 }
@@ -201,8 +244,10 @@ export default connect(
         return {
             account,
             metaData,
+            accountname,
             isOwnAccount: username == accountname,
             profile,
+            follow: state.global.get('follow'),
             ...ownProps
         }
     },

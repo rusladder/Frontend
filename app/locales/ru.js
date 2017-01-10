@@ -283,7 +283,7 @@ const ru = {
 	unknown_account: 'Неизвестный аккаунт',
 	user_hasnt_made_any_posts_yet: "Похоже что {name} еще не написал(а) постов!",
 	user_hasnt_started_bloggin_yet: "Похоже что {name} еще не завёл(а) блог!",
-	user_hasnt_followed_anything_yet: "Похоже что {name} еще никого ни на кого не подписан(а)!",
+	user_hasnt_followed_anything_yet: "Похоже что {name} еще ни на кого не подписан(а)!",
 	user_hasnt_had_any_replies_yet: "{name} еще не получил(а) ответов",
 	users_blog: "блог {name}",
 	users_posts: "посты {name}",
@@ -498,13 +498,13 @@ const ru = {
 	flag: "Голосовать против",
 	promote: 'Продвинуть',
 	// Tips.js
-	tradeable_tokens_that_may_be_transferred_anywhere_at_anytime: 'Перемещаемые цифровые токены, которые могут переданы куда угодно в любой момент.',
+	tradeable_tokens_that_may_be_transferred_anywhere_at_anytime: 'Перемещаемые цифровые токены, которые могут быть переданы куда угодно в любой момент.',
 	LIQUID_TOKEN_can_be_converted_to_VESTING_TOKEN_in_a_process_called_powering_up: LIQUID_TOKEN + ' может быть конвертирован в ' + VESTING_TOKEN + ', этот процесс называется "усиление голоса".',
 	tokens_worth_about_AMOUNT_of_LIQUID_TOKEN: 'Перемещаемые цифровые токены, цена которых всегда равна ~1 мг золота в ' + LIQUID_TOKEN + '.',
 	influence_tokens_which_earn_more_power_by_holding_long_term: 'Неперемещаемые цифровые токены, их количество увеличивается при долгосрочном хранении.',
 	the_more_you_hold_the_more_you_influence_post_rewards: 'Чем их больше, тем сильней вы влияете на вознаграждения за пост и тем больше зарабатываете за голосование.',
 	the_estimated_value_is_based_on_a_7_day_average_value_of_LIQUID_TOKEN_in_currency: 'Оценочная стоимость рассчитывается из 7-ми дневной средней стоимости ' + LIQUID_TOKEN + '.',
-	VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN: VESTING_TOKEN + ' нельзя передавать и потребуется 3 месяца и 13 выплаты чтобы перевести обратно в ' + LIQUID_TOKEN + '.',
+	VESTING_TOKEN_is_non_transferrable_and_will_require_2_years_and_104_payments_to_convert_back_to_LIQUID_TOKEN: VESTING_TOKEN + ' нельзя передавать и потребуется 2 года и 104 выплаты чтобы перевести обратно в ' + LIQUID_TOKEN + '.',
 	// TODO
 	converted_VESTING_TOKEN_can_be_sent_to_yourself_but_can_not_transfer_again: 'Конвертированная ' + VESTING_TOKEN + ' может быть отправлена себе или кому-то еще, но не может быть передана вновь без конвертирования назад в ' + LIQUID_TOKEN + '.',
 	profile: 'Профиль',
@@ -648,6 +648,11 @@ const ru = {
     always_warn: 'Всегда предупреждать',
     always_show: 'Всегда показывать',
 	adult_content_NSFW: 'Взрослый контент (NSFW)',
+    comments_by_user_name: 'Комментарии {user_name}',
+    account_registered_by_anoter_account_requires_10x_creation_fee_worth_of_VESTING_TOKEN_before_it_can_power_down: "Учетная запись должна набрать количество " + VESTING_TOKEN + " в 10 раз большее чем значение которое было заплачено за её создание, прежде чем она сможет начать понижение",
+    you_may_only_post_once_per_minute: 'Вы можете создавать посты только раз в минуту.',
+    you_already_voted_for_this_post: 'Вы уже голосовали за этот пост',
+    transaction_failed_error: 'Неудачная транзакция: {error}',
 }
 
 export { ru }

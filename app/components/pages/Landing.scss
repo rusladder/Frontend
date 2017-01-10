@@ -295,6 +295,7 @@
 
 .Team {
 	.Team__members { margin-bottom: 150px; }
+    > .Team__members { margin-bottom: 50px; }
 	.Team__partners {
 		margin: 50px auto;
 		.columns {
@@ -389,6 +390,9 @@
         width: 217px;
 	    left: 56%;
 	    max-width: none;
+	}
+	.Team__member__anton .Team__member__img {
+		top: 67%;
 	}
 	@media #{$small-only} {
 		.Team__members__image-wrapper {

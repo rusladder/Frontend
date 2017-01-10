@@ -95,6 +95,16 @@ app.use(function *(next) {
     }
 });
 
+// redirect to "hot"
+app.use(function *(next) {
+    if (this.method === 'GET' && this.url == '/') {
+        this.status = 302;
+        this.redirect('/hot');
+    } else {
+        yield next;
+    }
+});
+
 if (env === 'production') {
     // load production middleware
     app.use(require('koa-conditional-get')());
@@ -109,11 +119,9 @@ app.use(helmet());
 
 app.use(mount('/static', staticCache(path.join(__dirname, '../app/assets/static'), cacheOpts)));
 
-app.use(mount('/robots.txt', function* () {
-    this.set('Cache-Control', 'public, max-age=86400000');
-    this.type = 'text/plain';
-    this.body = "User-agent: *\nDisallow:  ";
-}));
+app.use(mount('/robots.txt', staticCache(path.join(__dirname, '../app/assets/robots.txt'), cacheOpts)));
+app.use(mount('/sitemap.xml', staticCache(path.join(__dirname, '../app/assets/sitemap.xml'), cacheOpts)));
+
 
 useRedirects(app);
 useEnterAndConfirmEmailPages(app);
@@ -136,6 +144,18 @@ app.use(isBot());
 app.use(mount('/favicons', staticCache(path.join(__dirname, '../app/assets/images/favicons'), cacheOpts)));
 app.use(mount('/images', staticCache(path.join(__dirname, '../app/assets/images'), cacheOpts)));
 app.use(mount('/legal', staticCache(path.join(__dirname, '../app/assets/legal'), cacheOpts)));
+// google analytics verification page (required by google analytics)
+app.use(mount('/google01836be5bad501ce.html', staticCache(path.join(__dirname, '../app/assets/google01836be5bad501ce.html'), cacheOpts)));
+app.use(mount('/googlee59d4af4f1222cd7.html', staticCache(path.join(__dirname, '../app/assets/googlee59d4af4f1222cd7.html'), cacheOpts)));
+app.use(mount('/googleb1863376a961eb3b.html', staticCache(path.join(__dirname, '../app/assets/googleb1863376a961eb3b.html'), cacheOpts)));
+
+// Yandex Webmaster verification page (required by Yandex Webmaster)
+app.use(mount('/yandex_dc913847e717bca6.html', staticCache(path.join(__dirname, '../app/assets/yandex_dc913847e717bca6.html'), cacheOpts)));
+// postmaster.mail.ru verification page (required by postmaster.mail.ru)
+app.use(mount('/mailru-verification92b53816046791c4.html', staticCache(path.join(__dirname, '../app/assets/mailru-verification92b53816046791c4.html'), cacheOpts)));
+app.use(mount('/mailru-verification2f585ac3784b45be.html', staticCache(path.join(__dirname, '../app/assets/mailru-verification2f585ac3784b45be.html'), cacheOpts)));
+app.use(mount('/mailru-verification9a42734aa5b7e274.html', staticCache(path.join(__dirname, '../app/assets/mailru-verification9a42734aa5b7e274.html'), cacheOpts)));
+
 // Proxy asset folder to webpack development server in development mode
 console.log (env)
 

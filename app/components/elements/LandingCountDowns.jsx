@@ -226,13 +226,12 @@ export default class LandingCountDowns extends React.Component {
 								{
 									state.showBitcoinsRaised
 									? <div>
-										<p style={{marginBottom: 0}}>Собрано биткоинов</p>
+										<div style={{marginBottom: 0}}>Собрано биткоинов</div>
 										{
 											state.bitcoinsRaised === false
 											? <strong>загрузка...</strong>
-
-											: <strong><a href="https://blockchain.info/address/3CWicRKHQqcj1N6fT1pC9J3hUzHw1KyPv3" target="blank">{roundPrecision(_btc.fromSatoshis(state.bitcoinsRaised), 4)} B</a></strong>
-
+											: <strong><a href="https://blockchain.info/address/3CWicRKHQqcj1N6fT1pC9J3hUzHw1KyPv3" target="blank">600 B</a></strong>
+										// roundPrecision(_btc.fromSatoshis(state.bitcoinsRaised), 4)
 										}
 									</div>
 									: null
@@ -280,7 +279,6 @@ export default class LandingCountDowns extends React.Component {
 					: 	<div className="row CountDowns__links">
 							<div className="small-12 medium-6 columns text-left">
 								<a href="https://golos.io/ru--golos/@golos/golos-russkoyazychnaya-socialno-mediinaya-blokchein-platforma" target="blank" className="CountDowns__button_small">White Paper</a>
-								<a href="https://wiki.golos.io/5-development/roadmap.html" target="blank" className="CountDowns__button_small">Дорожная карта</a>
 							</div>
 							<div className="small-12 medium-6 columns text-right CountDowns__social-links">
 								<p>Социальные сети: </p>

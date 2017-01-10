@@ -105,7 +105,7 @@ const en = 	{
 	welcome_to_the_blockchain: 'Welcome to the Blockchain!',
 	your_voice_is_worth_something: 'Your voice is worth something',
 	learn_more: 'Learn More',
-	get_INVEST_TOKEN_when_sign_up: 'Get ${signupBonus} of ' + VESTING_TOKEN + ' when you sign up today.',
+	get_VESTING_TOKEN_when_sign_up: 'Get ${signupBonus} of ' + VESTING_TOKEN + ' when you sign up today.',
 	all_accounts_refunded: 'All Recovered Accounts have been fully Refunded',
 	APP_URL_is_now_open_source: APP_URL + ' is now Open Source',
 	// this is mainly from ReplyEditor
@@ -499,7 +499,7 @@ const en = 	{
 	tokens_worth_about_AMOUNT_of_LIQUID_TOKEN: 'Tokens worth about {amount} of ' + LIQUID_TOKEN + '.',
 	influence_tokens_which_earn_more_power_by_holding_long_term: 'Influence tokens which earn more power by holding long term.',
 	the_more_you_hold_the_more_you_influence_post_rewards: 'The more you hold the more you influence post rewards and earn for accurate voting.',
-	the_estimated_value_is_based_on_a_7_day_average_value_of_LIQUID_TOKEN_in_currency: 'The estimated value is based on a 7 day average value of ' + LIQUID_TOKEN + ' in US Dollars.',
+	the_estimated_value_is_based_on_a_7_day_average_value_of_LIQUID_TOKEN_in_currency: 'The estimated value is based on a 7 day average value of ' + LIQUID_TOKEN + ' in mg of gold.',
 	VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN: VESTING_TOKEN + ' is non-transferrable and requires 3 months (13 payments) to convert back to ' + LIQUID_TOKEN + '.',
 	converted_VESTING_TOKEN_can_be_sent_to_yourself_but_can_not_transfer_again: 'Converted ' + VESTING_TOKEN + ' can be sent to yourself or someone else but can not transfer again without converting back to ' + LIQUID_TOKEN + '.',
 	profile: 'Profile',
@@ -638,6 +638,10 @@ const en = 	{
   always_warn: 'Always warn',
   always_show: 'Always show',
   adult_content_NSFW: 'Adult Content (NSFW)',
+  account_registered_by_anoter_account_requires_10x_creation_fee_worth_of_VESTING_TOKEN_before_it_can_power_down: 'Account registered by another account requires 10x account creation fee worth of ' + VESTING_TOKEN + ' before it can power down',
+  you_may_only_post_once_per_minute: 'You may only post once per minute.',
+  you_already_voted_for_this_post: 'You already voted for this post',
+  transaction_failed_error: 'Transaction failed: {error}',
 }
 
 export { en }

@@ -228,7 +228,7 @@ class UserWallet extends React.Component {
                     {steemOrders ? <div style={{paddingRight: isMyAccount ? "0.85rem" : null}}><Link to="/market"><Tooltip t={translate('open_orders')}>(+{steem_orders_balance_str} STEEM)</Tooltip></Link></div> : null}
                 </div>
                 {/* {isMyAccount && <div className="column small-12 medium-4">
-                    <button className="UserWallet__buysp button hollow float-right" onClick={this.onShowDepositSteem}>{translate('buy_LIQUID_TOKEN_or_INVEST_TOKEN')}</button>
+                    <button className="UserWallet__buysp button hollow float-right" onClick={this.onShowDepositSteem}>{translate('buy_LIQUID_TOKEN_or_VESTING_TOKEN')}</button>
                 </div>} */}
             </div>
             <div className="UserWallet__balance row zebra">

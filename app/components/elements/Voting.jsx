@@ -14,6 +14,7 @@ import FoundationDropdown from 'app/components/elements/FoundationDropdown';
 import CloseButton from 'react-foundation-components/lib/global/close-button';
 import { translate } from 'app/Translator';
 import LocalizedCurrency, {localizedCurrency} from 'app/components/elements/LocalizedCurrency';
+import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 
 const MAX_VOTES_DISPLAY = 20;
 const VOTE_WEIGHT_DROPDOWN_THRESHOLD = 1.0 * 1000.0 * 1000.0;
@@ -234,19 +235,20 @@ class Voting extends React.Component {
 
         return (
             <span className="Voting">
-              { /* when component is not yet rendered in browser environment the info is missleading,
-                 because <LocalizedCurrency /> is not yet applied proper calculations */
-                process.env.BROWSER
-                ?
                   <span className="Voting__inner">
-                      <span className={classUp}>
-                          {votingUpActive ? up : <a href="#" onClick={voteUpClick} title={translate(myVote > 0 ? 'remove_vote' : 'upvote')}>{up}</a>}
-                          {dropdown}
-                      </span>
-                      {payoutEl}
+                      { /* when component is not yet rendered in browser environment the info is missleading,
+                          because <LocalizedCurrency /> is not yet applied proper calculations */
+                          process.env.BROWSER
+                          ? <span>
+                              <span className={classUp}>
+                                  {votingUpActive ? up : <a href="#" onClick={voteUpClick} title={translate(myVote > 0 ? 'remove_vote' : 'upvote')}>{up}</a>}
+                                  {dropdown}
+                              </span>
+                              {payoutEl}
+                            </span>
+                           : <LoadingIndicator type="circle" inline />
+                       }
                   </span>
-                : <i>{translate('loading')}...</i>
-              }
               {voters_list}
             </span>
         );

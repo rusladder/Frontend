@@ -166,7 +166,7 @@ class Header extends React.Component {
         if (process.env.BROWSER && (route.page !== 'Post' && route.page !== 'PostNoCategory')) document.title = page_title + ' — ' + APP_NAME;
 
         const logo_link = route.params && route.params.length > 1 && this.last_sort_order ? '/' + this.last_sort_order : '/hot';
-        let topic_link = topic ? <Link to={`/${this.last_sort_order || 'hot'}/${topic}`}>{detransliterate(topic)}</Link> : null;
+        let topic_link = topic ? <Link to={`/${this.last_sort_order || 'hot'}/${topic_original_link}`}>{detransliterate(topic)}</Link> : null;
 
         const sort_orders = [
             ['created', translate('new')],
@@ -179,7 +179,7 @@ class Header extends React.Component {
             ['active', translate('active')]
         ];
         if (current_account_name) sort_orders.unshift(['home', translate('home')]);
-        const sort_order_menu = sort_orders.filter(so => so[0] !== sort_order).map(so => ({link: sortOrderToLink(so[0], topic_original_link, current_account_name), value: so[1]}));
+        const sort_order_menu = sort_orders.filter(so => so[0] !== sort_order).map(so => ({link: sortOrderToLink(so[0], topic_original_link, current_account_name), value: capitalizeFirstLetter(so[1])}));
         // there were a problem when in root route ('/') when header menu didn't
         // had any active links. Thats why selected_sort_order falls down to 'trending' if undefined
         const selected_sort_order = sort_orders.find(so => so[0] === sort_order) || sort_orders[2];
@@ -192,6 +192,7 @@ class Header extends React.Component {
         ];
         if (current_account_name) sort_orders_horizontal.unshift(['home', translate('home')]);
         const sort_order_menu_horizontal = sort_orders_horizontal.map(so => {
+                sort_order = route.params && route.params[0] !== 'home' ? route.params[0] : null;
                 let active = (so[0] === sort_order) || (so[0] === 'trending' && sort_order === 'trending30');
                 if (so[0] === 'home' && sort_order === 'home' && !home_account) active = false;
                 return {link: sortOrderToLink(so[0], topic_original_link, current_account_name), value: so[1], active};
@@ -215,7 +216,8 @@ class Header extends React.Component {
                             <ul className="menu">
                                 <li className="Header__top-logo">
                                     <Link to={logo_link}>
-                                        <Icon name={APP_ICON} size="2x" />
+                                        {/* <Icon name={APP_ICON} size="2x" /> */}
+                                        <img style={{display: 'inline-block', width: '2rem', height: '2rem'}} src="/images/golos-NG.png" alt="Новогодний логотип Голоса" />
                                     </Link>
                                 </li>
 
@@ -228,7 +230,7 @@ class Header extends React.Component {
                                 {user_name && <li><Link to={`/@${user_name}`}>@{user_name}</Link></li>}
                                 {page_name && <li><span>{page_name}</span></li>}
                                 {(topic_link || user_name || page_name) && sort_order && <li className="delim show-for-small-only">|</li>}
-                                {selected_sort_order && <DropdownMenu className="Header__sort-order-menu show-for-small-only" items={sort_order_menu} selected={selected_sort_order[1]} el="li" />}
+                                {selected_sort_order && route && route.page !== 'Landing' && <DropdownMenu className="Header__sort-order-menu show-for-small-only" items={sort_order_menu} selected={selected_sort_order[1]} el="li" />}
                             </ul>
                         </div>
                         <div className="columns shrink">

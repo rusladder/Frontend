@@ -94,6 +94,10 @@ class PostFull extends React.Component {
                     this.setState({showEdit: true})
                 }
             }
+            // Facebook Pixel events #200
+            if (post == "natasha/znakomstvo-s-platformoi-golos-tokeny-registraciya-i-lichnyi-kabinet") {
+                fbq('track', 'ViewContent');
+            }
         }
     }
 
@@ -301,7 +305,7 @@ class PostFull extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                     <div className="column large-8 medium-10 small-12">
+                     <div className="column small-12">
                         {showReply && renderedEditor}
                     </div>
                 </div>

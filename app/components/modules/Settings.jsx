@@ -9,7 +9,9 @@ import o2j from 'shared/clash/object2json'
 import LoadingIndicator from 'app/components/elements/LoadingIndicator'
 import reactForm from 'app/utils/ReactForm'
 import UserList from 'app/components/elements/UserList';
+import { injectIntl } from 'react-intl'
 
+@injectIntl
 class Settings extends React.Component {
 
     constructor(props) {
@@ -181,7 +183,7 @@ class Settings extends React.Component {
                             <strong>Настройки сайта</strong>
                             {/* CHOOSE LANGUAGE */}
                             <label>{translate('choose_language')}
-                              <select defaultValue={store.get('language')} onChange={this.handleLanguageChange}>
+                              <select defaultValue={locale} onChange={this.handleLanguageChange}>
                                 <option value="ru">русский</option>
                                 <option value="en">english</option>
                                 {/* in react-intl they use 'uk' instead of 'ua' */}

@@ -157,6 +157,10 @@
   margin-right: 0px!important;
 }
 
+.PostFull, .Post_comments {
+    textarea[rows] {min-height: 7rem;}
+}
+
 /* Small only */
 @media screen and (max-width: 39.9375em) {
   .Post {

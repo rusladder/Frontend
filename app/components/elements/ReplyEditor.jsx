@@ -450,6 +450,7 @@ export default formId => reduxForm(
                 category = category.split(' ')
                                     .map(item => /^[а-яё]/.test(item) ? 'ru--' + detransliterate(item, true) : item)
                                     .join(' ')
+                                    .trim()
             }
 
             const isEdit = type === 'edit'

@@ -158,7 +158,7 @@ class BlocktradesDeposit extends React.Component {
                 translate('LIQUID_TOKEN_can_be_converted_to_VESTING_TOKEN_in_a_process_called_powering_up')
             : outputCoin.value === VEST_TICKER ? <div>
                 <p>{translate('influence_tokens_which_earn_more_power_by_holding_long_term') + ' ' + translate('the_more_you_hold_the_more_you_influence_post_rewards')}</p>
-                <p>{translate('VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN')}</p>
+                <p>{translate('VESTING_TOKEN_is_non_transferrable_and_will_require_2_years_and_104_payments_to_convert_back_to_LIQUID_TOKEN')}</p>
             </div>
             : null
 

@@ -1,6 +1,7 @@
 import xmldom from 'xmldom'
 import linksRe from 'app/utils/Links'
 import {validate_account_name} from 'app/utils/ChainValidation'
+import { detransliterate } from 'app/utils/ParsersAndFormatters'
 
 const noop = () => {}
 const DOMParser = new xmldom.DOMParser({
@@ -177,10 +178,16 @@ function linkifyNode(child, state) {try{
 
 function linkify(content, mutate, hashtags, usertags, images, links) {
     // hashtag
-    content = content.replace(/(^|\s)(#[-a-z\d]+)/ig, tag => {
+    content = content.replace(/(^|\s)(#[-a-zа-я\d]+)/ig, tag => {
         if(/#[\d]+$/.test(tag)) return tag // Don't allow numbers to be tags
         const space = /^\s/.test(tag) ? tag[0] : ''
-        const tag2 = tag.trim().substring(1)
+        let tag2 = tag.trim().substring(1)
+        // Parse tags:
+        // if tag string starts with russian symbol, add 'ru-' prefix to it
+        // when transletirate it
+        // This is needed to be able to detransletirate it back to russian in future (to show russian categories to user)
+        // (all of this is needed because blockchain does not allow russian symbols in category)
+        if(/^[а-яё]/.test(tag2)) tag2 = 'ru--' + detransliterate(tag2, true)
         const tagLower = tag2.toLowerCase()
         if(hashtags) hashtags.add(tagLower)
         if(!mutate) return tag
@@ -204,7 +211,7 @@ function linkify(content, mutate, hashtags, usertags, images, links) {
     content = content.replace(linksRe.any, ln => {
         if(linksRe.image.test(ln)) {
             if(images) images.add(ln)
-            return `<img src="${ipfsPrefix(ln)}" />`
+            return `<center><img src="${ipfsPrefix(ln)}" /></center>`
         }
         if(links) links.add(ln)
         return `<a href="${ipfsPrefix(ln)}">${ln}</a>`

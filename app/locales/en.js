@@ -108,7 +108,7 @@ const en = 	{
 	all_accounts_refunded: 'All Recovered Accounts have been fully Refunded',
 	APP_URL_is_now_open_source: APP_URL + ' is now Open Source',
 	// this is mainly from ReplyEditor
-	tag_your_story: 'Tag (up to 4 tags), the first tag is your main category.',
+	tag_your_story: 'Tag (up to 5 tags), the first tag is your main category.',
 	select_a_tag: 'Select a tag',
 	required: 'Required',
 	shorten_title: 'Shorten title',
@@ -190,6 +190,7 @@ const en = 	{
 	recover_account: 'Recover Account',
 	new: 'new', // ex. 'Generated Password (new)', but not exclusively
 	age: 'age',
+	votes: 'votes',
 	backup_password_by_storing_it: 'Back it up by storing in your password manager or a text file',
 	click_to_generate_password: 'Click to generate password',
 	re_enter_generate_password: 'Re-enter Generated Password',
@@ -281,7 +282,7 @@ const en = 	{
 	unknown_account: 'Unknown Account',
 	user_hasnt_made_any_posts_yet: "Looks like {name} hasn't made any posts yet!",
 	user_hasnt_started_bloggin_yet: "Looks like {name} hasn't started blogging yet!",
-	user_hasnt_followed_anything_yet: "Looks like {name} hasn't followed anything yet!",
+	user_hasnt_followed_anything_yet: "Looks like {name} might not be following anyone yet! If {name} recently added new users to follow, their personalized feed will populate once new content is available.",
 	user_hasnt_had_any_replies_yet: "{name} hasn't had any replies yet",
 	users_blog: "{name}'s blog",
 	users_posts: "{name}'s posts",
@@ -372,7 +373,8 @@ const en = 	{
 	// Voting.jsx
 	stop_seeing_content_from_this_user: 'Stop seeing content from this user',
 	flagging_post_can_remove_rewards_the_flag_should_be_used_for_the_following: 'Flagging a post can remove rewards and make this material less visible. Some common reasons to flag',
-	fraud_or_plagiarism: 'Fraud or Plagiarism',
+    disagreement_on_rewards: 'Disagreement on rewards',
+    fraud_or_plagiarism: 'Fraud or Plagiarism',
 	hate_speech_or_internet_trolling: 'Hate Speech or Internet Trolling',
 	intentional_miss_categorized_content_or_spam: 'Intentional miss-categorized content or Spam',
 	downvote: 'Downvote',

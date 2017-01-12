@@ -116,10 +116,12 @@ class ReplyEditor extends React.Component {
         this.onCancel = e => {
             if(e) e.preventDefault()
             const {onCancel, resetForm} = this.props
-            resetForm()
-            this.setAutoVote()
-            this.setState({rte_value: stateFromHtml()})
-            if(onCancel) onCancel(e)
+            if(confirm("Are you sure you want to clear this form?")) {
+                resetForm()
+                this.setAutoVote()
+                this.setState({rte_value: stateFromHtml()})
+                if(onCancel) onCancel(e)
+            }
         }
         this.onChange = this.onChange.bind(this);
         this.toggleRte = this.toggleRte.bind(this);
@@ -389,12 +391,12 @@ export default formId => reduxForm(
         const username = state.user.getIn(['current', 'username'])
         const fields = ['body', 'autoVote']
         const {type, parent_author, jsonMetadata} = ownProps
+        const isEdit = type === 'edit'
         const isStory = /submit_story/.test(type) || (
-            type === 'edit' && parent_author === ''
+            isEdit && parent_author === ''
         )
         if (isStory) fields.push('title')
         if (isStory) fields.push('category')
-        const isEdit = type === 'edit'
         const maxKb = isStory ? 100 : 16
         const validate = values => ({
             title: isStory && (
@@ -489,8 +491,8 @@ export default formId => reduxForm(
             if(rtags.images.size) meta.image = rtags.images; else delete meta.image
             if(rtags.links.size) meta.links = rtags.links; else delete meta.links
 
+            meta.app = "steemit/0.1"
             if(isStory) {
-                meta.app = "steemit/0.1"
                 meta.format = isHtml ? 'html' : 'markdown'
             }
 
@@ -502,9 +504,9 @@ export default formId => reduxForm(
                 return
             }
 
-            if(meta.tags.length > 4) {
+            if(meta.tags.length > 5) {
                 const includingCategory = isEdit ? ` (including the category '${rootCategory}')` : ''
-                errorCallback(`You have ${meta.tags.length} tags total${includingCategory}.  Please use only 4 in your post and category line.`)
+                errorCallback(`You have ${meta.tags.length} tags total${includingCategory}.  Please use only 5 in your post and category line.`)
                 return
             }
             // loadingCallback starts the loading indicator

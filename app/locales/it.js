@@ -92,7 +92,7 @@ const it = 	{
 	all_accounts_refunded: 'Tutti gli account recuperati sono stati rimborsati pienamente',
 	steemit_is_now_open_source: 'Steemit.com è ora Open Source',
 	// this is mainly from ReplyEditor
-	tag_your_story: 'Tag (massimo 4 tags), il primo tag rappresenta la categoria principale.',
+	tag_your_story: 'Tag (massimo 5 tags), il primo tag rappresenta la categoria principale.',
 	select_a_tag: 'Seleziona un tag',
 	required: 'Richiesto',
 	shorten_title: 'Titoletto',
@@ -171,6 +171,7 @@ const it = 	{
 	recover_account: 'Recupera Account',
 	new: 'nuovo', // ex. 'Generated Password (new)', but not exclusively
 	age: 'nuovo',
+	votes: 'votes',
 	backup_password_by_storing_it: 'Fai un backup della tua password o scrivila su un foglio di carta',
 	click_to_generate_password: 'Clicca per generare una password',
 	re_enter_generate_password: 'Riscrivi la Password generata',
@@ -262,7 +263,7 @@ const it = 	{
 	unknown_account: 'Account Sconosciuto',
 	user_hasnt_made_any_posts_yet: "Sembra che {name} non ha ancora scritto nessun post!",
 	user_hasnt_started_bloggin_yet: "Sembra che {name} non ha ancora scritto nessun articolo!",
-	user_hasnt_followed_anything_yet: "Sembra che {name} non ha ancora seguito nessuno!",
+	user_hasnt_followed_anything_yet: "Sembra che {name} non ha ancora seguito nessuno! Se {name} aggiunte di recente nuovi utenti da seguire, la loro alimentazione personalizzata popolerà una volta nuovi contenuti è disponibile",
 	user_hasnt_had_any_replies_yet: "{name} non ha avuto ancora nessuna risposta",
 	users_blog: "{name}'s blog",
 	users_posts: "{name}'s posts",
@@ -352,7 +353,8 @@ const it = 	{
 	// Voting.jsx
 	stop_seeing_content_from_this_user: 'Smetti di visualizzare il contentuto da questo utente',
 	flagging_post_can_remove_rewards_the_flag_should_be_used_for_the_following: 'Flaggare un post ne riduce il valore e lo rende meno visibile. Il flag dovrebbe essere utilizzato per le seguenti categorie',
-	fraud_or_plagiarism: 'post Fraudolento o Plagio',
+    disagreement_on_rewards: 'Disaccordo sui premi',
+    fraud_or_plagiarism: 'post Fraudolento o Plagio',
 	hate_speech_or_internet_trolling: 'Pessimi discorsi o Internet Trolling',
 	intentional_miss_categorized_content_or_spam: 'Contenuto non categorizzato o Spam',
 	downvote: 'Downvote',

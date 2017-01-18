@@ -578,6 +578,8 @@ const en = 	{
   you_may_only_post_once_per_minute: 'You may only post once per minute.',
   you_already_voted_for_this_post: 'You already voted for this post',
   transaction_failed_error: 'Transaction failed: {error}',
+  favorites: 'Favorites',
+  add_or_remove_to_favorites: 'Add or remove from favorites',
 }
 
 export { en }

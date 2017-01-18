@@ -595,6 +595,8 @@ const ru = {
 	you_may_only_post_once_per_minute: 'Вы можете создавать посты только раз в минуту.',
 	you_already_voted_for_this_post: 'Вы уже голосовали за этот пост',
 	transaction_failed_error: 'Неудачная транзакция: {error}',
+	favorites: 'Избранное',
+	add_or_remove_to_favorites: 'Добавить или удалить из избранного',
 }
 
 export { ru }

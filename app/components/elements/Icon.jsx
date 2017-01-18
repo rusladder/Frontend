@@ -30,6 +30,8 @@ const icons = [
     'flag1',
     'flag2',
     'reblog',
+    'heart',
+    'heart-o'
 ];
 const icons_map = {};
 for (const i of icons) icons_map[i] = require(`app/assets/icons/${i}.svg`);

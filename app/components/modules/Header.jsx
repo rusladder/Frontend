@@ -165,7 +165,8 @@ class Header extends React.Component {
         if (process.env.BROWSER && route.page !== 'Post') document.title = page_title + ' — ' + APP_NAME;
 
         const logo_link = route.params && route.params.length > 1 && this.last_sort_order ? '/' + this.last_sort_order : (current_account_name ? `/@${current_account_name}/feed` : '/');
-        let topic_link = topic ? <Link to={`/${this.last_sort_order || 'hot'}/${topic_original_link}`}>{detransliterate(topic)}</Link> : null;
+        let topic_link = topic ? <Link className="Header__top__topic-link" to={`/${this.last_sort_order || 'hot'}/${topic_original_link}`}>{detransliterate(topic)}</Link> : null;
+        const topic_subscribe_button = topic ? <Icon name="heart-o" size="1x" /> : null;
 
         const sort_orders = [
             ['created', translate('new')],
@@ -222,7 +223,7 @@ class Header extends React.Component {
                                 </li>
 
                                 {(topic_link || user_name || page_name) && <li className="delim show-for-medium">|</li>}
-                                {topic_link && <li className="Header__top-topic">{topic_link}</li>}
+                                {topic_link && <li className="Header__top-topic">{topic_link}{topic_subscribe_button}</li>}
                                 {user_name && <li><Link to={`/@${user_name}`}>{user_name}</Link></li>}
                                 {page_name && <li><span>{page_name}</span></li>}
                                 {(topic_link || user_name || page_name) && sort_order && <li className="delim show-for-small-only">|</li>}

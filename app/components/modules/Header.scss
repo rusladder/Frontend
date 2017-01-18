@@ -139,6 +139,15 @@ ul > li > .button {
   }
 }
 
+.Header__top-topic {
+    .Icon, .Header__top__topic-link {
+        display: inline;
+    }
+    .Icon {
+        padding: 0;
+    }
+}
+
 .Header__sort-order-menu {
   .VerticalMenu {
     left: 0;

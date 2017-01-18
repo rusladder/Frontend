@@ -202,6 +202,15 @@ export default class UserProfile extends React.Component {
                   loadMore={null}
                   showSpam={false} />;
         }
+        else if( (section === 'favorites') && account.recent_replies ) {
+              tab_content = <PostsList
+                  emptyText={translate('user_hasnt_had_any_replies_yet', {name}) + '.'}
+                  posts={account.recent_replies}
+                  loading={fetching}
+                  category="recent-replies"
+                  loadMore={null}
+                  showSpam={false} />;
+        }
         else if( section === 'permissions' && isMyAccount ) {
             tab_content = <UserKeys account={accountImm} />
         } else if( section === 'password' ) {
@@ -250,6 +259,7 @@ export default class UserProfile extends React.Component {
                     <li><Link to={`/@${accountname}`} activeClassName="active">{translate('blog')}</Link></li>
                     <li><Link to={`/@${accountname}/posts`} activeClassName="active">{translate('comments')}</Link></li>
                     <li><Link to={`/@${accountname}/recent-replies`} activeClassName="active">{translate('replies')}</Link></li>
+                    <li><Link to={`/@${accountname}/favorites`} activeClassName="active">{translate('favorites')}</Link></li>
                     {/*<li><Link to={`/@${accountname}/feed`} activeClassName="active">{translate('feeds')}</Link></li>*/}
                     <li>
                         <LinkWithDropdown

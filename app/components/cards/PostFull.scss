@@ -11,6 +11,16 @@
   .ReplyEditor {
     margin-top: 2rem;
   }
+  .FavoriteButton {
+      &:hover{
+          path {
+              fill: #8a8a8a;
+          }
+      }
+      path {
+          fill: #cac7c7;
+      }
+  }
 }
 
 .PostFull__time_author_category {

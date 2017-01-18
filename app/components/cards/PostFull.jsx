@@ -22,6 +22,7 @@ import {List} from 'immutable'
 import {repLog10, parsePayoutAmount} from 'app/utils/ParsersAndFormatters';
 import { translate } from 'app/Translator';
 import { APP_NAME, APP_NAME_LATIN, APP_URL } from 'config/client_config';
+import FavoriteButton from 'app/components/elements/FavoriteButton'
 
 function TimeAuthorCategory({content, authorRepLog10, showTags}) {
     return (
@@ -258,7 +259,10 @@ class PostFull extends React.Component {
 
         return (
             <article className="PostFull hentry" itemScope itemType ="http://schema.org/blogPost">
-                <div className="float-right"><Voting post={post} flag /></div>
+                <div className="float-right">
+                    <FavoriteButton />
+                    <Voting post={post} flag />
+                </div>
                 <div className="PostFull__header">
                     {post_header}
                     <TimeAuthorCategory content={content} authorRepLog10={authorRepLog10} showTags />

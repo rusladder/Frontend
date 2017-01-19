@@ -359,10 +359,6 @@ export default function useGeneralApi(app) {
     });
 
     router.post('/page_view', koaBody, function *() {
-      // disabled until tarantool is set up
-      this.body = JSON.stringify({views: 0});
-      return;
-      //
         const params = this.request.body;
         const {csrf, page, ref} = typeof(params) === 'string' ? JSON.parse(params) : params;
         if (!checkCSRF(this, csrf)) return;

@@ -44,7 +44,6 @@ export default class TagsIndex extends React.Component {
         }).map(tag => {
             const name = tag.get('name');
             const link = order ? `/${order}/${name}` : `/hot/${name}`;
-            console.log('tag.toJS()', tag.toJS())
             // const tag_info = tagsAll.get(tag);
             return (<tr key={name}>
                 <td>
@@ -84,7 +83,7 @@ export default class TagsIndex extends React.Component {
 module.exports = {
     path: 'tags.html(/:order)',
     component: connect(state => ({
-        tagsList: state.global.get('category_idx'), // TODO shared-db upgrade > rename variable
-        tagsAll: state.global.get('categories') // TODO shared-db upgrade > rename variable
+        tagsList: state.global.get('tag_idx'),
+        tagsAll: state.global.get('tags')
     }))(TagsIndex)
 };

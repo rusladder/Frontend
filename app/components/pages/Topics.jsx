@@ -37,7 +37,6 @@ class Topics extends React.Component {
     };
 
     render() {
-        return null
         const {
             props: {order, current, compact, className},
             state: {expanded, search},

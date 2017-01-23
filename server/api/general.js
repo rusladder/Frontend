@@ -49,13 +49,11 @@ function dbStoreSingleMeta(name, k, v) {
 const mixpanel = config.mixpanel ? Mixpanel.init(config.mixpanel) : null;
 
 export default function useGeneralApi(app) {
-    const router = koa_router({
-        prefix: '/api/v1'
-    });
+    const router = koa_router({prefix: '/api/v1'});
     app.use(router.routes());
     const koaBody = koa_body();
 
-    router.post('/accounts', koaBody, function*() {
+    router.post('/accounts', koaBody, function *() {
         if (rateLimitReq(this, this.req)) return;
         const params = this.request.body;
         print('params', params)
@@ -64,9 +62,7 @@ export default function useGeneralApi(app) {
         console.log('-- /accounts -->', this.session.uid, this.session.user, account);
 
         if ($STM_Config.disable_signups) {
-            this.body = JSON.stringify({
-                error: 'New signups are temporary disabled.'
-            });
+            this.body = JSON.stringify({error: 'New signups are temporary disabled.'});
             this.status = 401;
             return;
         }
@@ -98,6 +94,27 @@ export default function useGeneralApi(app) {
         }
 
         try {
+            const user = yield models.User.findOne(
+                {attributes: ['verified', 'waiting_list'], where: {id: user_id}}
+            );
+            if (!user) {
+                this.body = JSON.stringify({error: 'Unauthorized'});
+                this.status = 401;
+                return;
+            }
+
+            // check if user's ip is associated with any bot
+            const same_ip_bot = yield models.User.findOne({
+                attributes: ['id', 'created_at'],
+                where: {remote_ip, bot: true}
+            });
+            if (same_ip_bot) {
+                console.log('-- /accounts same_ip_bot -->', user_id, this.session.uid, remote_ip, user.email);
+                this.body = JSON.stringify({error: 'We are sorry, we cannot sign you up at this time because your IP address is associated with bots activity. Please contact support@steemit.com for more information.'});
+                this.status = 401;
+                return;
+            }
+
             const meta = {}
             const remote_ip = getRemoteIp(this.req);
             const user_id = this.session.user;
@@ -108,21 +125,7 @@ export default function useGeneralApi(app) {
                 this.status = 401;
                 return;
             }
-
-            const user = yield models.User.findOne({
-                attributes: ['verified', 'waiting_list'],
-                where: {
-                    id: user_id
-                }
-            });
-            if (!user) {
-                this.body = JSON.stringify({
-                    error: 'Unauthorized'
-                });
-                this.status = 401;
-                return;
-            }
-
+            
             const existing_account = yield models.Account.findOne({
                 attributes: ['id', 'created_at'],
                 where: {user_id, ignored: false},
@@ -132,13 +135,9 @@ export default function useGeneralApi(app) {
                 throw new Error("Only one Steem account per user is allowed in order to prevent abuse");
             }
 
-            const same_ip_account = yield models.Account.findOne({
-                attributes: ['created_at'],
-                where: {
-                    remote_ip: esc(remote_ip)
-                },
-                order: 'id DESC'
-            });
+            const same_ip_account = yield models.Account.findOne(
+                {attributes: ['created_at'], where: {remote_ip: esc(remote_ip)}, order: 'id DESC'}
+            );
             if (same_ip_account) {
                 const minutes = (Date.now() - same_ip_account.created_at) / 60000;
                 if (minutes < 10) {
@@ -150,19 +149,28 @@ export default function useGeneralApi(app) {
                 console.log(`api /accounts: waiting_list user ${this.session.uid} #${user_id}`);
                 throw new Error('You are on the waiting list. We will get back to you at the earliest possible opportunity.');
             }
-            const eid = yield models.Identity.findOne({
-                attributes: ['id'],
-                where: {
-                    user_id,
-                    provider: 'email',
-                    verified: true
-                },
-                order: 'id DESC'
-            });
+
+            // check email
+            const eid = yield models.Identity.findOne(
+                {attributes: ['id'], where: {user_id, provider: 'email', verified: true}, order: 'id DESC'}
+            );
             if (!eid) {
                 console.log(`api /accounts: not confirmed email for user ${this.session.uid} #${user_id}`);
                 throw new Error('Email address is not confirmed');
             }
+
+            //!!!! steemit checks for an sms-confirmed account here
+            // we should use the check ONLY if user is new-coming :
+
+            // check phone
+            const mid = yield models.Identity.findOne(
+                {attributes: ['id'], where: {user_id, provider: 'phone', verified: true}, order: 'id DESC'}
+            );
+            if (!mid) {
+                console.log(`api /accounts: not confirmed sms for user ${this.session.uid} #${user_id}`);
+                throw new Error('Phone number is not confirmed');
+            }
+
             yield createAccount({
                 signingKey: config.registrar.signing_key,
                 fee: config.registrar.fee,
@@ -177,9 +185,8 @@ export default function useGeneralApi(app) {
             });
             console.log('-- create_account_with_keys created -->', this.session.uid, account.name, user.id, account.owner_key);
 
-            this.body = JSON.stringify({
-                status: 'ok'
-            });
+            this.body = JSON.stringify({status: 'ok'});
+
             if (mixpanel) {
                 mixpanel.track('Signup', {
                     distinct_id: this.session.uid,
@@ -189,9 +196,7 @@ export default function useGeneralApi(app) {
             }
         } catch (error) {
             console.error('Error in /accounts api call', this.session.uid, error.toString());
-            this.body = JSON.stringify({
-                error: error.message
-            });
+            this.body = JSON.stringify({error: error.message});
             this.status = 500;
         } finally {
             // console.log('-- /accounts unlock_entity -->', user_id);
@@ -200,53 +205,32 @@ export default function useGeneralApi(app) {
         recordWebEvent(this, 'api/accounts', account ? account.name : 'n/a');
     });
 
-    router.post('/update_email', koaBody, function*() {
+    router.post('/update_email', koaBody, function *() {
         if (rateLimitReq(this, this.req)) return;
         const params = this.request.body;
-        const {
-            csrf,
-            email
-        } = typeof(params) === 'string' ? JSON.parse(params): params;
+        const {csrf, email} = typeof(params) === 'string' ? JSON.parse(params) : params;
         if (!checkCSRF(this, csrf)) return;
         console.log('-- /update_email -->', this.session.uid, email);
         try {
             if (!emailRegex.test(email.toLowerCase())) throw new Error('not valid email: ' + email);
             // TODO: limit by 1/min/ip
-            let user = yield findUser({
-                user_id: this.session.user,
-                email: esc(email),
-                uid: this.session.uid
-            });
+            let user = yield findUser({user_id: this.session.user, email: esc(email), uid: this.session.uid});
             if (user) {
-                user = yield models.User.update({
-                    email: esc(email),
-                    waiting_list: true
-                }, {
-                    where: {
-                        id: user.id
-                    }
-                });
+                user = yield models.User.update({email: esc(email), waiting_list: true}, {where: {id: user.id}});
             } else {
-                user = yield models.User.create({
-                    email: esc(email),
-                    waiting_list: true
-                });
+                user = yield models.User.create({email: esc(email), waiting_list: true});
             }
             this.session.user = user.id;
-            this.body = JSON.stringify({
-                status: 'ok'
-            });
+            this.body = JSON.stringify({status: 'ok'});
         } catch (error) {
             console.error('Error in /update_email api call', this.session.uid, error);
-            this.body = JSON.stringify({
-                error: error.message
-            });
+            this.body = JSON.stringify({error: error.message});
             this.status = 500;
         }
         recordWebEvent(this, 'api/update_email', email);
     });
 
-    router.post('/login_account', koaBody, function*() {
+    router.post('/login_account', koaBody, function *() {
         if (rateLimitReq(this, this.req)) return;
         const params = this.request.body;
         const {csrf, account, signatures} = typeof(params) === 'string' ? JSON.parse(params) : params;
@@ -303,37 +287,27 @@ export default function useGeneralApi(app) {
         recordWebEvent(this, 'api/login_account', account);
     });
 
-    router.post('/logout_account', koaBody, function*() {
+    router.post('/logout_account', koaBody, function *() {
         // if (rateLimitReq(this, this.req)) return; - logout maybe immediately followed with login_attempt event
         const params = this.request.body;
-        const {
-            csrf
-        } = typeof(params) === 'string' ? JSON.parse(params): params;
+        const {csrf} = typeof(params) === 'string' ? JSON.parse(params) : params;
         if (!checkCSRF(this, csrf)) return;
         console.log('-- /logout_account -->', this.session.uid);
         try {
             this.session.a = null;
-            this.body = JSON.stringify({
-                status: 'ok'
-            });
+            this.body = JSON.stringify({status: 'ok'});
         } catch (error) {
             console.error('Error in /logout_account api call', this.session.uid, error);
-            this.body = JSON.stringify({
-                error: error.message
-            });
+            this.body = JSON.stringify({error: error.message});
             this.status = 500;
         }
     });
 
-    router.post('/record_event', koaBody, function*() {
+    router.post('/record_event', koaBody, function *() {
         if (rateLimitReq(this, this.req)) return;
         try {
             const params = this.request.body;
-            const {
-                csrf,
-                type,
-                value
-            } = typeof(params) === 'string' ? JSON.parse(params): params;
+            const {csrf, type, value} = typeof(params) === 'string' ? JSON.parse(params) : params;
             if (!checkCSRF(this, csrf)) return;
             console.log('-- /record_event -->', this.session.uid, type, value);
             const str_value = typeof value === 'string' ? value : JSON.stringify(value);
@@ -351,7 +325,7 @@ export default function useGeneralApi(app) {
         }
     });
 
-    router.post('/csp_violation', function*() {
+    router.post('/csp_violation', function *() {
         if (rateLimitReq(this, this.req)) return;
         const params = yield coBody.json(this);
         console.log('-- /csp_violation -->', this.req.headers['user-agent'], params);
@@ -478,4 +452,4 @@ export default function useGeneralApi(app) {
     }
     }
 
-    const parseSig = hexSig => {try {return Signature.fromHex(hexSig)} catch(e) {return null}}
+const parseSig = hexSig => {try {return Signature.fromHex(hexSig)} catch(e) {return null}}

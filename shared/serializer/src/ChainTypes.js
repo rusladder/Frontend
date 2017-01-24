@@ -8,8 +8,8 @@ ChainTypes.reserved_spaces = {
   implementation_ids: 2
 };
 
-ChainTypes.operations=
-    {vote: 0,
+ChainTypes.operations= {
+    vote: 0,
     comment: 1,
     transfer: 2,
     transfer_to_vesting: 3,

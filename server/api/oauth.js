@@ -92,7 +92,7 @@ function* handleFacebookCallback() {
         console.log('-- /handle_facebook_callback user id -->', this.session.uid, user ? user.id : 'not found');
 
         let account_recovery_record = null;
-        const provider = 'facebook';
+        const provider = this.session.prv = 'facebook';
         if (this.session.arec) {
             const arec = yield models.AccountRecoveryRequest.findOne({
                 attributes: ['id', 'created_at', 'account_name', 'owner_key'],
@@ -230,7 +230,7 @@ function* handleRedditCallback() {
         console.log('-- /handle_reddit_callback user id -->', this.session.uid, user ? user.id : 'not found');
 
         let account_recovery_record = null;
-        const provider = 'reddit';
+        const provider = this.session.prv = 'reddit';
         if (this.session.arec) {
             const arec = yield models.AccountRecoveryRequest.findOne({
                 attributes: ['id', 'created_at', 'account_name', 'owner_key'],

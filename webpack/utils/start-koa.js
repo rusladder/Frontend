@@ -48,7 +48,9 @@ const startServer = () => {
                 });
 
                 // Start watcher on server files and restart server on change
-                watch(path.join(__dirname, '../../server'), () => restartServer());
+                const server_path = path.join(__dirname, '../../server');
+                // const app_path = path.join(__dirname, '../../app');
+                watch([server_path], () => restartServer());
             }
         }
     });

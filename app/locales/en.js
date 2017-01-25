@@ -581,6 +581,8 @@ const en = 	{
   you_already_voted_for_this_post: 'You already voted for this post',
   transaction_failed_error: 'Transaction failed: {error}',
   you_can_like_a_post_only_after_3_sec_after_last_post: 'You can like a post only after 3 seconds after the last post',
+  subscribe: 'Subscribe',
+  unsubscribe: 'Unsubscribe'
 }
 
 export { en }

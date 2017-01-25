@@ -11,6 +11,8 @@ import HorizontalMenu from 'app/components/elements/HorizontalMenu';
 import { APP_NAME, APP_ICON } from 'config/client_config';
 import { detransliterate } from 'app/utils/ParsersAndFormatters';
 import capitalizeFirstLetter from 'capitalize'
+import IgnoreButton from 'app/components/elements/IgnoreButton'
+import SubscribeButton from 'app/components/elements/SubscribeButton'
 
 function sortOrderToLink(so, topic, account) {
     // to prevent probmes check if topic is not the same as account name
@@ -222,7 +224,7 @@ class Header extends React.Component {
                                 </li>
 
                                 {(topic_link || user_name || page_name) && <li className="delim show-for-medium">|</li>}
-                                {topic_link && <li className="Header__top-topic">{topic_link}</li>}
+                                {topic_link && <li className="Header__top-topic">{topic_link}<SubscribeButton /><IgnoreButton /></li>}
                                 {user_name && <li><Link to={`/@${user_name}`}>{user_name}</Link></li>}
                                 {page_name && <li><span>{page_name}</span></li>}
                                 {(topic_link || user_name || page_name) && sort_order && <li className="delim show-for-small-only">|</li>}

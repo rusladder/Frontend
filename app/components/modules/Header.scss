@@ -27,6 +27,9 @@
   svg > path {
     fill: $dark-gray;
   }
+  .Header__top-topic a, .SubscribeButton, .IgnoreButton {
+      display: inline;
+  }
   //.submit-story {
   //  margin-right: 1rem;
   //}

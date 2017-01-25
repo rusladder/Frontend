@@ -4,7 +4,7 @@ import Post from 'app/components/pages/Post';
 import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 import shouldComponentUpdate from 'app/utils/shouldComponentUpdate';
 import debounce from 'lodash.debounce';
-import {find, findIndex} from 'lodash';
+import {find, findIndex, intersection} from 'lodash';
 import Callout from 'app/components/elements/Callout';
 import CloseButton from 'react-foundation-components/lib/global/close-button';
 import {findParent} from 'app/utils/DomUtils';
@@ -288,10 +288,12 @@ export default connect(
                 }
             }
 
-            // let total_payout = 0;
-
+            // dummy example of user's ignored tags
+            const ignored_tags = ['ru--golos', 'ru--zhiznx']
+            const metadata = JSON.parse(content.get('json_metadata'))
+            const has_ignored_tags = Boolean(intersection(metadata.tags, ignored_tags).length)
             const key = ['follow', 'get_following', username, 'result', content.get('author')]
-            const ignore = username ? state.global.getIn(key, List()).contains('ignore') : false
+            const ignore = username ? state.global.getIn(key, List()).contains('ignore') || has_ignored_tags : false
             const {hide, netVoteSign, authorRepLog10} = content.get('stats').toJS()
             if(!(ignore || hide) || showSpam) // rephide
                 comments.push({item, ignore, netVoteSign, authorRepLog10})

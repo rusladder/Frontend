@@ -118,7 +118,7 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
         return (
             <ul className={mcn}>
                 <li className={lcn + ' buttons'}>
-                    <Link to="/feedback" className="button primary">Обратная связь</Link>
+                    <Link to="/feedback.html" className="button primary">Обратная связь</Link>
                 </li>
                 <li className={lcn + ' buttons'}>
                     <Link to="/ico" className="button success">Информация для пользователя</Link>
@@ -175,7 +175,7 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
         return (
             <ul className={mcn + mcl}>
                 <li className={lcn + ' buttons'}>
-                    <Link to="/feedback" className="button primary">Обратная связь</Link>
+                    <Link to="/feedback.html" className="button primary">Обратная связь</Link>
                 </li>
                 <li className={lcn + ' buttons'}>
                     <Link to="/ico" className="button success">Информация для пользователя</Link>
@@ -217,7 +217,7 @@ function TopRightMenu({username, showLogin, logout, loggedIn, showSignUp, userpi
     return (
             <ul className={mcn + mcl}>
                 <li className={lcn + ' buttons'}>
-                    <Link to="/feedback" className="button primary">Обратная связь</Link>
+                    <Link to="/feedback.html" className="button primary">Обратная связь</Link>
                 </li>
                 <li className={lcn + ' buttons'}>
                     <Link to="/ico" className="button success">Информация для пользователя</Link>

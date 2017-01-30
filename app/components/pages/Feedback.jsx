@@ -25,6 +25,6 @@ class Feedback extends React.Component {
 }
 
 module.exports = {
-    path: 'feedback',
+    path: 'feedback.html',
     component: Feedback
 };

@@ -12,6 +12,6 @@ class FeedbackServerRender extends React.Component {
 }
 
 module.exports = {
-    path: 'feedback',
+    path: 'feedback.html',
     component: FeedbackServerRender
 };

@@ -53,7 +53,7 @@ export default function resolveRoute(path)
     if (path === '/submit.html') {
         return {page: 'SubmitPost'};
     }
-    if (path === '/feedback') {
+    if (path === '/feedback.html') {
         return {page: 'Feedback'};
     }
     let match = path.match(/^\/(@[\w\.\d-]+)\/feed\/?$/);

@@ -1,6 +1,7 @@
 
 import { APP_NAME, APP_URL, LANDING_PAGE_URL, LIQUID_TOKEN, DEBT_TOKEN, DEBT_TOKEN_SHORT, CURRENCY_SIGN, VESTING_TOKEN, LIQUID_TICKER, SUPPORT_EMAIL } from 'config/client_config';
 import {localCurrencySymbol} from 'app/components/elements/LocalizedCurrency'
+import { VESTING_TOKEN_CASE, DEBT_TOKEN_CASE } from '../utils/caseText';
 /**
  * see: app/locales/README.md
  */
@@ -170,7 +171,7 @@ const ru = {
 	transfer_amount_steem_power_to: "Перевод {amount} "+LIQUID_TICKER+" в Силу Голоса",
 	stop_power_down: "Ослабление Силы Голоса остановлено",
 	start_power_down_of: "Ослабление Силы Голоса начато с",
-	curation_reward_of_VESTING_TOKEN_for: 'Кураторские вознаграждения {reward} ' + VESTING_TOKEN + ' за',
+	curation_reward_of_VESTING_TOKEN_for: 'Кураторские вознаграждения {reward} ' + VESTING_TOKEN_CASE('ы') + ' за',
 	author_reward_of_VESTING_TOKEN_for: 'Авторские вознаграждения {payout} и {reward} ' + VESTING_TOKEN + ' за',
 	recieve_interest_of: 'Получены проценты в размере {interest}',
 	// TODO find where this is used and write an example
@@ -207,8 +208,8 @@ const ru = {
 	deadline_for_recovery_is: 'Крайним сроком для восстановления является',
 	i_understand_dont_show_again: "Понимаю, больше не показывать",
 	ok: 'Ок', // Лучше использовать "хорошо" или "ладно"?
-	convert_to_VESTING_TOKEN: 'Перевести Голос в ' + VESTING_TOKEN,
-	DEBT_TOKEN_will_be_unavailable: 'Конвертация ' + DEBT_TOKEN + ' будет происходить в течении 7 дней с момента запуска. Отменить её нельзя. После запуска конвертации, конвертируемые монеты станут недоступны.',
+	convert_to_VESTING_TOKEN: 'Перевести Голос в ' + VESTING_TOKEN_CASE('у'),
+	DEBT_TOKEN_will_be_unavailable: 'Конвертация ' + DEBT_TOKEN_CASE('ых') + ' будет происходить в течении 7 дней с момента запуска. Отменить её нельзя. После запуска конвертации, конвертируемые монеты станут недоступны.',
 	amount: 'Количество',
 	convert: 'Конвертировать',
 	invalid_amount: 'Неверное количество',
@@ -401,8 +402,8 @@ const ru = {
 	you_are_viewing_single_comments_thread_from: 'Вы читаете одну нить комментариев от',
 	view_the_full_context: 'Показать полный контекст',
 	this_is_a_price_feed_conversion: 'Неделя отсрочки, путем автоматической конвертации, необходима, в целях предотвращения злоупотребления спекуляцией, по средней ценовой котировке.',
-	your_existing_DEBT_TOKEN_are_liquid_and_transferable: 'Токены Золотой ликвидны и их можно передавать между аккаунтами. Перед запуском конвертации, проверьте опции {link} Золотой, на внутренней бирже. Также, токен Золотой, доступен к выводу (и торговле) на внешних биржах.',
-	buy_or_sell: 'Купить или Продать',
+	your_existing_DEBT_TOKEN_are_liquid_and_transferable: 'Токены ' + DEBT_TOKEN_CASE() + ' ликвидны и их можно передавать между аккаунтами. Перед запуском конвертации, проверьте опции {link} ' + DEBT_TOKEN_CASE() + ', на внутренней бирже. Также, токен ' + DEBT_TOKEN_CASE() +', доступен к выводу (и торговле) на внешних биржах.',
+	buy_or_sell: 'купить / продать',
 	trending_30_day: 'Популярное (30 дней)',
     trending30: 'Популярное за 30 дней',
 	promoted: 'Продвигаемое',
@@ -489,10 +490,10 @@ const ru = {
 	tradeable_tokens_that_may_be_transferred_anywhere_at_anytime: 'Перемещаемые цифровые токены, которые могут быть переданы куда угодно в любой момент.',
 	LIQUID_TOKEN_can_be_converted_to_VESTING_TOKEN_in_a_process_called_powering_up: LIQUID_TOKEN + ' может быть конвертирован в ' + VESTING_TOKEN + ', этот процесс называется "усиление голоса".',
 	tokens_worth_about_AMOUNT_of_LIQUID_TOKEN: 'Перемещаемые цифровые токены, цена которых всегда равна ~1 мг золота в ' + LIQUID_TOKEN + '.',
-	influence_tokens_which_earn_more_power_by_holding_long_term: 'Сила Голоса неперемещаемая, количество токенов Силы Голоса, увеличивается при долгосрочном хранении.',
+	influence_tokens_which_earn_more_power_by_holding_long_term: 'Сила Голоса неперемещаемая, количество токенов ' + VESTING_TOKEN_CASE('ы') +', увеличивается при долгосрочном хранении.',
 	the_more_you_hold_the_more_you_influence_post_rewards: 'Чем их больше, тем сильней вы влияете на вознаграждения за пост и тем больше зарабатываете за голосование.',
 	the_estimated_value_is_based_on_a_7_day_average_value_of_LIQUID_TOKEN_in_currency: 'Оценочная стоимость рассчитывается из 7-ми дневной средней стоимости ' + LIQUID_TOKEN + '.',
-	VESTING_TOKEN_is_non_transferrable_and_will_require_2_years_and_104_payments_to_convert_back_to_LIQUID_TOKEN: VESTING_TOKEN + ' нельзя передать другому аккаунты, потребуется 2 года или 104, равных выплаты чтобы конвертировать её обратно в ' + LIQUID_TOKEN + '.',
+	VESTING_TOKEN_is_non_transferrable_and_will_require_2_years_and_104_payments_to_convert_back_to_LIQUID_TOKEN: VESTING_TOKEN_CASE('у') + ' нельзя передать другому аккаунты, потребуется 2 года или 104, равных выплаты чтобы конвертировать её обратно в ' + LIQUID_TOKEN + '.',
 	// TODO
 	converted_VESTING_TOKEN_can_be_sent_to_yourself_but_can_not_transfer_again: 'Конвертированная ' + VESTING_TOKEN + ' может быть отправлена себе или кому-то еще, но не может быть передана вновь без конвертирования назад в ' + LIQUID_TOKEN + '.',
 	profile: 'Профиль',
@@ -515,7 +516,7 @@ const ru = {
 	promote_post: 'Продвинуть пост',
 	spend_your_DEBT_TOKEN_to_advertise_this_post: 'Используйте ваши ' + DEBT_TOKEN + ' чтобы прорекламировать этот пост в секции продвигаемого контента',
 	you_successdully_promoted_this_post: 'Вы успешно продвинули этот пост',
-	pay_me_100_in_VESTING_TOKEN: 'Заплатите мне 100% в ' + VESTING_TOKEN,
+	pay_me_100_in_VESTING_TOKEN: 'Заплатите мне 100% в ' + VESTING_TOKEN_CASE('е'),
 	requires_5_or_more_reddit_comment_karma: 'необходимо 5 или больше Reddit кармы комментирования',
 	this_post_was_hidden_due_to_low_ratings: 'Этот пост был скрыт из-за низкого рейтинга',
 	reblogged_by: 'Поделился',

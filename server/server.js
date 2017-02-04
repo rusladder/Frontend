@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import Koa from 'koa';
 import mount from 'koa-mount';
-import helmet from 'koa-helmet';
+//import helmet from 'koa-helmet';
 import koa_logger from 'koa-logger';
 import prod_logger from './prod_logger';
 import favicon from 'koa-favicon';
@@ -116,7 +116,7 @@ if (env === 'production') {
     app.use(koa_logger());
 }
 
-app.use(helmet());
+//app.use(helmet());
 
 app.use(mount('/static', staticCache(path.join(__dirname, '../app/assets/static'), cacheOpts)));
 
@@ -150,7 +150,7 @@ useUserJson(app);
 
 
 if (env === 'production') {
-    app.use(helmet.contentSecurityPolicy(config.helmet));
+    //app.use(helmet.contentSecurityPolicy(config.helmet));
 }
 
 useAccountRecoveryApi(app);

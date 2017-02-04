@@ -4,7 +4,7 @@ ecc_config.address_prefix = "GLS";
 
 // let chain_id = ""
 // for(let i = 0; i < 32; i++) chain_id += "00"
-let chain_id = config.CHAIN_ID || "18dcf0a285365fc58b71f18b3d3fec954aa0c141c44e4e5cb4cf777b9eab274e"
+let chain_id = config.CHAIN_ID || "5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679"
 console.log (chain_id, "CHAIN_ID")
 
 module.exports = {

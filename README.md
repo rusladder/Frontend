@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/goloschain/docs-api/master/source/images/golosdev.png" alt="Golos API Portal" width="226">
+  <img src="https://raw.githubusercontent.com/GolosChain/tolstoy/gh-pages/images/golosdev.png" alt="Golos API Portal" width="226">
   <br>
   <br>
   
@@ -7,7 +7,7 @@
 
 <p align="center">Welcome to the <a href="https://golos.io" target="_blank">Golos</a> API and Developer Docs.</p>
 
-<p align="center"><img src="https://raw.githubusercontent.com/goloschain/docs-api/master/source/images/preview.png" width=700 alt="\"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/GolosChain/tolstoy/gh-pages/images/preview.png" width=700 alt="\"></p>
 
 <p align="center">The Live Golos API Developer docs can be viewed at<a href="https://goloschain.github.io/docs-api" target="_blank"> golos.io API docs</a></p>
 ------------------------------

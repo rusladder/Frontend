@@ -9,6 +9,7 @@ import sanitize from 'sanitize-html'
 import HtmlReady from 'shared/HtmlReady'
 import {translate} from 'app/Translator';
 import EmbedView from 'app/components/elements/EmbedView';
+import MathView from 'app/components/elements/MathView';
 import links from 'app/utils/Links';
 import { isWhite } from 'app/utils/EmbedContentWhitelist';
 
@@ -153,6 +154,15 @@ class MarkdownViewer extends Component {
                 }
 
             }
+
+            match = section.match(/\$latex(?:\s*|\s+)(?:[^$]+)\$/);
+            if (match && match.length == 0) {
+                const formula = match[0]
+                sections.push(<MathView key={idx++} formula={formula} />)
+                section = section.substring(`${formula} ~~~`.length)
+                if(section === '') continue
+            }
+
             sections.push(<div key={idx++} dangerouslySetInnerHTML={{__html: section}} />)
         }
 

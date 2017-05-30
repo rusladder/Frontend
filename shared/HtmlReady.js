@@ -170,6 +170,7 @@ function linkifyNode(child, state, resolve) {try{
     if(embedYouTubeNode(child, state.links, state.images)) return
     if(embedVimeoNode(child, state.links, state.images)) return
     if(embedContentNode(child, state.links, resolve)) return
+    if(mathContentNode(child)) return
 
     const data = XMLSerializer.serializeToString(child)
     const content = linkify(data, state.mutate, state.hashtags, state.usertags, state.images, state.links)
@@ -282,6 +283,23 @@ function embedContentNode(child, links, resolve) {try{
     const v = DOMParser.parseFromString(`~~~ embed:${url} ~~~`)
     child.parentNode.replaceChild(v, child)
     if(links) links.add(url)
+
+    return true
+} catch(error) {console.log(error); return false}}
+
+function mathContentNode(child) {try{
+    if(!child.data) return false
+
+    let math
+    {
+        const m = child.data.match(/\$latex(?:\s*|\s+)(?:[^$]+)\$/)
+        math = m ? m[0] : null
+
+    }
+    if(!math) return false
+
+    const v = DOMParser.parseFromString(`~~~ embed:${math} ~~~`)
+    child.parentNode.replaceChild(v, child)
 
     return true
 } catch(error) {console.log(error); return false}}

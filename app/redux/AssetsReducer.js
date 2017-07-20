@@ -1,12 +1,12 @@
 import createModule from 'redux-modules';
+import {fromJS, Map} from 'immutable';
 
 import {immutableCore, global_object} from 'app/utils/Assets/assets_fake_data';
 
 const defaultState = {
     assets: {},
     asset: {},
-    core: immutableCore,
-    globalObject: global_object
+    core: Map()
 };
 
 export default createModule({
@@ -24,6 +24,13 @@ export default createModule({
             reducer: (state, {payload}) => {
                 return state.set('asset', payload)
             }
-        }
+        },
+        {
+            action: 'RECEIVE_CORE_ASSET',
+            reducer: (state, {payload}) => {
+                return state.set('core', payload)
+            }
+        },
+
     ]
 });

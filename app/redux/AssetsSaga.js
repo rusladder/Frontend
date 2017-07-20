@@ -1,15 +1,19 @@
 import { takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
+import { fromJS } from 'immutable'
 import AssetsReducer from './AssetsReducer';
 import big from "bignumber.js";
+import { findSigningKey } from 'app/redux/AuthSaga'
 import utils from 'app/utils/Assets/utils';
-import Immutable from "immutable";
+
+import {api, broadcast} from 'golos-js';
 
 import {getAssets} from 'app/utils/Assets/assets_fake_data';
 
 export const assetsWatches = [
     watchLocationChange,
     watchGetAsset,
+    watchGetCoreAsset,
     watchCreateAsset,
     watchUpdateAsset,
     watchIssueAsset,
@@ -22,6 +26,10 @@ export function* watchLocationChange() {
 
 export function* watchGetAsset() {
     yield* takeLatest('GET_ASSET', fetchAsset);
+}
+
+export function* watchGetCoreAsset() {
+    yield* takeLatest('GET_CORE_ASSET', getCoreAsset);
 }
 
 export function* watchCreateAsset() {
@@ -38,6 +46,14 @@ export function* watchIssueAsset() {
 
 export function* watchReserveAsset() {
     yield* takeLatest('RESERVE_ASSET', reserveAsset);
+}
+
+export function* getCoreAsset(){
+    let coreAsset = yield call([api, api.getAssetsAsync], ['GOLOS']);
+    // const dynamicData = yield call([api, api.getAssetsDynamicDataAsync], ['GOLOS']);
+    coreAsset = fromJS(coreAsset[0]);
+    // coreAsset = coreAsset.set('dynamic_data', fromJS(dynamicData[0]))
+    yield put(AssetsReducer.actions.receiveCoreAsset(coreAsset));
 }
 
 export function* fetchAssets() {
@@ -57,24 +73,16 @@ export function* fetchAsset({payload: {symbol}}) {
 }
 
 export function* createAsset({payload: {account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket, bitassetOpts, description}}) {
-    console.log("createAsset", account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket, bitassetOpts, description);
 
     const precision = utils.get_asset_precision(createObject.precision);
     big.config({DECIMAL_PLACES: createObject.precision});
     let max_supply = (new big(createObject.max_supply)).times(precision).toString();
     let max_market_fee = (new big(createObject.max_market_fee || 0)).times(precision).toString();
-    // console.log("max_supply:", max_supply);
-    // console.log("max_market_fee:", max_market_fee);
-
-    const corePrecision = 0 //TODO utils.get_asset_precision(getAsset(cer.base.asset_name).get("precision"));
 
     const operationJSON = {
-        fee: {
-            amount: 0,
-            asset_name: 0
-        },
+        fee:  '0.001 GOLOS',
         issuer: account,
-        symbol: createObject.symbol,
+        asset_name: createObject.symbol,
         precision: parseInt(createObject.precision, 10),
         common_options: {
             max_supply: max_supply,
@@ -83,14 +91,8 @@ export function* createAsset({payload: {account, createObject, flags, permission
             issuer_permissions: permissions,
             flags: flags,
             core_exchange_rate: {
-                base: {
-                    amount: coreExchangeRate.base.amount * corePrecision,
-                    asset_name: coreExchangeRate.base.asset_name
-                },
-                quote: {
-                    amount: coreExchangeRate.quote.amount * precision,
-                    asset_name: "" //FIXME
-                }
+                base:  coreExchangeRate.base,
+                quote: coreExchangeRate.quote
             },
             whitelist_authorities: [],
             blacklist_authorities: [],
@@ -107,6 +109,7 @@ export function* createAsset({payload: {account, createObject, flags, permission
         operationJSON.bitasset_opts = bitassetOpts;
     }
 
+    console.log('asset_create', operationJSON);
     //TODO asset_create operationJSON
 }
 

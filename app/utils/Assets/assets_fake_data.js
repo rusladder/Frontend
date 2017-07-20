@@ -225,6 +225,39 @@ export const core = {
 
 export const immutableCore = Immutable.fromJS(core)
 
+const golosAsset = {
+    "id":0,
+    "asset_name":"GOLOS",
+    "precision":3,
+    "issuer":"null",
+    "market_issued":false,
+    "options":{
+        "max_supply":"1000000000000000",
+        "market_fee_percent":0,
+        "max_market_fee":"1000000000000000",
+        "issuer_permissions":0,
+        "flags":0,
+        "core_exchange_rate":{
+            "base":"0.001 GOLOS",
+            "quote":"0.001 GOLOS"
+        },
+        "whitelist_authorities":[],
+        "blacklist_authorities":[],
+        "whitelist_markets":[],
+        "blacklist_markets":[],
+        "description":"",
+        "extensions":[]
+    },
+    'dynamic_data' : {
+        "id":0,
+        "asset_name":"GOLOS",
+        "current_supply":"43310388291",
+        "confidential_supply":0,
+        "accumulated_fees":0,
+        "fee_pool":0
+    }
+}
+
 export const globalObject = {
     "id":"2.0.0",
     "parameters":{

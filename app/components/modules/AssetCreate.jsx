@@ -7,7 +7,6 @@ import AmountSelector from 'app/components/elements/AmountSelector'
 import assetConstants from "app/utils/Assets/Constants";
 import assetUtils from "app/utils/Assets/AssetsUtils";
 import utils from 'app/utils/Assets/utils';
-import FormattedAsset from "app/components/elements/FormattedAsset";
 import {validate_asset_symbol} from 'app/utils/ChainValidation';
 
 let MAX_SAFE_INT = new big("9007199254740991");
@@ -15,6 +14,7 @@ let MAX_SAFE_INT = new big("9007199254740991");
 class BitAssetOptions extends React.Component {
 
     static propTypes = {
+        backingAsset: PropTypes.string.isRequired,
         isUpdate: PropTypes.bool
     };
 
@@ -25,7 +25,7 @@ class BitAssetOptions extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            backingAsset: props.backingAsset.symbol,
+            backingAsset: this.props.backingAsset,
             error: null
         };
     }
@@ -55,8 +55,8 @@ class BitAssetOptions extends React.Component {
     }
 
     render() {
-        let {bitasset_opts} = this.props;
-        let {error} = this.state;
+        let { bitasset_opts } = this.props;
+        let { error } = this.state;
 
         return (
             <div className="column small-12">
@@ -96,7 +96,7 @@ class BitAssetOptions extends React.Component {
                     <div className="column small-12">
                         <label>{tt('user_issued_assets.force_settlement_offset_percent')}
                             <input type="number"
-                                   value={bitasset_opts.force_settlement_offset_percent / assetConstants.GRAPHENE_1_PERCENT}
+                                   value={bitasset_opts.force_settlement_offset_percent / assetConstants.STEEMIT_1_PERCENT}
                                    onChange={this.props.onUpdate.bind(this, "force_settlement_offset_percent")}/>
                         </label>
                     </div>
@@ -106,7 +106,7 @@ class BitAssetOptions extends React.Component {
                     <div className="column small-12">
                         <label>{tt('user_issued_assets.maximum_force_settlement_volume')}
                             <input type="number"
-                                   value={bitasset_opts.maximum_force_settlement_volume / assetConstants.GRAPHENE_1_PERCENT}
+                                   value={bitasset_opts.maximum_force_settlement_volume / assetConstants.STEEMIT_1_PERCENT}
                                    onChange={this.props.onUpdate.bind(this, "maximum_force_settlement_volume")}/>
                         </label>
                     </div>
@@ -116,7 +116,7 @@ class BitAssetOptions extends React.Component {
                     <div className="column small-12">
                         <label>
                             {tt('user_issued_assets.backing')}
-                            <input /*AssetSelector*/
+                            <input /* FIXME AssetSelector*/
                                 type="text"
                                 value={this.state.backingAsset || ""}
                                 placeholder={tt('user_issued_assets.backing')}
@@ -134,13 +134,16 @@ class BitAssetOptions extends React.Component {
 class AssetCreate extends React.Component {
 
     static propTypes = {
-        core: PropTypes.any.isRequired,
-        globalObject: PropTypes.any.isRequired,
+        core: PropTypes.any.isRequired
     };
 
     constructor(props) {
         super(props);
         this.state = this.resetState();
+    }
+
+    componentDidMount() {
+        this.props.fetchCoreAsset();
     }
 
     resetState() {
@@ -166,22 +169,16 @@ class AssetCreate extends React.Component {
             isBitAsset: isBitAsset,
             is_prediction_market: false,
             core_exchange_rate: {
-                quote: {
-                    asset_id: null,
-                    amount: 1
-                },
-                base: {
-                    asset_id: "1.3.0",
-                    amount: 1
-                }
+                quote: "0.001 GOLOS",
+                base: "0.001 GOLOS"
             },
             bitasset_opts: {
-                feed_lifetime_sec : 60 * 60 * 24,
-                minimum_feeds : 7,
-                force_settlement_delay_sec : 60 * 60 * 24,
-                force_settlement_offset_percent : 1 * assetConstants.GRAPHENE_1_PERCENT,
-                maximum_force_settlement_volume : 20 * assetConstants.GRAPHENE_1_PERCENT,
-                short_backing_asset : "1.3.0"
+                feed_lifetime_sec : assetUtils.STEEMIT_DEFAULT_PRICE_FEED_LIFETIME,
+                minimum_feeds : 1,
+                force_settlement_delay_sec : assetUtils.STEEMIT_DEFAULT_FORCE_SETTLEMENT_DELAY,
+                force_settlement_offset_percent : assetUtils.STEEMIT_DEFAULT_FORCE_SETTLEMENT_OFFSET,
+                maximum_force_settlement_volume : assetUtils.STEEMIT_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME,
+                short_backing_asset : "GOLOS"
             },
             marketInput: ""
         };
@@ -215,7 +212,7 @@ class AssetCreate extends React.Component {
         switch (value) {
             case "force_settlement_offset_percent":
             case "maximum_force_settlement_volume":
-                bitasset_opts[value] = parseFloat(e.target.value) * assetConstants.GRAPHENE_1_PERCENT;
+                bitasset_opts[value] = parseFloat(e.target.value) * assetConstants.STEEMIT_1_PERCENT;
                 break;
 
             case "feed_lifetime_sec":
@@ -328,7 +325,8 @@ class AssetCreate extends React.Component {
         let amount, asset;
         if (type === "quote") {
             amount = utils.limitByPrecision(e.target.value, this.state.update.precision);
-            asset = null;
+            const { symbol } = this.state.update;
+            asset = symbol;
         } else {
             if (!e || !("amount" in e)) {
                 return;
@@ -337,15 +335,12 @@ class AssetCreate extends React.Component {
             amount = e.amount == ""
                 ? "0"
                 : utils.limitByPrecision(e.amount.toString().replace(/,/g, ""), precision);
-            asset = e.asset.get("id");
+            asset = 'GOLOS';
         }
 
         const {core_exchange_rate} = this.state;
-        core_exchange_rate[type] = {
-            amount: amount,
-            asset_id: asset
-        };
-        this.forceUpdate();
+        core_exchange_rate[type] = [amount, asset].join(' ');
+        this.setState(core_exchange_rate);
     }
 
     onToggleBitAsset() {
@@ -357,8 +352,6 @@ class AssetCreate extends React.Component {
         const {flagBooleans, permissionBooleans} = this.getPermissions(this.state);
         this.setState({flagBooleans});
         this.setState({permissionBooleans});
-
-        this.forceUpdate();
     }
 
     validateEditFields( new_state ) {
@@ -394,14 +387,16 @@ class AssetCreate extends React.Component {
     onTogglePM() {
         this.state.is_prediction_market = !this.state.is_prediction_market;
         this.state.update.precision = this.props.core.get("precision");
-        this.state.core_exchange_rate.base.asset_name = this.props.core.get("asset_name");
-        this.forceUpdate();
+        //FIXME
+        // this.state.core_exchange_rate.base.asset_name = this.props.core.get("asset_name");
     }
 
     createAsset(e) {
         e.preventDefault();
         const { update, flagBooleans, permissionBooleans, core_exchange_rate,
             isBitAsset, is_prediction_market, bitasset_opts } = this.state;
+
+        this.validateEditFields(update);
 
         const { account } = this.props;
 
@@ -412,39 +407,21 @@ class AssetCreate extends React.Component {
             update.description.market = "";
         }
         const description = JSON.stringify(update.description);
-
-        this.props.assetCreate(account.name, update, flags, permissions, core_exchange_rate, isBitAsset, is_prediction_market, bitasset_opts, description);
+        const done = () => {this.setState({busy: false})};
+        this.props.assetCreate(account.name, update, flags, permissions, core_exchange_rate, isBitAsset, is_prediction_market, bitasset_opts, description, done);
     }
 
     reset(e) {
         e.preventDefault();
-
         this.setState(
             this.resetState(this.props)
         );
     }
 
     render() {
-        const { globalObject, core } = this.props;
+        const { core } = this.props;
         const { errors, isValid, update, flagBooleans, permissionBooleans,
             core_exchange_rate, is_prediction_market, isBitAsset, bitasset_opts } = this.state;
-
-        //only for DEBUG
-        // is_prediction_market = true;
-
-        // Estimate the asset creation fee from the symbol character length
-        let symbolLength = update.symbol.length;
-        let createFee = "N/A";
-
-        if(symbolLength === 3) {
-            createFee = <FormattedAsset amount={utils.estimateFee("asset_create", ["symbol3"], globalObject)} asset={"1.3.0"} />;
-        }
-        else if(symbolLength === 4) {
-            createFee = <FormattedAsset amount={utils.estimateFee("asset_create", ["symbol4"], globalObject)} asset={"1.3.0"} />;
-        }
-        else if(symbolLength > 4) {
-            createFee = <FormattedAsset amount={utils.estimateFee("asset_create", ["long_symbol"], globalObject)} asset={"1.3.0"} />;
-        }
 
         // Loop over flags
         let flags = [];
@@ -488,10 +465,12 @@ class AssetCreate extends React.Component {
             )
         }
 
+        const quoteAmount = assetUtils.splitAmount(core_exchange_rate.quote);
+        const baseAmount = assetUtils.splitAmount(core_exchange_rate.base);
         const price = utils.get_asset_price(
-            core_exchange_rate.quote.amount * utils.get_asset_precision(update.precision),
+            quoteAmount[0] * utils.get_asset_precision(update.precision),
             {precision: update.precision},
-            core_exchange_rate.base.amount * utils.get_asset_precision(core),
+            baseAmount[0] * utils.get_asset_precision(core),
             core);
         const formattedPrice = price.toFixed(2 + (parseInt(update.precision, 10) || 8));
 
@@ -581,9 +560,9 @@ class AssetCreate extends React.Component {
                                             <div className="inline-label">
                                                 <input
                                                     type="text"
-                                                    placeholder="0.0"
+                                                    placeholder="0.001"
                                                     onChange={this.onCoreRateChange.bind(this, "quote")}
-                                                    value={core_exchange_rate.quote.amount}
+                                                    value={assetUtils.splitAmount(core_exchange_rate.quote)[0]}
                                                 />
                                             </div>
                                         </div>
@@ -592,10 +571,10 @@ class AssetCreate extends React.Component {
                                     <div className="column small-12 medium-6">
                                          <AmountSelector
                                             label={tt('user_issued_assets.base')}
-                                            amount={core_exchange_rate.base.amount}
+                                            amount={assetUtils.splitAmount(core_exchange_rate.base)[0]}
                                             onChange={this.onCoreRateChange.bind(this, "base")}
-                                            asset={core_exchange_rate.base.asset_id}
-                                            placeholder="0.0"
+                                            asset={assetUtils.splitAmount(core_exchange_rate.base)[1]}
+                                            placeholder="0.001"
                                             tabIndex={1}
                                         />
                                     </div>
@@ -604,7 +583,7 @@ class AssetCreate extends React.Component {
                                     <h5>
                                         {tt('asset_create_jsx.price')}
                                         <span>: {formattedPrice}</span>
-                                        <span> {update.symbol}/{core.get("symbol")}</span>
+                                        <span> {update.symbol}/{core.get("asset_name")}</span>
                                     </h5>
                                 </div>
                             </label>
@@ -723,26 +702,27 @@ class AssetCreate extends React.Component {
                                             </tr>
                                             </tbody>
                                         </table>
-                                        <div className={{disabled: !flagBooleans.charge_market_fee}}>
-                                            <div className="row margin">
-                                                <div className="column small-6">
-                                                    <label>{tt('user_issued_assets.market_fee')} (%)
-                                                        <input
-                                                            type="number"
-                                                            value={update.market_fee_percent}
-                                                            onChange={this.onUpdateInput.bind(this, "market_fee_percent")}/>
-                                                    </label>
-                                                </div>
-                                                <div className="column small-6">
-                                                    <label>{tt('user_issued_assets.max_market_fee')} ({update.symbol})
-                                                        <input
-                                                            type="number"
-                                                            value={update.max_market_fee}
-                                                            onChange={this.onUpdateInput.bind(this, "max_market_fee")}/>
-                                                    </label>
-                                                </div>
-                                                { errors.max_market_fee ? <p className="error">{errors.max_market_fee}</p> : null}
+
+                                        <div className="row margin">
+                                            <div className="column small-6">
+                                                <label>{tt('user_issued_assets.market_fee')} (%)
+                                                    <input
+                                                        disabled={!flagBooleans.charge_market_fee}
+                                                        type="number"
+                                                        value={update.market_fee_percent}
+                                                        onChange={this.onUpdateInput.bind(this, "market_fee_percent")}/>
+                                                </label>
                                             </div>
+                                            <div className="column small-6">
+                                                <label>{tt('user_issued_assets.max_market_fee')} ({update.symbol})
+                                                    <input
+                                                        disabled={!flagBooleans.charge_market_fee}
+                                                        type="number"
+                                                        value={update.max_market_fee}
+                                                        onChange={this.onUpdateInput.bind(this, "max_market_fee")}/>
+                                                </label>
+                                            </div>
+                                            { errors.max_market_fee ? <p className="error">{errors.max_market_fee}</p> : null}
                                         </div>
                                     </div>
                                  </div>)
@@ -770,7 +750,6 @@ class AssetCreate extends React.Component {
                         <button className="button hollow" onClick={this.reset.bind(this)} value= {tt('asset_create.reset')}>
                             {tt('asset_create_jsx.reset')}
                         </button>
-                        <p>{tt('user_issued_assets.approx_fee')}: {createFee}</p>
                     </div>
                 </div>
             </div>
@@ -781,20 +760,30 @@ class AssetCreate extends React.Component {
 export default connect(
     state => {
         return {
-            core: state.assets.get('core'),
-            globalObject: state.assets.get('globalObject')
+            core: state.assets.get('core')
         }
     },
     dispatch => ({
-        assetCreate : (account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket, bitassetOpts, description) => {
-            dispatch({
-                type: 'CREATE_ASSET',
-                payload: {account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket, bitassetOpts, description}
-            })
+        fetchCoreAsset : () => {
+            dispatch({type: 'GET_CORE_ASSET'})
         },
 
-        reserveAsset : (amount, assetId, account) =>{
-
+        assetCreate : (account, createObject, flags, permissions, coreExchangeRate,
+                       isBitAsset, isPredictionMarket, bitassetOpts, description) => {
+            dispatch({
+                type: 'CREATE_ASSET',
+                payload: {
+                    account,
+                    createObject,
+                    flags,
+                    permissions,
+                    coreExchangeRate,
+                    isBitAsset,
+                    isPredictionMarket,
+                    bitassetOpts,
+                    description
+                }
+            })
         }
     })
 )(AssetCreate);

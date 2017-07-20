@@ -2,6 +2,14 @@ import assetConstants from "app/utils/Assets/Constants";
 
 export default class AssetUtils {
 
+    static splitAmount(amount) {
+        const res = amount.split(' ');
+        return [
+            res[0], //amount
+            res[1] //asset_name
+        ];
+    }
+
     static getFlagBooleans(mask, isBitAsset = false) {
         let booleans = {
             charge_market_fee    : false,
@@ -13,7 +21,7 @@ export default class AssetUtils {
             disable_confidential : false,
             witness_fed_asset    : false,
             committee_fed_asset  : false
-        }
+        };
 
         if (mask === "all") {
             for (let flag in booleans) {
@@ -48,7 +56,7 @@ export default class AssetUtils {
             if (flagBooleans[key] && key !== "global_settle") {
                 flags += assetConstants.permission_flags[key];
             }
-        })
+        });
 
         return flags;
     }
@@ -60,7 +68,7 @@ export default class AssetUtils {
             if (flagBooleans[permission] && permission !== "global_settle") {
                 flags += assetConstants.permission_flags[permission];
             }
-        })
+        });
 
         if (isBitAsset) {
             flags += assetConstants.permission_flags["global_settle"];

@@ -1,12 +1,13 @@
 import { takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { fromJS } from 'immutable'
-import AssetsReducer from './AssetsReducer';
 import big from "bignumber.js";
-import { findSigningKey } from 'app/redux/AuthSaga'
+import AssetsReducer from './AssetsReducer';
+import transaction from 'app/redux/Transaction';
 import utils from 'app/utils/Assets/utils';
+import assetConstants from "app/utils/Assets/Constants";
 
-import {api, broadcast} from 'golos-js';
+import { api } from 'golos-js';
 
 import {getAssets} from 'app/utils/Assets/assets_fake_data';
 
@@ -72,15 +73,17 @@ export function* fetchAsset({payload: {symbol}}) {
     yield put(AssetsReducer.actions.getAsset(state));
 }
 
-export function* createAsset({payload: {account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket, bitassetOpts, description}}) {
+export function* createAsset({payload: {
+    account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket,
+    bitassetOpts, description}}) {
 
     const precision = utils.get_asset_precision(createObject.precision);
     big.config({DECIMAL_PLACES: createObject.precision});
     let max_supply = (new big(createObject.max_supply)).times(precision).toString();
     let max_market_fee = (new big(createObject.max_market_fee || 0)).times(precision).toString();
 
-    const operationJSON = {
-        fee:  '0.001 GOLOS',
+    const createAssetObject = {
+        fee:  assetConstants.ASSET_DEFAULT_FEE,
         issuer: account,
         asset_name: createObject.symbol,
         precision: parseInt(createObject.precision, 10),
@@ -99,18 +102,31 @@ export function* createAsset({payload: {account, createObject, flags, permission
             whitelist_markets: [],
             blacklist_markets: [],
             description: description,
-            extensions: null
+            extensions: []
         },
         is_prediction_market: isPredictionMarket,
-        extensions: null
+        extensions: []
     };
 
     if (isBitAsset) {
-        operationJSON.bitasset_opts = bitassetOpts;
+        createAssetObject.bitasset_opts = bitassetOpts;
     }
 
-    console.log('asset_create', operationJSON);
-    //TODO asset_create operationJSON
+    yield put(transaction.actions.broadcastOperation(
+        {
+            type: 'asset_create',
+            operation: createAssetObject,
+            successCallback,
+            errorCallback
+        }
+    ));
+}
+
+function successCallback() {
+    console.log('successCallback')
+}
+function errorCallback() {
+    console.log('successCallback')
 }
 
 export function* updateAsset({payload: {issuer, new_issuer, update, coreExchangeRate, asset, flags, permissions,
@@ -130,14 +146,10 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     const coreQuoteAmount = (new big(coreExchangeRate.quote.amount)).times(coreQuotePrecision).toString();
     const coreBaseAmount = (new big(coreExchangeRate.base.amount)).times(coreBasePrecision).toString();
 
-    const updateObject = {
-        fee: {
-            amount: 0,
-            asset_name: 0
-        },
-        asset_to_update: asset.get("asset_name"),
-        extensions: asset.get("extensions"),
+    const updateAssetObject = {
+        fee:  assetConstants.ASSET_DEFAULT_FEE,
         issuer: issuer,
+        asset_to_update: asset.get("asset_name"),
         new_issuer: new_issuer,
         new_options: {
             max_supply: maxSupply,
@@ -152,22 +164,25 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
             blacklist_markets: asset.getIn(["options", "blacklist_markets"]),
             extensions: asset.getIn(["options", "extensions"]),
             core_exchange_rate: {
-                quote: {
-                    amount: coreQuoteAmount,
-                    asset_name: coreExchangeRate.quote.asset_name
-                },
-                base: {
-                    amount: coreBaseAmount,
-                    asset_name: coreExchangeRate.base.asset_name
-                }
+                base:  coreExchangeRate.base,
+                quote: coreExchangeRate.quote
             }
-        }
+        },
+        extensions: asset.get("extensions")
     };
 
     if (issuer === new_issuer || !new_issuer) {
         delete updateObject.new_issuer;
     }
-    //TODO asset_update updateObject
+
+    yield put(transaction.actions.broadcastOperation(
+        {
+            type: 'asset_update',
+            operation: updateAssetObject,
+            successCallback,
+            errorCallback
+        }
+    ));
 
     //console.log("bitassetOpts:", bitassetOpts, "originalBitassetOpts:", originalBitassetOpts);
 
@@ -179,17 +194,22 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
         bitassetOpts.maximum_force_settlement_volume !== originalBitassetOpts.maximum_force_settlement_volume ||
         bitassetOpts.short_backing_asset !== originalBitassetOpts.short_backing_asset)) {
 
-        const bitAssetUpdateObject = {
-            fee: {
-                amount: 0,
-                asset_name: 0
-            },
+        const updateBitAssetObject = {
+            fee:  assetConstants.ASSET_DEFAULT_FEE,
             asset_to_update: asset.get("asset_name"),
             issuer: issuer,
-            new_options: bitassetOpts
+            new_options: bitassetOpts,
+            extensions: []
         };
 
-        //TODO asset_update_bitasset bitAssetUpdateObject
+        yield put(transaction.actions.broadcastOperation(
+            {
+                type: 'asset_update_bitasset',
+                operation: updateBitAssetObject,
+                successCallback,
+                errorCallback
+            }
+        ));
     }
 }
 
@@ -200,27 +220,30 @@ export function* issueAsset({payload: {to, from, assetName, amount, memo}}) {
     };
 
     const issueAssetObject ={
-        fee: {
-            amount: 0,
-            asset_name: 0
-        },
+        fee:  assetConstants.ASSET_DEFAULT_FEE,
         issuer: from,
         asset_to_issue: {
             amount: amount,
             asset_name: assetName
         },
         issue_to_account: to,
-        memo: memoObject
+        memo: memoObject,
+        extensions: []
     };
-    //TODO implement asset_issue issueAssetObject
+
+    yield put(transaction.actions.broadcastOperation(
+        {
+            type: 'asset_issue',
+            operation: issueAssetObject,
+            successCallback,
+            errorCallback
+        }
+    ));
 }
 
 export function* reserveAsset({payload: {amount, assetName, payer}}) {
     const reserveAssetObject = {
-        fee: {
-            amount: 0,
-            asset_name: 0
-        },
+        fee: assetConstants.ASSET_DEFAULT_FEE,
         payer,
         amount_to_reserve: {
             amount: amount,
@@ -229,5 +252,12 @@ export function* reserveAsset({payload: {amount, assetName, payer}}) {
         extensions: []
     };
 
-    //TODO implement asset_reserve reserveAssetObject
+    yield put(transaction.actions.broadcastOperation(
+        {
+            type: 'asset_reserve',
+            operation: reserveAssetObject,
+            successCallback,
+            errorCallback
+        }
+    ));
 }

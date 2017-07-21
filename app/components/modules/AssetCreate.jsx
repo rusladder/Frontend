@@ -173,11 +173,11 @@ class AssetCreate extends React.Component {
                 base: "0.001 GOLOS"
             },
             bitasset_opts: {
-                feed_lifetime_sec : assetUtils.STEEMIT_DEFAULT_PRICE_FEED_LIFETIME,
+                feed_lifetime_sec : assetConstants.STEEMIT_DEFAULT_PRICE_FEED_LIFETIME,
                 minimum_feeds : 1,
-                force_settlement_delay_sec : assetUtils.STEEMIT_DEFAULT_FORCE_SETTLEMENT_DELAY,
-                force_settlement_offset_percent : assetUtils.STEEMIT_DEFAULT_FORCE_SETTLEMENT_OFFSET,
-                maximum_force_settlement_volume : assetUtils.STEEMIT_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME,
+                force_settlement_delay_sec : assetConstants.STEEMIT_DEFAULT_FORCE_SETTLEMENT_DELAY,
+                force_settlement_offset_percent : assetConstants.STEEMIT_DEFAULT_FORCE_SETTLEMENT_OFFSET,
+                maximum_force_settlement_volume : assetConstants.STEEMIT_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME,
                 short_backing_asset : "GOLOS"
             },
             marketInput: ""

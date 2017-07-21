@@ -583,7 +583,7 @@ class AssetCreate extends React.Component {
                                     <h5>
                                         {tt('asset_create_jsx.price')}
                                         <span>: {formattedPrice}</span>
-                                        <span> {update.symbol}/{core.get("asset_name")}</span>
+                                        <span> {update.symbol} / {core.get("asset_name")}</span>
                                     </h5>
                                 </div>
                             </label>

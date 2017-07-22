@@ -74,17 +74,7 @@ const Utils = {
     },
 
     replaceName(name, isBitAsset = false) {
-        let toReplace = ["TRADE.", "OPEN.", "METAEX."];
-        let suffix = "";
-        for (var i = 0; i < toReplace.length; i++) {
-            if (name.indexOf(toReplace[i]) !== -1) {
-                name = name.replace(toReplace[i], "") + suffix;
-                break;
-            }
-        }
-
-        let prefix = isBitAsset ? "bit" : toReplace[i] ? toReplace[i].toLowerCase() : null;
-        if (prefix === "open.") prefix = "";
+        let prefix = isBitAsset ? "bit" : null;
 
         return {
             name,

@@ -26,7 +26,7 @@ export default class FormattedAsset extends React.Component {
         return (
             <span>
                 <span>{formatDecimal(this.props.exact_amount ? amount : amount / precision)}</span>&nbsp;
-                <span><AssetName name={asset.symbol} isBitAsset={('bitasset' in asset)}/></span>
+                <span><AssetName name={asset.asset_name} isBitAsset={('bitasset_opts' in asset)}/></span>
             </span>
         );
     }

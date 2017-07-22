@@ -1,50 +1,16 @@
 import React, { PropTypes } from "react";
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
 import tt from 'counterpart';
-import debounce from 'lodash.debounce';
 import FormattedAsset from "app/components/elements/FormattedAsset";
 import assetUtils from "app/utils/Assets/AssetsUtils";
 
 class AccountAssets extends React.Component {
-    static defaultProps = {
-        symbol: "",
-        name: "",
-        description: "",
-        max_supply: 0,
-        precision: 0
-    };
-
-    static propTypes = {
-        symbol: PropTypes.string.isRequired
-    };
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            create: {
-                symbol: "",
-                name: "",
-                description: "",
-                max_supply: 1000000000000000,
-                precision: 4
-            },
-            issue: {
-                amount: 0,
-                to: "",
-                to_id: "",
-                asset_id: "",
-                symbol: ""
-            },
-            errors: {
-                symbol: null
-            },
-            isValid: false,
-            searchTerm: ""
-        };
-
-        this.searchAccounts = debounce(this.searchAccounts, 150);
+        this.state = {};
     }
 
     checkAssets(assets, force) {
@@ -77,74 +43,64 @@ class AccountAssets extends React.Component {
         this.checkAssets(this.props.assets, true);
     }
 
-    searchAccounts(searchTerm) {
+    reserveButtonClick(asset_name, e) {
+        e.preventDefault();
+        this.setState({reserve: asset_name});
         //TODO implement
     }
 
-    reserveButtonClick(assetId, e) {
+    issueButtonClick(asset_name, e) {
         e.preventDefault();
-        this.setState({reserve: assetId});
-        //TODO implement
-    }
-
-    issueButtonClick(asset_id, symbol, e) {
-        e.preventDefault();
-        let {issue} = this.state;
-        issue.asset_id = asset_id;
-        issue.symbol = symbol;
+        const {issue} = this.state;
+        issue.asset_name = asset_name;
         this.setState({issue: issue});
         //TODO implement
     }
 
-    editButtonClick(symbol, account_name, e) {
+    editButtonClick(assetName, accountName, e) {
         e.preventDefault();
-        //TODO implement
-        //this.props.router.push(`${account_name}/update-asset/${symbol}`);
+        browserHistory.push(`/@${accountName}/update-asset/${assetName}`);
     }
 
     render() {
-        let {account, account_name, searchAccounts, assets} = this.props;
-        let {issue, errors, isValid, create} = this.state;
+        const {account, account_name, assets} = this.props;
 
-        let myAssets = assets
+        const myAssets = assets
         //TODO need for debug
         // .filter(asset => {
-        //     return asset.issuer === account.id;
+        //     return asset.issuer === account.id; //account_name
         // })
-        .sort((a, b) => {
-            return parseInt(a.id.substring(4, a.id.length), 10) - parseInt(b.id.substring(4, b.id.length), 10);
-        })
         .map(asset => {
-            const description = assetUtils.parseDescription(asset.options.description);
+            const description = assetUtils.parseDescription(asset.common_options.description);
             let desc = description.short_name ? description.short_name : description.main;
 
             if (desc.length > 100) {
                 desc = desc.substr(0, 100) + "...";
             }
             return (
-                <tr key={asset.symbol}>
-                    <td><Link to={`/asset/${asset.symbol}`}>{asset.symbol}</Link></td>
+                <tr key={asset.asset_name}>
+                    <td><Link to={`/asset/${asset.asset_name}`}>{asset.asset_name}</Link></td>
                     <td style={{maxWidth: "250px"}}>{desc}</td>
                     <td>{<FormattedAsset amount={parseInt(asset.dynamic_data.current_supply, 10)} asset={asset} />}</td>
-                    <td>{<FormattedAsset amount={parseInt(asset.options.max_supply, 10)} asset={asset} />}</td>
+                    <td>{<FormattedAsset amount={parseInt(asset.common_options.max_supply, 10)} asset={asset} />}</td>
                     <td>
-                        {!asset.bitasset_data_id
-                            ? (<button onClick={this.issueButtonClick.bind(this, asset.id, asset.symbol)} className="tiny button slim">
+                        {!asset.bitasset_opts
+                            ? (<button onClick={this.issueButtonClick.bind(this, asset.asset_name)} className="tiny button slim">
                                     {tt('account_assets_jsx.asset_issue')}
                                </button>)
                             : null
                         }
                     </td>
                     <td>
-                        {!asset.bitasset_data_id
-                            ? (<button onClick={this.reserveButtonClick.bind(this, asset.id)} className="tiny button slim">
+                        {!asset.bitasset_opts
+                            ? (<button onClick={this.reserveButtonClick.bind(this, asset.asset_name)} className="tiny button slim">
                                     {tt('account_assets_jsx.asset_reserve')}
                                 </button>)
                             : null
                         }
                     </td>
                     <td>
-                        <button onClick={this.editButtonClick.bind(this, asset.symbol, account_name)} className="tiny button slim">
+                        <button onClick={this.editButtonClick.bind(this, asset.asset_name, account_name)} className="tiny button slim">
                             {tt('account_assets_jsx.asset_update')}
                         </button>
                     </td>
@@ -160,8 +116,8 @@ class AccountAssets extends React.Component {
                             <h4>{tt('user_issued_assets.issued_assets')}</h4>
                         </div>
                         <div className="columns shrink right-column">
-                            <Link to={`/@${account_name}/create-asset/`}>
-                                <button className="button">{tt('account_assets_jsx.asset_create')}</button>
+                            <Link to={`/@${account_name}/create-asset/`} className="button">
+                                {tt('account_assets_jsx.asset_create')}
                             </Link>
                         </div>
                     </div>
@@ -185,8 +141,6 @@ class AccountAssets extends React.Component {
                         </div>
                     </div>
                 </div>
-
-                {/**TODO implement reactForm for asset_to_issue and reserve_asset */}
 
             </div>
         );

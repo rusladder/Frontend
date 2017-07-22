@@ -1,11 +1,13 @@
 import React, { PropTypes } from "react";
 import { connect } from 'react-redux';
+import { Link, browserHistory } from 'react-router';
 import tt from 'counterpart';
 import FormattedAsset from "app/components/elements/FormattedAsset";
 import FormattedPrice from "app/components/elements/FormattedPrice";
 import AssetName from "app/components/elements/AssetName";
 import assetUtils from "app/utils/Assets/AssetsUtils";
 import utils from 'app/utils/Assets/utils';
+
 
 class AssetFlag extends React.Component {
     render() {
@@ -67,21 +69,17 @@ class Asset extends React.Component {
         const quote = price.quote;
         return (<span>
              <FormattedPrice
-                base_amount={base.amount}
-                base_asset={base.asset_id}
-                quote_amount={quote.amount}
-                quote_asset={quote.asset_id}
-                hide_value={hide_value}
-                hide_symbols={hide_symbols}
+                base={base}
+                quote={quote}
             />
             </span>
         );
     }
 
     renderSummary(asset) {
-        const dynamic = asset.dynamic;
-        const options = asset.options;
-        const flagBooleans = assetUtils.getFlagBooleans(asset.options.flags, ('bitasset_data_id' in asset) ? asset.bitasset_data_id: false);
+        const dynamic = asset.dynamic_data;
+        const options = asset.common_options;
+        const flagBooleans = assetUtils.getFlagBooleans(asset.common_options.flags, ('bitasset_opts' in asset));
         const bitNames = Object.keys(flagBooleans);
 
         const currentSupply = (dynamic) ? (
@@ -114,12 +112,12 @@ class Asset extends React.Component {
 
         return (
             <div className="asset-card">
-                <h4>{<AssetName name={asset.symbol} />}</h4>
+                <h4>{<AssetName name={asset.asset_name} />}</h4>
                 <table>
                     <tbody>
                     <tr>
                         <td> {tt('asset_jsx.asset_type')} </td>
-                        <td> {('bitasset' in asset) ? (asset.bitasset.is_prediction_market ? 'Prediction' : 'Smart') : 'Simple'} </td>
+                        <td> {('bitasset_opts' in asset) ? (asset.is_prediction_market ? 'Prediction' : 'Smart') : 'Simple'} </td>
                     </tr>
                     <tr>
                         <td> {tt('asset_jsx.issuer')} </td>
@@ -144,10 +142,14 @@ class Asset extends React.Component {
 
     renderPriceFeed(asset) {
         const title = (tt('asset_jsx.price_feed_title'));
-        const bitAsset = asset.bitasset;
+        const bitAsset = asset.bitasset_opts;
 
-        if (!('current_feed' in bitAsset))
-            return ( <div header= {title} /> );
+       if (!('current_feed' in bitAsset))
+           return (
+               <div className="asset-card">
+                   <h4>{title}</h4>
+               </div>
+           );
 
         const currentFeed = bitAsset.current_feed;
 
@@ -176,7 +178,7 @@ class Asset extends React.Component {
 
     renderFeePool(asset) {
         const dynamic = asset.dynamic_data;
-        const options = asset.options;
+        const options = asset.common_options;
         return (
             <div className="asset-card">
                 <h4>{tt('asset_jsx.fee_pool_title')}</h4>
@@ -201,13 +203,13 @@ class Asset extends React.Component {
     }
 
     renderPriceFeedData(asset) {
-        const bitAsset = asset.bitasset;
+        const bitAsset = asset.bitasset_opts;
         if (!('feeds' in bitAsset) || bitAsset.feeds.length == 0 || bitAsset.is_prediction_market) {
             return null;
         }
 
         let now = new Date().getTime();
-        let oldestValidDate = new Date(now - asset.bitasset.options.feed_lifetime_sec * 1000);
+        let oldestValidDate = new Date(now - asset.bitasset_opts.feed_lifetime_sec * 1000);
 
         // Filter by valid feed lifetime, Sort by published date
         let feeds = bitAsset.feeds;
@@ -279,27 +281,26 @@ class Asset extends React.Component {
 
     render() {
         const asset = this.props.asset.toJS();
-        const priceFeed = ('bitasset' in asset) ? this.renderPriceFeed(asset) : null;
-        const priceFeedData = ('bitasset' in asset) ? this.renderPriceFeedData(asset) : null;
-
-        const description = assetUtils.parseDescription(asset.options.description);
+        const priceFeed = ('bitasset_opts' in asset) ? this.renderPriceFeed(asset) : null;
+        const priceFeedData = ('bitasset_opts' in asset) ? this.renderPriceFeedData(asset) : null;
+        const description = assetUtils.parseDescription(asset.common_options.description);
         const short_name = description.short_name ? description.short_name : null;
 
         //let preferredMarket = description.market ? description.market : "BTS";
-        const { name, prefix } = utils.replaceName(asset.symbol, "bitasset" in asset && !asset.bitasset.is_prediction_market && asset.issuer === "1.2.0");
+        const { name, prefix } = utils.replaceName(asset.asset_name, "bitasset_opts" in asset);
 
         const aboutBox = (
             <div className="asset-card">
                 <h3>{tt('asset_jsx.title')} {(prefix || "") + name}</h3>
                 <p>{description.main}</p>
-                <p>{asset.issuer}</p>
+                <p><Link to={`/@${asset.issuer}`}>{asset.issuer}</Link></p>
                 {short_name ? <p>{short_name}</p> : null}
                 {/*<a style={{textTransform: "uppercase"}} href={`/market/${asset.symbol}_${preferredMarket}`}>{tt('asset_jsx.market')}</a>*/}
             </div>
         );
 
-        const options = asset.options;
-        const permissionBooleans = assetUtils.getFlagBooleans(asset.options.issuer_permissions, ('bitasset_data_id' in asset) ? asset.bitasset_data_id: false);
+        const options = asset.common_options;
+        const permissionBooleans = assetUtils.getFlagBooleans(asset.common_options.issuer_permissions, ('bitasset_opts' in asset) ? asset.bitasset_opts : false);
         const bitNames = Object.keys(permissionBooleans);
 
         const permissions = (<div className="asset-card">
@@ -338,7 +339,7 @@ class Asset extends React.Component {
                             {this.renderSummary(asset)}
                         </div>
                         <div className="column small-12 medium-6">
-                            {priceFeed ? priceFeed : permissions}
+                            {permissions}
                         </div>
                     </div>
                     <div className="row">
@@ -346,7 +347,7 @@ class Asset extends React.Component {
                             {this.renderFeePool(asset)}
                         </div>
                         <div className="column small-12 medium-6">
-                            {priceFeed ? permissions : null}
+                            {priceFeed ? priceFeed : null}
                         </div>
                     </div>
                     {priceFeedData}

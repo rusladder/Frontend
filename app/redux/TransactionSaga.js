@@ -234,7 +234,7 @@ function* broadcastPayload({payload: {operations, keys, username, successCallbac
         }
         if (successCallback) try { successCallback() } catch (error) { console.error(error) }
     } catch (error) {
-        console.error('TransactionSaga\tbroadcast', error)
+        console.error('TransactionSaga\tbroadcastPayload', error)
         // status: error
         yield put(tr.actions.error({operations, error, errorCallback}))
         for (const [type, operation] of operations) {

@@ -1,6 +1,6 @@
 import { takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
-import { fromJS } from 'immutable'
+import { fromJS, Map } from 'immutable'
 import big from "bignumber.js";
 import AssetsReducer from './AssetsReducer';
 import transaction from 'app/redux/Transaction';
@@ -66,8 +66,8 @@ export function* fetchAssets() {
 export function* fetchAsset({payload: {symbol}}) {
     let state = {};
     getAssets().forEach( (value, key, map) => {
-       if (value.symbol === symbol) {
-           state =  Immutable.fromJS(value);
+       if (value.asset_name === symbol) {
+           state =  fromJS(value);
        }
     });
     yield put(AssetsReducer.actions.getAsset(state));

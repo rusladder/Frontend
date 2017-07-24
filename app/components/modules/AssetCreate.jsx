@@ -1,5 +1,6 @@
 import React, { PropTypes } from "react";
 import {connect} from 'react-redux';
+import { browserHistory } from 'react-router';
 import big from "bignumber.js";
 import tt from 'counterpart';
 import {Tabs, Tab} from 'app/components/elements/Tabs'
@@ -153,12 +154,12 @@ class AssetCreate extends React.Component {
         return {
 
             update: {
-                symbol: "",
+                symbol: '',
                 precision: 4,
                 max_supply: 100000,
                 max_market_fee: 0,
                 market_fee_percent: 0,
-                description: {main: ""}
+                description: {main: ''}
             },
             errors: {
                 max_supply: null
@@ -169,8 +170,8 @@ class AssetCreate extends React.Component {
             isBitAsset: isBitAsset,
             is_prediction_market: false,
             core_exchange_rate: {
-                quote: "0.001 GOLOS",
-                base: "0.001 GOLOS"
+                quote: '1 null',
+                base: '1 GOLOS'
             },
             bitasset_opts: {
                 feed_lifetime_sec : assetConstants.STEEMIT_DEFAULT_PRICE_FEED_LIFETIME,
@@ -178,9 +179,9 @@ class AssetCreate extends React.Component {
                 force_settlement_delay_sec : assetConstants.STEEMIT_DEFAULT_FORCE_SETTLEMENT_DELAY,
                 force_settlement_offset_percent : assetConstants.STEEMIT_DEFAULT_FORCE_SETTLEMENT_OFFSET,
                 maximum_force_settlement_volume : assetConstants.STEEMIT_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME,
-                short_backing_asset : "GOLOS"
+                short_backing_asset : 'GOLOS'
             },
-            marketInput: ""
+            marketInput: ''
         };
     }
 
@@ -270,7 +271,7 @@ class AssetCreate extends React.Component {
                 if (e.target.value !== "" && !regexp.test(e.target.value)) {
                     break;
                 }
-                //TODO Store.getAsset(e.target.value);
+                this.props.getAsset(e.target.value);
                 update[value] = this.forcePositive(e.target.value);
                 break;
 
@@ -331,10 +332,10 @@ class AssetCreate extends React.Component {
             if (!e || !("amount" in e)) {
                 return;
             }
-            const precision = this.props.core.get("precision");
+            const precision = utils.get_asset_precision(this.props.core);
             amount = e.amount == ""
                 ? "0"
-                : utils.limitByPrecision(e.amount.toString().replace(/,/g, ""), precision);
+                : utils.limitByPrecision(e.amount, precision);
             asset = 'GOLOS';
         }
 
@@ -360,9 +361,10 @@ class AssetCreate extends React.Component {
         };
 
         errors.symbol = validate_asset_symbol(new_state.symbol);
-        //TODO
-        const existingAsset = ''; //Store.getAsset(new_state.symbol);
-        if (existingAsset) {
+
+        const existingAsset = this.props.received;
+
+        if (existingAsset && existingAsset.get('asset_name') === new_state.symbol) {
             errors.symbol = tt('user_issued_assets.exists')
         }
 
@@ -370,6 +372,12 @@ class AssetCreate extends React.Component {
 
         const isValid = !errors.symbol && !errors.max_supply;
         this.setState({isValid: isValid, errors: errors});
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.received) {
+            this.setState({errors: {symbol : tt('user_issued_assets.exists')}});
+        }
     }
 
     onFlagChange(key) {
@@ -386,7 +394,7 @@ class AssetCreate extends React.Component {
 
     onTogglePM() {
         this.state.is_prediction_market = !this.state.is_prediction_market;
-        this.state.update.precision = this.props.core.get("precision");
+        this.state.update.precision = utils.get_asset_precision(this.props.core);
         //FIXME
         // this.state.core_exchange_rate.base.asset_name = this.props.core.get("asset_name");
     }
@@ -407,8 +415,9 @@ class AssetCreate extends React.Component {
             update.description.market = "";
         }
         const description = JSON.stringify(update.description);
-        const done = () => {this.setState({busy: false})};
-        this.props.assetCreate(account.name, update, flags, permissions, core_exchange_rate, isBitAsset, is_prediction_market, bitasset_opts, description, done);
+
+        this.props.assetCreate(account.name, update, flags, permissions, core_exchange_rate, isBitAsset,
+            is_prediction_market, bitasset_opts, description);
     }
 
     reset(e) {
@@ -758,18 +767,32 @@ class AssetCreate extends React.Component {
 }
 
 export default connect(
-    state => {
-        return {
-            core: state.assets.get('core')
-        }
+    (state, props) => {
+        const core = state.assets.get('core');
+        const received = state.assets.get('received');
+
+        return {...props, core, received};
     },
     dispatch => ({
         fetchCoreAsset : () => {
             dispatch({type: 'GET_CORE_ASSET'})
         },
 
+        getAsset: (assetName) => {
+            dispatch({type: 'GET_ASSET', payload: {assetName}})
+        },
+
         assetCreate : (account, createObject, flags, permissions, coreExchangeRate,
                        isBitAsset, isPredictionMarket, bitassetOpts, description) => {
+
+            const successCallback = () => {
+                browserHistory.push(`/@${account}/assets`);
+            };
+
+            const errorCallback = () => {
+                console.log('errorCallback')
+            };
+
             dispatch({
                 type: 'CREATE_ASSET',
                 payload: {
@@ -781,7 +804,9 @@ export default connect(
                     isBitAsset,
                     isPredictionMarket,
                     bitassetOpts,
-                    description
+                    description,
+                    successCallback,
+                    errorCallback
                 }
             })
         }

@@ -1,5 +1,3 @@
-const id_regex = /\b\d+\.\d+\.(\d+)\b/;
-
 const Utils = {
 
     get_asset_precision: (precision) => {
@@ -53,24 +51,10 @@ const Utils = {
         }
     },
 
-    estimateFee: function(op_type, options, globalObject) {
-        // if (!globalObject) return 0;
-        // let op_code = ops[op_type];
-        // let currentFees = globalObject.getIn(["parameters", "current_fees", "parameters", op_code, 1]).toJS();
-        //
-        // let fee = 0;
-        // if (currentFees.fee) {
-        //     fee += currentFees.fee;
-        // }
-        //
-        // if (options) {
-        //     for (let option of options) {
-        //         fee += currentFees[option];
-        //     }
-        // }
-        //
-        // return fee * globalObject.getIn(["parameters", "current_fees", "scale"]) / 10000;
-        return 0;
+    formatCer: function(amount, precision) {
+        const [amnt, asset_name] = amount.split(' ');
+
+        return [parseInt(amnt, 10).toFixed(parseInt(precision, 10)).toString(), asset_name].join(' ');
     },
 
     replaceName(name, isBitAsset = false) {

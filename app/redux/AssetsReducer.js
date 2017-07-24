@@ -6,7 +6,8 @@ import {immutableCore, global_object} from 'app/utils/Assets/assets_fake_data';
 const defaultState = {
     assets: {},
     asset: {},
-    core: Map()
+    core: Map(),
+    received : null
 };
 
 export default createModule({
@@ -20,15 +21,15 @@ export default createModule({
             }
         },
         {
-            action: 'GET_ASSET',
-            reducer: (state, {payload}) => {
-                return state.set('asset', payload)
-            }
-        },
-        {
             action: 'RECEIVE_CORE_ASSET',
             reducer: (state, {payload}) => {
                 return state.set('core', payload)
+            }
+        },
+        {
+            action: 'SET_RECEIVED_ASSET',
+            reducer: (state, {payload}) => {
+                return state.set('received', payload)
             }
         },
 

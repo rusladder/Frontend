@@ -1,4 +1,4 @@
-import { takeLatest } from 'redux-saga';
+import { takeLatest, takeEvery } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { fromJS, Map } from 'immutable'
 import big from "bignumber.js";
@@ -26,7 +26,7 @@ export function* watchLocationChange() {
 }
 
 export function* watchGetAsset() {
-    yield* takeLatest('GET_ASSET', fetchAsset);
+    yield* takeEvery('GET_ASSET', getAsset);
 }
 
 export function* watchGetCoreAsset() {
@@ -57,25 +57,28 @@ export function* getCoreAsset(){
     yield put(AssetsReducer.actions.receiveCoreAsset(coreAsset));
 }
 
-export function* fetchAssets() {
-    const state = getAssets();
+export function* fetchAssets(location_change_action) {
+    const {pathname} = location_change_action.payload;
 
-    yield put(AssetsReducer.actions.receiveAssets(state));
+    if (pathname && pathname.indexOf('/assets') == -1) {
+        return
+    }
+
+    const assets = getAssets();
+
+    // const assets  = yield call([api, api.listAssetsAsync], 'A', 100);
+    yield put(AssetsReducer.actions.receiveAssets(assets));
 }
 
-export function* fetchAsset({payload: {symbol}}) {
-    let state = {};
-    getAssets().forEach( (value, key, map) => {
-       if (value.asset_name === symbol) {
-           state =  fromJS(value);
-       }
-    });
-    yield put(AssetsReducer.actions.getAsset(state));
+export function* getAsset({payload: {assetName}}) {
+    let asset  = yield call([api, api.lookupAssetSymbols], [assetName]);
+    asset = fromJS(asset[0]);
+    yield put(AssetsReducer.actions.setReceivedAsset(asset));
 }
 
 export function* createAsset({payload: {
     account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket,
-    bitassetOpts, description}}) {
+    bitassetOpts, description, successCallback, errorCallback}}) {
 
     const precision = utils.get_asset_precision(createObject.precision);
     big.config({DECIMAL_PLACES: createObject.precision});
@@ -94,8 +97,8 @@ export function* createAsset({payload: {
             issuer_permissions: permissions,
             flags: flags,
             core_exchange_rate: {
-                base:  coreExchangeRate.base,
-                quote: coreExchangeRate.quote
+                base:  utils.formatCer(coreExchangeRate.base, 3),
+                quote: utils.formatCer(coreExchangeRate.quote, parseInt(createObject.precision, 10))
             },
             whitelist_authorities: [],
             blacklist_authorities: [],
@@ -120,13 +123,6 @@ export function* createAsset({payload: {
             errorCallback
         }
     ));
-}
-
-function successCallback() {
-    console.log('successCallback')
-}
-function errorCallback() {
-    console.log('successCallback')
 }
 
 export function* updateAsset({payload: {issuer, new_issuer, update, coreExchangeRate, asset, flags, permissions,

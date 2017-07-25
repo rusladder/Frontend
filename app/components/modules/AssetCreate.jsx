@@ -9,6 +9,7 @@ import assetConstants from "app/utils/Assets/Constants";
 import assetUtils from "app/utils/Assets/AssetsUtils";
 import utils from 'app/utils/Assets/utils';
 import {validate_asset_symbol} from 'app/utils/ChainValidation';
+import {api} from 'golos-js'
 
 let MAX_SAFE_INT = new big("9007199254740991");
 
@@ -37,22 +38,20 @@ class BitAssetOptions extends React.Component {
             backingAsset: asset.toUpperCase(),
             error: null
         });
-        //TODO
-        // if (asset) {
-        //     if (asset.get("id") === "1.3.0" || (asset.get("bitasset_data_id") && !asset.getIn(["bitasset", "is_prediction_market"]))) {
-        //         if (asset.get("precision") !== parseInt(this.props.assetPrecision, 10)) {
-        //             this.setState({
-        //                 error: tt('account.user_issued_assets.error_precision', {asset: this.props.assetSymbol})
-        //             });
-        //         } else {
-        //             this.props.onUpdate("short_backing_asset", asset.get("id"));
-        //         }
-        //     } else {
-        //         this.setState({
-        //             error: tt('account.user_issued_assets.error_invalid')
-        //         });
-        //     }
-        // }
+    }
+
+    onFoundBackingAsset(asset) {
+        if (asset) {
+            if (asset.get('asset_name') === 'GOLOS' || (asset.get('bitasset_data') && !asset.getIn(['bitasset', 'is_prediction_market']))) {
+                if (asset.get("precision") !== parseInt(this.props.assetPrecision, 10)) {
+                    this.setState({error: tt('account.user_issued_assets.error_precision', {asset: this.props.assetName})});
+                } else {
+                    this.props.onUpdate("short_backing_asset", asset.get("asset_name"));
+                }
+            } else {
+                this.setState({ error: tt('account.user_issued_assets.error_invalid')});
+            }
+        }
     }
 
     render() {
@@ -200,11 +199,10 @@ class AssetCreate extends React.Component {
     }
 
     onInputMarket(event) {
-        let asset = event.target.value.trim().substr(0, 16).toUpperCase();
+        const asset = event.target.value.trim().substr(0, 6).toUpperCase();
         this.setState({marketInput: asset});
 
-        //TODO
-        //this.onUpdateDescription("market", asset.get("symbol"));
+        this.onUpdateDescription("market", asset);
     }
 
     onChangeBitAssetOpts(value, e) {
@@ -271,7 +269,13 @@ class AssetCreate extends React.Component {
                 if (e.target.value !== "" && !regexp.test(e.target.value)) {
                     break;
                 }
-                this.props.getAsset(e.target.value);
+
+                this.validateAssetName(e.target.value);
+
+                const {core_exchange_rate} = this.state;
+                core_exchange_rate.quote = [core_exchange_rate.quote.split(' ')[0], e.target.value].join(' ');
+                this.setState(core_exchange_rate);
+
                 update[value] = this.forcePositive(e.target.value);
                 break;
 
@@ -283,6 +287,26 @@ class AssetCreate extends React.Component {
         if (updateState) {
             this.setState({update: update});
             this.validateEditFields(update);
+        }
+    }
+
+    validateAssetName(assetName) {
+        let error = '';
+        let promise;
+        if (assetName.length > 0) {
+            error = validate_asset_symbol(assetName);
+            if (!error) {
+                promise = api.lookupAssetSymbolsAsync([assetName]).then(res => {
+                    return (res && res.length > 0 && res[0] != null) ? tt('user_issued_assets.exists') : '';
+                });
+            }
+        }
+        if (promise) {
+            promise
+                .then(error => this.setState({errors: {symbol : error}}))
+                .catch(() => this.setState({errors: {symbol : "Asset name can't be verified right now due to server failure. Please try again later."}}));
+        } else {
+            this.setState({errors: {symbol : error}});
         }
     }
 
@@ -317,7 +341,6 @@ class AssetCreate extends React.Component {
         }
 
         if (updateState) {
-            this.forceUpdate();
             this.validateEditFields(update);
         }
     }
@@ -333,9 +356,7 @@ class AssetCreate extends React.Component {
                 return;
             }
             const precision = utils.get_asset_precision(this.props.core);
-            amount = e.amount == ""
-                ? "0"
-                : utils.limitByPrecision(e.amount, precision);
+            amount = e.amount == "" ? "0" : utils.limitByPrecision(e.amount, precision);
             asset = 'GOLOS';
         }
 
@@ -361,23 +382,10 @@ class AssetCreate extends React.Component {
         };
 
         errors.symbol = validate_asset_symbol(new_state.symbol);
-
-        const existingAsset = this.props.received;
-
-        if (existingAsset && existingAsset.get('asset_name') === new_state.symbol) {
-            errors.symbol = tt('user_issued_assets.exists')
-        }
-
         errors.max_supply = new_state.max_supply <= 0 ? tt('user_issued_assets.max_positive') : null;
 
         const isValid = !errors.symbol && !errors.max_supply;
         this.setState({isValid: isValid, errors: errors});
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.received) {
-            this.setState({errors: {symbol : tt('user_issued_assets.exists')}});
-        }
     }
 
     onFlagChange(key) {
@@ -393,10 +401,11 @@ class AssetCreate extends React.Component {
     }
 
     onTogglePM() {
-        this.state.is_prediction_market = !this.state.is_prediction_market;
-        this.state.update.precision = utils.get_asset_precision(this.props.core);
-        //FIXME
-        // this.state.core_exchange_rate.base.asset_name = this.props.core.get("asset_name");
+        this.setState({is_prediction_market : !this.state.is_prediction_market});
+
+        const { update } = this.state;
+        update.precision = utils.get_asset_precision(this.props.core);
+        this.setState({update});
     }
 
     createAsset(e) {
@@ -542,19 +551,19 @@ class AssetCreate extends React.Component {
                                     </div>
                                 </div>
 
-                                <div className="column small-6 medium-6">
+                                 <div className="column small-6 medium-6">
                                     {isBitAsset
-                                        ? (<div className="switch" onClick={this.onTogglePM.bind(this)}>
+                                        ? null /* (<div className="switch" onClick={this.onTogglePM.bind(this)}>
                                                 <label>{tt('user_issued_assets.pm')}:
                                                     <input
                                                         type="checkbox"
                                                         checked={is_prediction_market}
                                                     />
                                                 </label>
-                                            </div>)
+                                            </div>)*/
                                         : null
                                     }
-                                </div>
+                                </div>)
                             </div>
 
                             <h5>{tt('user_issued_assets.core_exchange_rate')}</h5>
@@ -769,17 +778,12 @@ class AssetCreate extends React.Component {
 export default connect(
     (state, props) => {
         const core = state.assets.get('core');
-        const received = state.assets.get('received');
 
-        return {...props, core, received};
+        return {...props, core};
     },
     dispatch => ({
         fetchCoreAsset : () => {
             dispatch({type: 'GET_CORE_ASSET'})
-        },
-
-        getAsset: (assetName) => {
-            dispatch({type: 'GET_ASSET', payload: {assetName}})
         },
 
         assetCreate : (account, createObject, flags, permissions, coreExchangeRate,

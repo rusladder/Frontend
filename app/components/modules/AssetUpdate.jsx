@@ -9,6 +9,7 @@ import utils from 'app/utils/Assets/utils';
 import assetConstants from "app/utils/Assets/Constants";
 import AmountSelector from 'app/components/elements/AmountSelector'
 import { BitAssetOptions } from "app/components/modules/AssetCreate";
+import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 
 let MAX_SAFE_INT = new big("9007199254740991");
 
@@ -16,11 +17,24 @@ class AssetUpdate extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = this.resetState(props);
+        // this.state = this.resetState(props);
+        this.state = {fetched: false}
     }
 
-    resetState(props) {
-        const asset = props.asset.toJS();
+    componentDidMount() {
+        this.props.dispatchGetAsset(this.props.assetname);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.asset) {
+            this.setState(
+                this.resetState(nextProps.asset)
+            );
+        }
+    }
+
+    resetState(asset_) {
+        let asset = asset_.toJS();
         const isBitAsset = asset.bitasset_data !== undefined;
         const precision = utils.get_asset_precision(asset.precision);
         const max_market_fee = (new big(asset.options.max_market_fee)).div(precision).toString();
@@ -31,6 +45,7 @@ class AssetUpdate extends React.Component {
         asset.options.market_fee_percent /= 100;
 
         return {
+            fetched: true,
             update: {
                 max_supply: max_supply,
                 max_market_fee: max_market_fee,
@@ -77,7 +92,7 @@ class AssetUpdate extends React.Component {
         e.preventDefault();
 
         this.setState(
-            this.resetState(this.props)
+            this.resetState(this.props.asset)
         );
     }
 
@@ -262,7 +277,9 @@ class AssetUpdate extends React.Component {
     }
 
     render() {
-
+        if (!this.state.fetched){
+            return <center><LoadingIndicator type="circle" /></center>;
+        }
         const { account, asset, core } = this.props;
         const { errors, isValid, update, assets, core_exchange_rate, flagBooleans,
             permissionBooleans, isBitAsset, bitasset_opts } = this.state;
@@ -570,6 +587,11 @@ export default connect(
     },
 
     dispatch => ({
+
+        dispatchGetAsset : (assetName) => {
+
+            dispatch({type: 'GET_ASSET', payload: {assetName}})
+        },
 
         updateAsset : (issuer, new_issuer, update, coreExchangeRate, asset,
         flags, permissions, isBitAsset, bitassetOpts, originalBitassetOpts, description) => {

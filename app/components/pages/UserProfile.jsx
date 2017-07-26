@@ -317,7 +317,7 @@ export default class UserProfile extends React.Component {
             tab_content = <div>
                 <WalletSubMenu account_name={account.name} />
 
-                <AssetUpdate account={account} asset={assetname}/>
+                <AssetUpdate account={account} assetname={assetname}/>
             </div>
         } else if( section === 'invites' ) {
             walletClass = 'active'

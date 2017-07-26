@@ -59,7 +59,7 @@ export function* getCoreAsset() {
 
 export function* getAssetsByIssuer() {
     const username = yield select(state => state.user.getIn(['current', 'username']));
-    let assets  = yield call([api, api.getAssetsByIssuer], username);
+    let assets  = yield call([api, api.getAssetsByIssuerAsync], username);
 
     yield put(AssetsReducer.actions.receiveAssets(assets));
 }
@@ -70,7 +70,7 @@ export function* updateAssetsData(assetsNames) {
 }
 
 export function* getAsset({payload: {assetName}}) {
-    let asset  = yield call([api, api.lookupAssetSymbols], [assetName]);
+    let asset  = yield call([api, api.getAssetsAsync], [assetName]);
     asset = fromJS(asset[0]);
     yield put(AssetsReducer.actions.setReceivedAsset(asset));
 }

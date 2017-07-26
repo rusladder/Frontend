@@ -142,10 +142,6 @@ class AssetCreate extends React.Component {
         this.state = this.resetState();
     }
 
-    componentDidMount() {
-        this.props.fetchCoreAsset();
-    }
-
     resetState() {
         let isBitAsset = false;
         let {flagBooleans, permissionBooleans} = this.getPermissions({isBitAsset});
@@ -242,6 +238,7 @@ class AssetCreate extends React.Component {
 
             case "max_market_fee":
                 if ((new big(e.target.value)).times(precision).gt(MAX_SAFE_INT)) {
+                    updateState = false;
                     return this.setState({errors: {max_market_fee: "The number you tried to enter is too large"}});
                 }
                 e.target.value = utils.limitByPrecision(e.target.value, this.state.update.precision);
@@ -255,6 +252,7 @@ class AssetCreate extends React.Component {
 
             case "max_supply":
                 if ((new big(e.target.value)).times(precision).gt(MAX_SAFE_INT)) {
+                    updateState = false;
                     return this.setState({errors: {max_supply: "The number you tried to enter is too large"}});
                 }
                 e.target.value = utils.limitByPrecision(e.target.value, this.state.update.precision);
@@ -498,6 +496,7 @@ class AssetCreate extends React.Component {
                 <Tab title={tt('user_issued_assets.primary')}>
                     <div className="row">
                         <div className="column small-12">
+                            <h5>{tt('user_issued_assets.primary')}</h5>
                             <div className="row margin">
                                 <div className="column small-6">
                                     <label>{tt('user_issued_assets.symbol')}
@@ -762,10 +761,10 @@ class AssetCreate extends React.Component {
                     {tabs}
                     <hr/>
                     <div style={{paddingTop: "0.5rem"}}>
-                        <button className={"button " + {disabled: !isValid}} onClick={this.createAsset.bind(this)}>
+                        <button className={"button"} disabled={!isValid} onClick={this.createAsset.bind(this)}>
                             {tt('asset_create_jsx.create_asset')}
                         </button>
-                        <button className="button hollow" onClick={this.reset.bind(this)} value= {tt('asset_create.reset')}>
+                        <button className="button hollow" onClick={this.reset.bind(this)}>
                             {tt('asset_create_jsx.reset')}
                         </button>
                     </div>
@@ -782,9 +781,6 @@ export default connect(
         return {...props, core};
     },
     dispatch => ({
-        fetchCoreAsset : () => {
-            dispatch({type: 'GET_CORE_ASSET'})
-        },
 
         assetCreate : (account, createObject, flags, permissions, coreExchangeRate,
                        isBitAsset, isPredictionMarket, bitassetOpts, description) => {
@@ -812,7 +808,7 @@ export default connect(
                     successCallback,
                     errorCallback
                 }
-            })
+            });
         }
     })
 )(AssetCreate);

@@ -15,7 +15,7 @@ export default class FormattedPrice extends React.Component {
     render() {
         const { base, quote } = this.props;
         return (
-            <span>{base}</span>
+            <span>{quote} / {base}</span>
         );
     }
 }

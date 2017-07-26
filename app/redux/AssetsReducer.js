@@ -1,11 +1,9 @@
 import createModule from 'redux-modules';
 import {fromJS, Map} from 'immutable';
 
-import {immutableCore, global_object} from 'app/utils/Assets/assets_fake_data';
-
 const defaultState = {
     assets: {},
-    asset: {},
+    asset: Map(),
     core: Map(),
     received : null
 };

@@ -1,20 +1,16 @@
 import { takeLatest, takeEvery } from 'redux-saga';
-import { call, put } from 'redux-saga/effects';
-import { fromJS, Map } from 'immutable'
+import { call, put, select } from 'redux-saga/effects';
+import { fromJS, Map, Iterable } from 'immutable'
 import big from "bignumber.js";
 import AssetsReducer from './AssetsReducer';
 import transaction from 'app/redux/Transaction';
 import utils from 'app/utils/Assets/utils';
 import assetConstants from "app/utils/Assets/Constants";
-
 import { api } from 'golos-js';
-
-import {getAssets} from 'app/utils/Assets/assets_fake_data';
 
 export const assetsWatches = [
     watchLocationChange,
     watchGetAsset,
-    watchGetCoreAsset,
     watchCreateAsset,
     watchUpdateAsset,
     watchIssueAsset,
@@ -22,15 +18,11 @@ export const assetsWatches = [
 ];
 
 export function* watchLocationChange() {
-    yield* takeLatest('@@router/LOCATION_CHANGE', fetchAssets);
+    yield* takeLatest('@@router/LOCATION_CHANGE', fetchData);
 }
 
 export function* watchGetAsset() {
     yield* takeEvery('GET_ASSET', getAsset);
-}
-
-export function* watchGetCoreAsset() {
-    yield* takeLatest('GET_CORE_ASSET', getCoreAsset);
 }
 
 export function* watchCreateAsset() {
@@ -49,25 +41,32 @@ export function* watchReserveAsset() {
     yield* takeLatest('RESERVE_ASSET', reserveAsset);
 }
 
-export function* getCoreAsset(){
-    let coreAsset = yield call([api, api.getAssetsAsync], ['GOLOS']);
-    // const dynamicData = yield call([api, api.getAssetsDynamicDataAsync], ['GOLOS']);
-    coreAsset = fromJS(coreAsset[0]);
-    // coreAsset = coreAsset.set('dynamic_data', fromJS(dynamicData[0]))
-    yield put(AssetsReducer.actions.receiveCoreAsset(coreAsset));
-}
-
-export function* fetchAssets(location_change_action) {
+export function* fetchData(location_change_action) {
     const {pathname} = location_change_action.payload;
 
     if (pathname && pathname.indexOf('/assets') == -1) {
         return
     }
 
-    const assets = getAssets();
+    yield getCoreAsset();
+    yield getAssetsByIssuer();
+}
 
-    // const assets  = yield call([api, api.listAssetsAsync], 'A', 100);
+export function* getCoreAsset() {
+    const coreAsset = yield call([api, api.getAssetsAsync], ['GOLOS']);
+    yield put(AssetsReducer.actions.receiveCoreAsset(fromJS(coreAsset[0])));
+}
+
+export function* getAssetsByIssuer() {
+    const username = yield select(state => state.user.getIn(['current', 'username']));
+    let assets  = yield call([api, api.getAssetsByIssuer], username);
+
     yield put(AssetsReducer.actions.receiveAssets(assets));
+}
+
+export function* updateAssetsData(assetsNames) {
+    // const bitAssetsData = yield call([api, api.getBitassetsDataAsync], assetsNames);
+    // const assetsDynamicData = yield call([api, api.getAssetsDynamicDataAsync], assetsNames);
 }
 
 export function* getAsset({payload: {assetName}}) {
@@ -126,21 +125,13 @@ export function* createAsset({payload: {
 }
 
 export function* updateAsset({payload: {issuer, new_issuer, update, coreExchangeRate, asset, flags, permissions,
-    isBitAsset, bitassetOpts, originalBitassetOpts, description}}) {
+    isBitAsset, bitassetOpts, originalBitassetOpts, description, successCallback, errorCallback}}) {
 
     const quotePrecision = utils.get_asset_precision(asset.get("precision"));
 
     big.config({DECIMAL_PLACES: asset.get("precision")});
     const maxSupply = (new big(update.max_supply)).times(quotePrecision).toString();
     const maxMarketFee = (new big(update.max_market_fee || 0)).times(quotePrecision).toString();
-
-    const coreQuoteAsset = "" //TODO getAsset(core_exchange_rate.quote.asset_asset_name);
-    const coreQuotePrecision = utils.get_asset_precision(coreQuoteAsset.get("precision"));
-    const coreBaseAsset = "" //TODO getAsset(core_exchange_rate.base.asset_name);
-    const coreBasePrecision = utils.get_asset_precision(coreBaseAsset.get("precision"));
-
-    const coreQuoteAmount = (new big(coreExchangeRate.quote.amount)).times(coreQuotePrecision).toString();
-    const coreBaseAmount = (new big(coreExchangeRate.base.amount)).times(coreBasePrecision).toString();
 
     const updateAssetObject = {
         fee:  assetConstants.ASSET_DEFAULT_FEE,
@@ -168,7 +159,7 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     };
 
     if (issuer === new_issuer || !new_issuer) {
-        delete updateObject.new_issuer;
+        delete updateAssetObject.new_issuer;
     }
 
     yield put(transaction.actions.broadcastOperation(
@@ -209,7 +200,8 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     }
 }
 
-export function* issueAsset({payload: {to, from, assetName, amount, memo}}) {
+export function* issueAsset({payload: {to, from, assetName, amount, memo,
+    successCallback, errorCallback}}) {
 
     const memoObject = {
         //TODO implement
@@ -218,12 +210,9 @@ export function* issueAsset({payload: {to, from, assetName, amount, memo}}) {
     const issueAssetObject ={
         fee:  assetConstants.ASSET_DEFAULT_FEE,
         issuer: from,
-        asset_to_issue: {
-            amount: amount,
-            asset_name: assetName
-        },
+        asset_to_issue: assetName,
         issue_to_account: to,
-        memo: memoObject,
+        // memo: memoObject,
         extensions: []
     };
 
@@ -237,14 +226,11 @@ export function* issueAsset({payload: {to, from, assetName, amount, memo}}) {
     ));
 }
 
-export function* reserveAsset({payload: {amount, assetName, payer}}) {
+export function* reserveAsset({payload: {amount, assetName, payer, successCallback, errorCallback}}) {
     const reserveAssetObject = {
         fee: assetConstants.ASSET_DEFAULT_FEE,
         payer,
-        amount_to_reserve: {
-            amount: amount,
-            asset_name: assetName
-        },
+        amount_to_reserve: assetName,
         extensions: []
     };
 

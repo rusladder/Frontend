@@ -4,6 +4,7 @@ import { Link, browserHistory } from 'react-router';
 import tt from 'counterpart';
 import FormattedAsset from "app/components/elements/FormattedAsset";
 import FormattedPrice from "app/components/elements/FormattedPrice";
+import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 import AssetName from "app/components/elements/AssetName";
 import assetUtils from "app/utils/Assets/AssetsUtils";
 import utils from 'app/utils/Assets/utils';
@@ -39,10 +40,19 @@ class Asset extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+          fetched: false
+        };
     }
 
     componentDidMount() {
-        this.props.dispatchGetAsset({symbol: this.props.params.symbol});
+        this.props.dispatchGetAsset(this.props.params.symbol);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.asset) {
+            this.setState({fetched: true});
+        }
     }
 
     renderFlagIndicators(flags, names) {
@@ -67,6 +77,7 @@ class Asset extends React.Component {
     formattedPrice(price, hide_symbols=false, hide_value=false) {
         const base = price.base;
         const quote = price.quote;
+        console.log('base',base,'quote',quote)
         return (<span>
              <FormattedPrice
                 base={base}
@@ -78,10 +89,10 @@ class Asset extends React.Component {
 
     renderSummary(asset) {
         const dynamic = asset.dynamic_data;
-        const options = asset.common_options;
-        const flagBooleans = assetUtils.getFlagBooleans(asset.common_options.flags, ('bitasset_opts' in asset));
+        const options = asset.options;
+        const flagBooleans = assetUtils.getFlagBooleans(asset.options.flags, ('bitasset_opts' in asset));
         const bitNames = Object.keys(flagBooleans);
-
+        console.log('options.core_exchange_rate',options.core_exchange_rate)
         const currentSupply = (dynamic) ? (
                 <tr>
                     <td> {tt('asset_jsx.current_supply')} </td>
@@ -131,6 +142,10 @@ class Asset extends React.Component {
                     {stealthSupply}
                     {marketFee}
                     {maxMarketFee}
+                    <tr>
+                        <td> {tt('asset_jsx.core_exchange_rate')} </td>
+                        <td> {this.formattedPrice(options.core_exchange_rate)} </td>
+                    </tr>
                     </tbody>
                 </table>
 
@@ -169,32 +184,6 @@ class Asset extends React.Component {
                     <tr>
                         <td> {tt('asset_jsx.maximum_short_squeeze_ratio')} </td>
                         <td> {currentFeed.maximum_short_squeeze_ratio/10}% </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
-
-    renderFeePool(asset) {
-        const dynamic = asset.dynamic_data;
-        const options = asset.common_options;
-        return (
-            <div className="asset-card">
-                <h4>{tt('asset_jsx.fee_pool_title')}</h4>
-                <table>
-                    <tbody>
-                    <tr>
-                        <td> {tt('asset_jsx.core_exchange_rate')} </td>
-                        <td> {this.formattedPrice(options.core_exchange_rate)} </td>
-                    </tr>
-                    <tr>
-                        <td> {tt('asset_jsx.pool_balance')} </td>
-                        <td> {dynamic ? <FormattedAsset asset={asset/*core asset*/} amount={dynamic.fee_pool} /> : null} </td>
-                    </tr>
-                    <tr>
-                        <td> {tt('asset_jsx.unclaimed_issuer_income')} </td>
-                        <td> {dynamic ? <FormattedAsset asset={asset} amount={dynamic.accumulated_fees} /> : null} </td>
                     </tr>
                     </tbody>
                 </table>
@@ -280,10 +269,15 @@ class Asset extends React.Component {
     }
 
     render() {
+
+        if (!this.state.fetched){
+            return <center><LoadingIndicator type="circle" /></center>;
+        }
+
         const asset = this.props.asset.toJS();
         const priceFeed = ('bitasset_opts' in asset) ? this.renderPriceFeed(asset) : null;
         const priceFeedData = ('bitasset_opts' in asset) ? this.renderPriceFeedData(asset) : null;
-        const description = assetUtils.parseDescription(asset.common_options.description);
+        const description = assetUtils.parseDescription(asset.options.description);
         const short_name = description.short_name ? description.short_name : null;
 
         //let preferredMarket = description.market ? description.market : "BTS";
@@ -299,8 +293,8 @@ class Asset extends React.Component {
             </div>
         );
 
-        const options = asset.common_options;
-        const permissionBooleans = assetUtils.getFlagBooleans(asset.common_options.issuer_permissions, ('bitasset_opts' in asset) ? asset.bitasset_opts : false);
+        const options = asset.options;
+        const permissionBooleans = assetUtils.getFlagBooleans(asset.options.issuer_permissions, ('bitasset_opts' in asset) ? asset.bitasset_opts : false);
         const bitNames = Object.keys(permissionBooleans);
 
         const permissions = (<div className="asset-card">
@@ -344,9 +338,6 @@ class Asset extends React.Component {
                     </div>
                     <div className="row">
                         <div className="column small-12 medium-6">
-                            {this.renderFeePool(asset)}
-                        </div>
-                        <div className="column small-12 medium-6">
                             {priceFeed ? priceFeed : null}
                         </div>
                     </div>
@@ -361,12 +352,17 @@ module.exports = {
     path: 'asset/:symbol',
     component: connect(
         (state, ownProps) => {
-            const asset = state.assets.get('asset')
+            if (!process.env.BROWSER) {
+                return {
+                    received: null
+                }
+            }
+            const asset = state.assets.get('received');
             return {...ownProps, asset}
         },
         dispatch => ({
-            dispatchGetAsset : ({symbol}) => {
-                dispatch({type: 'GET_ASSET', payload: {symbol}})
+            dispatchGetAsset : (assetName) => {
+                dispatch({type: 'GET_ASSET', payload: {assetName}})
             }
         })
     )(Asset)

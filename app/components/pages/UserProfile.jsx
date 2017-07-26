@@ -30,6 +30,7 @@ import Userpic from 'app/components/elements/Userpic';
 import Callout from 'app/components/elements/Callout';
 import normalizeProfile from 'app/utils/NormalizeProfile';
 import AssetCreate from 'app/components/modules/AssetCreate';
+import AssetUpdate from 'app/components/modules/AssetUpdate';
 import AccountAssets from 'app/components/modules/AccountAssets';
 import UserInvites from 'app/components/elements/UserInvites';
 
@@ -99,7 +100,7 @@ export default class UserProfile extends React.Component {
             props: {current_user, wifShown, global_status, follow},
             onPrint
         } = this;
-        let { accountname, section } = this.props.routeParams;
+        let { accountname, section, assetname } = this.props.routeParams;
         // normalize account from cased params
         accountname = accountname.toLowerCase();
         const username = current_user ? current_user.get('username') : null
@@ -311,6 +312,13 @@ export default class UserProfile extends React.Component {
 
                 <AssetCreate account={account}/>
             </div>
+        } else if (section === 'update-asset' && isMyAccount) {
+            walletClass = 'active'
+            tab_content = <div>
+                <WalletSubMenu account_name={account.name} />
+
+                <AssetUpdate account={account} asset={assetname}/>
+            </div>
         } else if( section === 'invites' ) {
             walletClass = 'active'
             tab_content = <div>
@@ -326,7 +334,8 @@ export default class UserProfile extends React.Component {
               section === 'password' ||
               section === 'invites' ||
               section === 'assets'||
-              section === 'create-asset')) {
+              section === 'create-asset'||
+              section === 'update-asset')) {
             tab_content = <div className="row">
                 <div className="UserProfile__tab_content column">
                     {tab_content}
@@ -457,7 +466,7 @@ export default class UserProfile extends React.Component {
 }
 
 module.exports = {
-    path: '@:accountname(/:section)',
+    path: '@:accountname(/:section)(/:assetname)',
     component: connect(
         state => {
             const wifShown = state.global.get('UserKeys_wifShown')

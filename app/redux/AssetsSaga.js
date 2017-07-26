@@ -48,8 +48,8 @@ export function* fetchData(location_change_action) {
         return
     }
 
-    yield getCoreAsset();
-    yield getAssetsByIssuer();
+    yield call(getCoreAsset);
+    yield call(getAssetsByIssuer);
 }
 
 export function* getCoreAsset() {

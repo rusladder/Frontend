@@ -13,7 +13,6 @@ export const assetsWatches = [
     watchGetAsset,
     watchCreateAsset,
     watchUpdateAsset,
-    watchIssueAsset,
     watchReserveAsset
 ];
 
@@ -31,10 +30,6 @@ export function* watchCreateAsset() {
 
 export function* watchUpdateAsset() {
     yield* takeLatest('UPDATE_ASSET', updateAsset);
-}
-
-export function* watchIssueAsset() {
-    yield* takeLatest('ISSUE_ASSET', issueAsset);
 }
 
 export function* watchReserveAsset() {
@@ -201,46 +196,3 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     }
 }
 
-export function* issueAsset({payload: {to, from, assetName, amount, memo,
-    successCallback, errorCallback}}) {
-
-    const memoObject = {
-        //TODO implement
-    };
-
-    const issueAssetObject ={
-        fee:  assetConstants.ASSET_DEFAULT_FEE,
-        issuer: from,
-        asset_to_issue: assetName,
-        issue_to_account: to,
-        // memo: memoObject,
-        extensions: []
-    };
-
-    yield put(transaction.actions.broadcastOperation(
-        {
-            type: 'asset_issue',
-            operation: issueAssetObject,
-            successCallback,
-            errorCallback
-        }
-    ));
-}
-
-export function* reserveAsset({payload: {amount, assetName, payer, successCallback, errorCallback}}) {
-    const reserveAssetObject = {
-        fee: assetConstants.ASSET_DEFAULT_FEE,
-        payer,
-        amount_to_reserve: assetName,
-        extensions: []
-    };
-
-    yield put(transaction.actions.broadcastOperation(
-        {
-            type: 'asset_reserve',
-            operation: reserveAssetObject,
-            successCallback,
-            errorCallback
-        }
-    ));
-}

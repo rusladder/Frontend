@@ -5,7 +5,6 @@ import tt from 'counterpart';
 import FormattedAsset from "app/components/elements/FormattedAsset";
 import assetUtils from "app/utils/Assets/AssetsUtils";
 import g from 'app/redux/GlobalReducer'
-import user from 'app/redux/User';
 
 class AccountAssets extends React.Component {
 
@@ -13,18 +12,14 @@ class AccountAssets extends React.Component {
         super(props);
     }
 
-    reserveButtonClick(asset_name, e) {
+    reserveButtonClick(assetName, e) {
         e.preventDefault();
-        // this.setState({reserve: asset_name});
-        // this.props.assetReserve();
+        // this.props.assetReserve(assetName);
     }
 
-    issueButtonClick(asset_name, e) {
+    issueButtonClick(assetName, e) {
         e.preventDefault();
-        // const {issue} = this.state;
-        // issue.asset_name = asset_name;
-        // this.setState({issue: issue});
-        this.props.assetIssue();
+        this.props.assetIssue(assetName);
     }
 
     render() {
@@ -116,9 +111,8 @@ export default connect(
     },
     dispatch => ({
 
-        assetIssue: () => {
-            // dispatch(g.actions.showDialog({name: 'asset_issue', params: {}}));
-            dispatch(user.actions.showTransfer());
+        assetIssue: (assetName) => {
+            dispatch(g.actions.showDialog({name: 'issue_asset', params: {assetName}}));
         },
 
         assetReserve: () => {

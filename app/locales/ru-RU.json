@@ -1039,5 +1039,12 @@
     "asset_reserve": "Резервирование актива",
     "asset_update": "Обновление актива",
     "asset_create": "Создание актива"
+  },
+  "asset_actions_jsx": {
+    "title": "Выпуск актива",
+    "submit" : "Выпустить актив",
+    "confirm_title": "Подтердите выпуск актива",
+    "confirm_issue_asset": "Выпустить актив в количестве %(amount)s ?",
+    "notification": "Актив выпущен в количестве %(amount)s"
   }
 }

@@ -53,8 +53,9 @@ export function* fetchData(location_change_action) {
 }
 
 export function* getCoreAsset() {
-    const coreAsset = yield call([api, api.getAssetsAsync], ['GOLOS']);
-    yield put(AssetsReducer.actions.receiveCoreAsset(fromJS(coreAsset[0])));
+    let coreAsset = yield call([api, api.getAssetsAsync], ['GOLOS']);
+    coreAsset = fromJS(coreAsset[0]);
+    yield put(AssetsReducer.actions.receiveCoreAsset(coreAsset));
 }
 
 export function* getAssetsByIssuer() {

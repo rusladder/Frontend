@@ -12,8 +12,7 @@ export const assetsWatches = [
     watchLocationChange,
     watchGetAsset,
     watchCreateAsset,
-    watchUpdateAsset,
-    watchReserveAsset
+    watchUpdateAsset
 ];
 
 export function* watchLocationChange() {
@@ -30,10 +29,6 @@ export function* watchCreateAsset() {
 
 export function* watchUpdateAsset() {
     yield* takeLatest('UPDATE_ASSET', updateAsset);
-}
-
-export function* watchReserveAsset() {
-    yield* takeLatest('RESERVE_ASSET', reserveAsset);
 }
 
 export function* fetchData(location_change_action) {

@@ -346,7 +346,7 @@ class AssetCreate extends React.Component {
     onCoreRateChange(type, e) {
         let amount, asset;
         if (type === "quote") {
-            amount = utils.limitByPrecision(e.target.value, this.state.update.precision);
+            amount = utils.limitByPrecision(e.target.value, this.props.core);
             const { symbol } = this.state.update;
             asset = symbol;
         } else {
@@ -787,6 +787,14 @@ export default connect(
 
             const successCallback = () => {
                 browserHistory.push(`/@${account}/assets`);
+
+                dispatch({type: 'ADD_NOTIFICATION', payload:
+                    {
+                        key: "asset_create_" + Date.now(),
+                        message: tt('asset_create_jsx.notification', { asset: createObject.symbol }),
+                        dismissAfter: 5000
+                    }
+                })
             };
 
             const errorCallback = () => {
@@ -805,6 +813,8 @@ export default connect(
                     isPredictionMarket,
                     bitassetOpts,
                     description,
+                    confirmTitle: {title: tt('asset_create_jsx.confirm_title')},
+                    confirmText: tt('asset_create_jsx.confirm_create_asset', { asset: createObject.symbol }),
                     successCallback,
                     errorCallback
                 }

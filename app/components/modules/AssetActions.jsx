@@ -205,7 +205,7 @@ export default connect(
             };
 
             dispatch(transaction.actions.broadcastOperation({
-                type: 'asset_issue',
+                type: 'asset_issue_',
                 operation,
                 confirm: tt('asset_actions_jsx.confirm_issue_asset', {amount: asset_to_issue}),
                 successCallback,

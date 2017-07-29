@@ -188,7 +188,7 @@ export default connect(
                 success();
                 dispatch({type: 'ADD_NOTIFICATION', payload:
                     {
-                        key: "asset_issue" + Date.now(),
+                        key: "asset_issue_" + Date.now(),
                         message: tt('asset_actions_jsx.notification', {amount: asset_to_issue}),
                         dismissAfter: 5000
                     }
@@ -205,7 +205,7 @@ export default connect(
             };
 
             dispatch(transaction.actions.broadcastOperation({
-                type: 'asset_issue_',
+                type: 'asset_issue',
                 operation,
                 confirm: tt('asset_actions_jsx.confirm_issue_asset', {amount: asset_to_issue}),
                 successCallback,

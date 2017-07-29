@@ -69,6 +69,9 @@ class DepthChart extends React.Component {
     }
 
     render() {
+        return (
+          <iframe style={{width: '100%', height: '420px', border: '0'}} ref="iframe" src="http://demo_chart.tradingview.com/" />
+        )
         const {bids, asks} = this.props;
         if (!bids.length && !asks.length) {
             return null;

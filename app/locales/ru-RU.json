@@ -1037,7 +1037,8 @@
     "max_supply": "Максимальное количество",
     "market_fee": "Комиссия рынка",
     "current_supply":"Текущее количество",
-    "stealth_supply":"Стелс количество"
+    "stealth_supply":"Стелс количество",
+    "market":"Биржа"
   },
   "account_assets_jsx": {
     "supply": "Запас",

@@ -1,6 +1,6 @@
 import React, { PropTypes } from "react";
 import { connect } from 'react-redux';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router';
 import tt from 'counterpart';
 import FormattedAsset from "app/components/elements/FormattedAsset";
 import FormattedPrice from "app/components/elements/FormattedPrice";
@@ -68,7 +68,7 @@ class Asset extends React.Component {
         return (
             <div>
                 {names.map((name) => {
-                    return <AssetPermission key={`perm_${name}`}name={name} isSet={permissions[name]}/>
+                    return <AssetPermission key={`perm_${name}`} name={name} isSet={permissions[name]}/>
                 })}
             </div>
         );
@@ -77,7 +77,7 @@ class Asset extends React.Component {
     formattedPrice(price, hide_symbols=false, hide_value=false) {
         const base = price.base;
         const quote = price.quote;
-        console.log('base',base,'quote',quote)
+
         return (<span>
              <FormattedPrice
                 base={base}
@@ -90,9 +90,9 @@ class Asset extends React.Component {
     renderSummary(asset) {
         const dynamic = asset.dynamic_data;
         const options = asset.options;
-        const flagBooleans = assetUtils.getFlagBooleans(asset.options.flags, ('bitasset_opts' in asset));
+        const flagBooleans = assetUtils.getFlagBooleans(asset.options.flags, ('bitasset_data' in asset));
         const bitNames = Object.keys(flagBooleans);
-        console.log('options.core_exchange_rate',options.core_exchange_rate)
+
         const currentSupply = (dynamic) ? (
                 <tr>
                     <td> {tt('asset_jsx.current_supply')} </td>
@@ -128,11 +128,11 @@ class Asset extends React.Component {
                     <tbody>
                     <tr>
                         <td> {tt('asset_jsx.asset_type')} </td>
-                        <td> {('bitasset_opts' in asset) ? (asset.is_prediction_market ? 'Prediction' : 'Smart') : 'Simple'} </td>
+                        <td> {('bitasset_data' in asset) ? (asset.is_prediction_market ? 'Prediction' : 'Smart') : 'Simple'} </td>
                     </tr>
                     <tr>
                         <td> {tt('asset_jsx.issuer')} </td>
-                        <td> {asset.issuer} </td>
+                        <td><Link to={`/@${asset.issuer}`}>{asset.issuer}</Link></td>
                     </tr>
                     <tr>
                         <td> {tt('asset_jsx.precision')} </td>
@@ -157,7 +157,7 @@ class Asset extends React.Component {
 
     renderPriceFeed(asset) {
         const title = (tt('asset_jsx.price_feed_title'));
-        const bitAsset = asset.bitasset_opts;
+        const bitAsset = asset.bitasset_data;
 
        if (!('current_feed' in bitAsset))
            return (
@@ -192,13 +192,13 @@ class Asset extends React.Component {
     }
 
     renderPriceFeedData(asset) {
-        const bitAsset = asset.bitasset_opts;
+        const bitAsset = asset.bitasset_data;
         if (!('feeds' in bitAsset) || bitAsset.feeds.length == 0 || bitAsset.is_prediction_market) {
             return null;
         }
 
         let now = new Date().getTime();
-        let oldestValidDate = new Date(now - asset.bitasset_opts.feed_lifetime_sec * 1000);
+        let oldestValidDate = new Date(now - bitAsset.feed_lifetime_sec * 1000);
 
         // Filter by valid feed lifetime, Sort by published date
         let feeds = bitAsset.feeds;
@@ -275,13 +275,17 @@ class Asset extends React.Component {
         }
 
         const asset = this.props.asset.toJS();
-        const priceFeed = ('bitasset_opts' in asset) ? this.renderPriceFeed(asset) : null;
-        const priceFeedData = ('bitasset_opts' in asset) ? this.renderPriceFeedData(asset) : null;
+        const priceFeed = ('bitasset_data' in asset) ? this.renderPriceFeed(asset) : null;
+        const priceFeedData = ('bitasset_data' in asset) ? this.renderPriceFeedData(asset) : null;
         const description = assetUtils.parseDescription(asset.options.description);
         const short_name = description.short_name ? description.short_name : null;
 
-        //let preferredMarket = description.market ? description.market : "BTS";
-        const { name, prefix } = utils.replaceName(asset.asset_name, "bitasset_opts" in asset);
+        let preferredMarket = description.market ? description.market : "GOLOS";
+        // if ("bitasset_data" in asset && asset.bitasset_data.is_prediction_market) {
+        //     preferredMarket = asset.bitasset_data.options.short_backing_asset;
+        // }
+
+        const { name, prefix } = utils.replaceName(asset.asset_name, "bitasset_data" in asset);
 
         const aboutBox = (
             <div className="asset-card">
@@ -289,12 +293,12 @@ class Asset extends React.Component {
                 <p>{description.main}</p>
                 <p><Link to={`/@${asset.issuer}`}>{asset.issuer}</Link></p>
                 {short_name ? <p>{short_name}</p> : null}
-                {/*<a style={{textTransform: "uppercase"}} href={`/market/${asset.symbol}_${preferredMarket}`}>{tt('asset_jsx.market')}</a>*/}
+                <a style={{textTransform: "uppercase"}} href={`/market/${asset.asset_name}_${preferredMarket}`}>{tt('asset_jsx.market')}</a>
             </div>
         );
 
         const options = asset.options;
-        const permissionBooleans = assetUtils.getFlagBooleans(asset.options.issuer_permissions, ('bitasset_opts' in asset) ? asset.bitasset_opts : false);
+        const permissionBooleans = assetUtils.getFlagBooleans(asset.options.issuer_permissions, ('bitasset_data' in asset) ? asset.bitasset_data : false);
         const bitNames = Object.keys(permissionBooleans);
 
         const permissions = (<div className="asset-card">

@@ -196,7 +196,6 @@ export default connect(
             };
 
             const operation = {
-                fee:  '0.000 GOLOS',
                 issuer: issuer.get('username'),
                 asset_to_issue,
                 issue_to_account: to,

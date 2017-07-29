@@ -47,6 +47,7 @@ class AssetUpdate extends React.Component {
         return {
             fetched: true,
             update: {
+                symbol: asset.asset_name,
                 max_supply: max_supply,
                 max_market_fee: max_market_fee,
                 market_fee_percent: asset.options.market_fee_percent,
@@ -64,8 +65,8 @@ class AssetUpdate extends React.Component {
             new_issuer: null,
             asset_to_update: asset.id,
 
-            bitasset_opts: isBitAsset ? asset.bitasset.options : null,
-            original_bitasset_opts: isBitAsset ? props.asset.getIn(["bitasset", "options"]).toJS() : null,
+            bitasset_opts: isBitAsset ? asset.bitasset_data.options : null,
+            original_bitasset_opts: isBitAsset ? this.props.asset.getIn(["bitasset_data", "options"]).toJS() : null,
             marketInput: ""
         };
     }
@@ -583,6 +584,7 @@ export default connect(
     (state, props) => {
         const asset = state.assets.get('received');
         const core = state.assets.get('core');
+
         return {...props, asset, core};
     },
 

@@ -5,6 +5,7 @@ const defaultState = {
     assets: {},
     asset: Map(),
     core: Map(),
+    issuer_assets: Map(),
     received : null
 };
 
@@ -28,6 +29,12 @@ export default createModule({
             action: 'SET_RECEIVED_ASSET',
             reducer: (state, {payload}) => {
                 return state.set('received', payload)
+            }
+        },
+        {
+            action: 'RECEIVE_ISSUER_ASSETS',
+            reducer: (state, {payload}) => {
+                return state.set('issuer_assets', payload)
             }
         },
 

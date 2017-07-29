@@ -60,9 +60,9 @@ export function* fetchOpenOrders(set_user_action) {
     const {username} = set_user_action.payload
 
     try {
-        const state = yield call([api, api.getOpenOrdersAsync], username);
-        yield put(MarketReducer.actions.receiveOpenOrders(state));
-        yield call(getAccount, username, true);
+       // const state = yield call([api, api.getOpenOrdersAsync], username);
+        //yield put(MarketReducer.actions.receiveOpenOrders(state));
+       // yield call(getAccount, username, true);
     } catch (error) {
         console.error('~~ Saga fetchOpenOrders error ~~>', error);
         yield put({type: 'global/CHAIN_API_ERROR', error: error.message});

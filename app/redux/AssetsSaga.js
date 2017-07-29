@@ -52,17 +52,32 @@ export function* getAssetsByIssuer() {
     const username = yield select(state => state.user.getIn(['current', 'username']));
     let assets  = yield call([api, api.getAssetsByIssuerAsync], username);
 
-    yield put(AssetsReducer.actions.receiveAssets(assets));
-}
+    let assetsByIssuer = Map(assets.map( (asset) => [asset.asset_name, fromJS(asset)] ));
 
-export function* updateAssetsData(assetsNames) {
-    // const bitAssetsData = yield call([api, api.getBitassetsDataAsync], assetsNames);
-    // const assetsDynamicData = yield call([api, api.getAssetsDynamicDataAsync], assetsNames);
+    const assetSymbols = assetsByIssuer.keySeq().toArray();
+
+    let bitAssetsData = yield call([api, api.getBitassetsDataAsync], assetSymbols);
+    let assetsDynamicData = yield call([api, api.getAssetsDynamicDataAsync], assetSymbols);
+
+    bitAssetsData = bitAssetsData.filter( d => d );
+    bitAssetsData = Map(bitAssetsData.map( (data) => [data.asset_name, fromJS(data)] ));
+    assetsDynamicData = Map(assetsDynamicData.map( (data) => [data.asset_name, fromJS(data)] ));
+
+    assetsByIssuer = assetsByIssuer.map( (asset, name) => {
+        asset = asset.setIn(['dynamic_data'], assetsDynamicData.get(name));
+
+        if (bitAssetsData.has(name)) {
+            asset = asset.setIn(['bitasset_data'], bitAssetsData.get(name));
+        }
+        return asset
+    });
+
+    yield put(AssetsReducer.actions.receiveIssuerAssets(assetsByIssuer));
 }
 
 export function* getAsset({payload: {assetName}}) {
-    let asset  = yield call([api, api.getAssetsAsync], [assetName]);
-    asset = fromJS(asset[0]);
+    const asset =  yield select(state => state.assets.getIn(['issuer_assets', assetName]));
+
     yield put(AssetsReducer.actions.setReceivedAsset(asset));
 }
 
@@ -76,7 +91,6 @@ export function* createAsset({payload: {
     let max_market_fee = (new big(createObject.max_market_fee || 0)).times(precision).toString();
 
     const createAssetObject = {
-        fee:  assetConstants.ASSET_DEFAULT_FEE,
         issuer: account,
         asset_name: createObject.symbol,
         precision: parseInt(createObject.precision, 10),
@@ -125,7 +139,6 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     const maxMarketFee = (new big(update.max_market_fee || 0)).times(quotePrecision).toString();
 
     const updateAssetObject = {
-        fee:  assetConstants.ASSET_DEFAULT_FEE,
         issuer: issuer,
         asset_to_update: asset.get("asset_name"),
         new_issuer: new_issuer,

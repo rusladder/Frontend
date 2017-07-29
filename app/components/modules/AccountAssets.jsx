@@ -27,6 +27,7 @@ class AccountAssets extends React.Component {
 
         const myAssets = assets
         .map(asset => {
+            asset = asset.toJS();
             const description = assetUtils.parseDescription(asset.options.description);
             let desc = description.short_name ? description.short_name : description.main;
 
@@ -37,10 +38,10 @@ class AccountAssets extends React.Component {
                 <tr key={asset.asset_name}>
                     <td><Link to={`/asset/${asset.asset_name}`}>{asset.asset_name}</Link></td>
                     <td style={{maxWidth: "250px"}}>{desc}</td>
-                    {/*<td>{<FormattedAsset amount={parseInt(asset.dynamic_data.current_supply, 10)} asset={asset} />}</td>*/}
+                    <td>{<FormattedAsset amount={parseFloat(asset.dynamic_data.current_supply, 10)} asset={asset} />}</td>
                     <td>{<FormattedAsset amount={parseInt(asset.options.max_supply, 10)} asset={asset} />}</td>
                     <td>
-                        {!asset.bitasset_opts
+                        {!asset.bitasset_data
                             ? (<button onClick={this.issueButtonClick.bind(this, asset.asset_name)} className="tiny button slim">
                                     {tt('account_assets_jsx.asset_issue')}
                                </button>)
@@ -48,7 +49,7 @@ class AccountAssets extends React.Component {
                         }
                     </td>
                     <td>
-                        {!asset.bitasset_opts
+                        {!asset.bitasset_data
                             ? (<button onClick={this.reserveButtonClick.bind(this, asset.asset_name)} className="tiny button slim" disabled={true}>
                                     {tt('account_assets_jsx.asset_reserve')}
                                 </button>)
@@ -106,7 +107,7 @@ class AccountAssets extends React.Component {
 export default connect(
     state => {
         return {
-            assets: state.assets.get('assets')
+            assets: state.assets.get('issuer_assets')
         }
     },
     dispatch => ({

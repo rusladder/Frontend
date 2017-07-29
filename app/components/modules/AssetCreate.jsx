@@ -562,7 +562,7 @@ class AssetCreate extends React.Component {
                                             </div>)*/
                                         : null
                                     }
-                                </div>)
+                                </div>
                             </div>
 
                             <h5>{tt('user_issued_assets.core_exchange_rate')}</h5>

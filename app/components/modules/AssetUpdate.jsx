@@ -600,6 +600,14 @@ export default connect(
 
             const successCallback = () => {
                 browserHistory.push(`/@${issuer}/assets`);
+
+                dispatch({type: 'ADD_NOTIFICATION', payload:
+                    {
+                        key: "asset_update_" + Date.now(),
+                        message: tt('asset_update_jsx.notification', { asset: update.symbol }),
+                        dismissAfter: 5000
+                    }
+                })
             };
 
             const errorCallback = () => {
@@ -620,6 +628,8 @@ export default connect(
                     bitassetOpts,
                     originalBitassetOpts,
                     description,
+                    confirmTitle: {title: tt('asset_update_jsx.confirm_title')},
+                    confirmText: tt('asset_update_jsx.confirm_update_asset', { asset: update.symbol }),
                     successCallback,
                     errorCallback
                 }

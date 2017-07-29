@@ -83,7 +83,8 @@ export function* getAsset({payload: {assetName}}) {
 
 export function* createAsset({payload: {
     account, createObject, flags, permissions, coreExchangeRate, isBitAsset, isPredictionMarket,
-    bitassetOpts, description, successCallback, errorCallback}}) {
+    bitassetOpts, description,
+    confirmTitle, confirmText, successCallback, errorCallback}}) {
 
     const precision = utils.get_asset_precision(createObject.precision);
     big.config({DECIMAL_PLACES: createObject.precision});
@@ -102,7 +103,7 @@ export function* createAsset({payload: {
             flags: flags,
             core_exchange_rate: {
                 base:  utils.formatCer(coreExchangeRate.base, 3),
-                quote: utils.formatCer(coreExchangeRate.quote, parseInt(createObject.precision, 10))
+                quote: utils.formatCer(coreExchangeRate.quote, 3)
             },
             whitelist_authorities: [],
             blacklist_authorities: [],
@@ -122,7 +123,8 @@ export function* createAsset({payload: {
     yield put(transaction.actions.broadcastOperation(
         {
             type: 'asset_create',
-            operation: createAssetObject,
+            operation: Object.assign(createAssetObject, { __config: confirmTitle }),
+            confirm: confirmText,
             successCallback,
             errorCallback
         }
@@ -130,7 +132,8 @@ export function* createAsset({payload: {
 }
 
 export function* updateAsset({payload: {issuer, new_issuer, update, coreExchangeRate, asset, flags, permissions,
-    isBitAsset, bitassetOpts, originalBitassetOpts, description, successCallback, errorCallback}}) {
+    isBitAsset, bitassetOpts, originalBitassetOpts, description,
+    confirmTitle, confirmText, successCallback, errorCallback}}) {
 
     const quotePrecision = utils.get_asset_precision(asset.get("precision"));
 
@@ -169,7 +172,8 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     yield put(transaction.actions.broadcastOperation(
         {
             type: 'asset_update',
-            operation: updateAssetObject,
+            operation: Object.assign(updateAssetObject, { __config: confirmTitle }),
+            confirm: confirmText,
             successCallback,
             errorCallback
         }

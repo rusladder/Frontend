@@ -13,7 +13,7 @@ import {api} from 'golos-js'
 
 let MAX_SAFE_INT = new big("9007199254740991");
 
-class BitAssetOptions extends React.Component {
+export class BitAssetOptions extends React.Component {
 
     static propTypes = {
         backingAsset: PropTypes.string.isRequired,
@@ -220,11 +220,10 @@ class AssetCreate extends React.Component {
                 break;
 
             default:
-                bitasset_opts[value] = e.target.value;
+                bitasset_opts[value] = parseInt(e.target.value, 10);
                 break;
         }
-
-        this.forceUpdate();
+        this.setState({bitasset_opts});
     }
 
     onUpdateInput(value, e) {

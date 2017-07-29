@@ -5,7 +5,6 @@ import big from "bignumber.js";
 import AssetsReducer from './AssetsReducer';
 import transaction from 'app/redux/Transaction';
 import utils from 'app/utils/Assets/utils';
-import assetConstants from "app/utils/Assets/Constants";
 import { api } from 'golos-js';
 
 export const assetsWatches = [
@@ -90,7 +89,7 @@ export function* createAsset({payload: {
     bitassetOpts, description,
     confirmTitle, confirmText, successCallback, errorCallback}}) {
 
-    const precision = utils.get_asset_precision(createObject.precision);
+    const precision = utils.get_asset_precision(3);
     big.config({DECIMAL_PLACES: createObject.precision});
     let max_supply = (new big(createObject.max_supply)).times(precision).toString();
     let max_market_fee = (new big(createObject.max_market_fee || 0)).times(precision).toString();
@@ -139,7 +138,7 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     isBitAsset, bitassetOpts, originalBitassetOpts, description,
     confirmTitle, confirmText, successCallback, errorCallback}}) {
 
-    const quotePrecision = utils.get_asset_precision(asset.get("precision"));
+    const quotePrecision = utils.get_asset_precision(3);
 
     big.config({DECIMAL_PLACES: asset.get("precision")});
     const maxSupply = (new big(update.max_supply)).times(quotePrecision).toString();
@@ -183,8 +182,6 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
         }
     ));
 
-    //console.log("bitassetOpts:", bitassetOpts, "originalBitassetOpts:", originalBitassetOpts);
-
     if (isBitAsset && (
         bitassetOpts.feed_lifetime_sec !== originalBitassetOpts.feed_lifetime_sec ||
         bitassetOpts.minimum_feeds !== originalBitassetOpts.minimum_feeds ||
@@ -194,9 +191,8 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
         bitassetOpts.short_backing_asset !== originalBitassetOpts.short_backing_asset)) {
 
         const updateBitAssetObject = {
-            fee:  assetConstants.ASSET_DEFAULT_FEE,
-            asset_to_update: asset.get("asset_name"),
             issuer: issuer,
+            asset_to_update: asset.get("asset_name"),
             new_options: bitassetOpts,
             extensions: []
         };

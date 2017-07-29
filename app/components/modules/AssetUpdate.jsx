@@ -35,7 +35,7 @@ class AssetUpdate extends React.Component {
 
     resetState(asset_) {
         let asset = asset_.toJS();
-        const isBitAsset = asset.bitasset_data !== undefined;
+        const isBitAsset = "bitasset_data" in asset;
         const precision = utils.get_asset_precision(asset.precision);
         const max_market_fee = (new big(asset.options.max_market_fee)).div(precision).toString();
         const max_supply = (new big(asset.options.max_supply)).div(precision).toString();
@@ -63,19 +63,16 @@ class AssetUpdate extends React.Component {
             core_exchange_rate: core_exchange_rate,
             issuer: asset.issuer,
             new_issuer: null,
-            asset_to_update: asset.id,
-
             bitasset_opts: isBitAsset ? asset.bitasset_data.options : null,
-            original_bitasset_opts: isBitAsset ? this.props.asset.getIn(["bitasset_data", "options"]).toJS() : null,
             marketInput: ""
         };
     }
 
     updateAsset(e) {
         e.preventDefault();
-        const {update, issuer, new_issuer_account, core_exchange_rate, flagBooleans,
-            permissionBooleans, isBitAsset, bitasset_opts, original_bitasset_opts} = this.state;
-
+        const {update, issuer, new_issuer, core_exchange_rate, flagBooleans,
+            permissionBooleans, isBitAsset, bitasset_opts} = this.state;
+        const original_bitasset_opts = isBitAsset ? this.props.asset.getIn(["bitasset_data", "options"]).toJS() : null
         const flags = assetUtils.getFlags(flagBooleans);
 
         const permissions = assetUtils.getPermissions(permissionBooleans, isBitAsset);
@@ -85,7 +82,7 @@ class AssetUpdate extends React.Component {
         }
         const description = JSON.stringify(update.description);
 
-        this.props.updateAsset(issuer, new_issuer_account, update, core_exchange_rate, this.props.asset,
+        this.props.updateAsset(issuer, new_issuer, update, core_exchange_rate, this.props.asset,
             flags, permissions, isBitAsset, bitasset_opts, original_bitasset_opts, description);
     }
 
@@ -147,7 +144,6 @@ class AssetUpdate extends React.Component {
 
             case "feed_lifetime_sec":
             case "force_settlement_delay_sec":
-                console.log(e.target.value, parseInt(parseFloat(e.target.value) * 60, 10));
                 bitasset_opts[value] = parseInt(parseFloat(e.target.value) * 60, 10);
                 break;
 
@@ -159,6 +155,8 @@ class AssetUpdate extends React.Component {
                 bitasset_opts[value] = parseInt(e.target.value, 10);
                 break;
         }
+
+        this.setState({bitasset_opts});
     }
 
     validateEditFields( new_state ) {
@@ -467,6 +465,19 @@ class AssetUpdate extends React.Component {
                         </div>
                     </div>
                 </Tab>
+
+                {isBitAsset
+                    ? (<Tab title={tt('user_issued_assets.bitasset_opts')}>
+                        <BitAssetOptions
+                            bitasset_opts={bitasset_opts}
+                            onUpdate={this.onChangeBitAssetOpts.bind(this)}
+                            backingAsset={bitasset_opts.short_backing_asset}
+                            assetPrecision={update.precision}
+                            assetSymbol={update.symbol}
+                        />
+                    </Tab>)
+                    : null
+                }
 
                 <Tab title={tt('user_issued_assets.update_owner')}>
                     <div className="row margin">

@@ -25,13 +25,35 @@ export function* getAccount(username, force = false) {
     return account
 }
 
+/**with state mutation */
+export function* getAccountBalances (state, account) {
+    const balances = yield call([api, api.getAccountBalancesAsync], account, ['GBG', 'GOLOS']);
+
+    if (balances.length === 2) {
+        const sbd_balance = balances[0].indexOf('GBG') ? balances[0] : balances[1];
+        const balance = balances[1].indexOf('GOLOS') ? balances[1] : balances[0];
+
+        state.accounts[account].sbd_balance = sbd_balance;
+        state.accounts[account].balance = balance;
+    }
+
+    return state;
+}
+
 export function* watchGetState() {
     yield* takeEvery('global/GET_STATE', getState);
 }
 /** Manual refreshes.  The router is in FetchDataSaga. */
 export function* getState({payload: {url}}) {
     try {
-        const state = yield call([api, api.getStateAsync], url);
+        let state = yield call([api, api.getStateAsync], url);
+
+        const accounts = Object.keys(state.accounts);
+        if (accounts.length > 0) {
+            const name = accounts[0];
+            state = yield call(getAccountBalances, state, name);
+        }
+
         yield put(g.actions.receiveState(state));
     } catch (error) {
         console.error('~~ Saga getState error ~~>', url, error);

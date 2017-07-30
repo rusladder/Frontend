@@ -1,7 +1,7 @@
 import {takeLatest, takeEvery} from 'redux-saga';
 import {call, put, select, fork} from 'redux-saga/effects';
 import {loadFollows, fetchFollowCount} from 'app/redux/FollowSaga';
-import {getContent} from 'app/redux/SagaShared';
+import { getContent, getAccountBalances } from 'app/redux/SagaShared';
 import GlobalReducer from './GlobalReducer';
 import constants from './constants';
 import {fromJS, Map} from 'immutable'
@@ -168,6 +168,11 @@ export function* fetchState(location_change_action) {
             state.content[key].active_votes = yield call([api, api.getActiveVotesAsync], state.content[key].author, state.content[key].permlink);
 
           yield put({type: 'global/FETCHING_STATE', payload: false});
+        }
+
+        if(m && m.length === 2) {
+            const name = m[1];
+            state = yield call(getAccountBalances, state, name);
         }
 
         yield put(GlobalReducer.actions.receiveState(state));

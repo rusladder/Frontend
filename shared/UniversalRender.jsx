@@ -318,6 +318,20 @@ async function universalRender({ location, initial_state, offchain, ErrorPage, t
           onchain = _state
         }
 
+        const accounts = Object.keys(onchain.accounts);
+        if (accounts.length === 1) {
+            const name = accounts[0];
+            const balances = await api.getAccountBalancesAsync(name, ['GBG', 'GOLOS']);
+
+            if (balances.length === 2) {
+                const sbd_balance = balances[0].indexOf('GBG') ? balances[0] : balances[1];
+                const balance = balances[1].indexOf('GOLOS') ? balances[1] : balances[0];
+
+                onchain.accounts[name].sbd_balance = sbd_balance;
+                onchain.accounts[name].balance = balance;
+            }
+        }
+
         if (Object.getOwnPropertyNames(onchain.accounts).length === 0 && (url.match(routeRegex.UserProfile1) || url.match(routeRegex.UserProfile3))) { // protect for invalid account
             return {
                 title: 'User Not Found - ' + APP_NAME,

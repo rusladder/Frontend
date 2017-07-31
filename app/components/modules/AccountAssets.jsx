@@ -14,12 +14,12 @@ class AccountAssets extends React.Component {
 
     reserveButtonClick(assetName, e) {
         e.preventDefault();
-        // this.props.assetReserve(assetName);
+        this.props.assetReserve(assetName, 'asset_reserve');
     }
 
     issueButtonClick(assetName, e) {
         e.preventDefault();
-        this.props.assetIssue(assetName);
+        this.props.assetIssue(assetName, 'asset_issue');
     }
 
     render() {
@@ -50,7 +50,7 @@ class AccountAssets extends React.Component {
                     </td>
                     <td>
                         {!asset.bitasset_data
-                            ? (<button onClick={this.reserveButtonClick.bind(this, asset.asset_name)} className="tiny button slim" disabled={true}>
+                            ? (<button onClick={this.reserveButtonClick.bind(this, asset.asset_name)} className="tiny button slim">
                                     {tt('account_assets_jsx.asset_reserve')}
                                 </button>)
                             : null
@@ -112,12 +112,12 @@ export default connect(
     },
     dispatch => ({
 
-        assetIssue: (assetName) => {
-            dispatch(g.actions.showDialog({name: 'issue_asset', params: {assetName}}));
+        assetIssue: (assetName, type) => {
+            dispatch(g.actions.showDialog({name: 'assetsActions', params: {assetName, type}}));
         },
 
-        assetReserve: () => {
-            dispatch(g.actions.showDialog({name: 'asset_issue', params: {}}));
+        assetReserve: (assetName, type) => {
+            dispatch(g.actions.showDialog({name: 'assetsActions', params: {assetName, type}}));
         },
     })
 )(AccountAssets)

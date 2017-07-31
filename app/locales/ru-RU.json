@@ -1050,10 +1050,20 @@
     "asset_create": "Создание актива"
   },
   "asset_actions_jsx": {
-    "title": "Выпуск актива",
-    "submit" : "Выпустить актив",
-    "confirm_title": "Подтвердите выпуск актива",
-    "confirm_issue_asset": "Выпустить актив в количестве %(amount)s ?",
-    "notification": "Актив выпущен в количестве %(amount)s"
+    "issue_asset_title": "Выпуск актива",
+    "issue_asset_submit" : "Выпустить актив",
+    "issue_asset_confirm_title": "Подтвердите выпуск актива",
+    "issue_asset_confirm_body": "Выпустить актив в количестве %(amount)s ?",
+    "issue_asset_notification": "Актив выпущен в количестве %(amount)s",
+    "issue_reserve_title": "Резервирование актива",
+    "issue_reserve_submit" : "Зарезервировать актив",
+    "issue_reserve_confirm_title": "Подтвердите резервирование актива",
+    "issue_reserve_confirm_body": "Зарезервировать актив в количестве %(amount)s ?",
+    "issue_reserve_notification": "Актив зарезервирован в количестве %(amount)s",
+    "issue_transfer_title": "Отправить пользователю",
+    "issue_transfer_submit" : "Отправить",
+    "issue_transfer_confirm_title": "Подтвердите отправку актива",
+    "issue_transfer_confirm_body": "Отправить актив в количестве %(amount)s пользователю %(account) ?",
+    "issue_transfer_notification": "Актив отправлен в количестве %(amount)s пользователю %(account)"
   }
 }

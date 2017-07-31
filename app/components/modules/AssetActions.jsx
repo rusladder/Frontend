@@ -14,23 +14,33 @@ class AssetActions extends Component {
     static propTypes = {
         assetName:  PropTypes.string.isRequired,
         issuer: PropTypes.object.isRequired,
+        type: PropTypes.string.isRequired
     };
 
     constructor(props) {
         super();
-        this.state = {};
+        const { type } = props;
+        this.state = {
+            isReserve: type === 'asset_reserve',
+            isTransfer: type === 'asset_transfer'
+        };
         this.initForm(props);
     }
 
     componentDidMount() {
+        const { isReserve } = this.state
         setTimeout(() => {
-            ReactDOM.findDOMNode(this.refs.to).focus()
+            if (isReserve)
+                ReactDOM.findDOMNode(this.refs.amount).focus()
+            else
+                ReactDOM.findDOMNode(this.refs.to).focus()
         }, 300)
         runTests()
     }
 
     initForm(props) {
-        const fields = ['to', 'amount', 'memo'];
+        const { isReserve } = this.state
+        const fields = isReserve ? ['amount'] : ['to', 'amount', 'memo'];
 
         reactForm({
             name: 'transfer',
@@ -61,9 +71,9 @@ class AssetActions extends Component {
 
     render() {
         const { to, amount, memo } = this.state;
-        const { loading, trxError } = this.state;
+        const { loading, trxError, isReserve, isTransfer } = this.state;
         const { submitting, valid, handleSubmit } = this.state.transfer;
-        const { issuer, assetName, dispatchSubmit } = this.props;
+        const { issuer, assetName, type, dispatchSubmit } = this.props;
 
         // const isMemoPrivate = memo && /^#/.test(memo.value);
         const form = (
@@ -73,11 +83,11 @@ class AssetActions extends Component {
                     if(this.props.onClose) this.props.onClose()
                     this.setState({loading: false})
                 }
-                dispatchSubmit({...data, assetName, errorCallback: this.errorCallback, issuer, success })
+                dispatchSubmit({...data, assetName, errorCallback: this.errorCallback, issuer, type, success })
             })}
                   onChange={this.clearError}
             >
-                <div className="row">
+                { !isReserve && <div className="row">
                     <div className="column small-2" style={{paddingTop: 5}}>{tt('g.from')}</div>
                     <div className="column small-10">
                         <div className="input-group" style={{marginBottom: "1.25rem"}}>
@@ -90,9 +100,9 @@ class AssetActions extends Component {
                             />
                         </div>
                     </div>
-                </div>
+                </div>}
 
-               <div className="row">
+                { !isReserve && <div className="row">
                     <div className="column small-2" style={{paddingTop: 5}}>{tt('g.to')}</div>
                     <div className="column small-10">
                         <div className="input-group" style={{marginBottom: "1.25rem"}}>
@@ -113,7 +123,7 @@ class AssetActions extends Component {
                         </div>
                         {to.touched && to.blur && to.error && <div className="error">{to.error}&nbsp;</div>}
                     </div>
-                </div>
+                </div>}
 
                 <div className="row">
                     <div className="column small-2" style={{paddingTop: 5}}>{tt('g.amount')}</div>
@@ -132,7 +142,7 @@ class AssetActions extends Component {
                     </div>
                 </div>
 
-                <div className="row">
+                { !isReserve && <div className="row">
                     <div className="column small-2" style={{paddingTop: 5}}>{tt('g.memo')}</div>
                     <div className="column small-10">
                         {/*<small>{tt('transfer_jsx.this_memo_is') + isMemoPrivate ? tt('transfer_jsx.private'): tt('transfer_jsx.public')}</small>*/}
@@ -149,12 +159,14 @@ class AssetActions extends Component {
                         />
                         <div className="error">{memo.touched && memo.error && memo.error}&nbsp;</div>
                     </div>
-                </div>
+                </div>}
                 {loading && <span><LoadingIndicator type="circle" /><br /></span>}
                 {!loading && <span>
                     {trxError && <div className="error">{trxError}</div>}
                     <button type="submit" disabled={submitting || !valid} className="button">
-                        {tt('asset_actions_jsx.submit')}
+                        { isReserve ? tt('asset_actions_jsx.issue_reserve_submit') :
+                            isTransfer ? tt('asset_actions_jsx.issue_transfer_submit') :
+                                tt('asset_actions_jsx.issue_asset_submit')}
                     </button>
                 </span>}
             </form>
@@ -162,7 +174,9 @@ class AssetActions extends Component {
         return (
             <div>
                 <div className="row">
-                    <h3>{tt('asset_actions_jsx.title')}</h3>
+                    <h3>{ isReserve ? tt('asset_actions_jsx.issue_reserve_title') :
+                        isTransfer ? tt('asset_actions_jsx.issue_transfer_title') :
+                            tt('asset_actions_jsx.issue_asset_title')}</h3>
                 </div>
                 {form}
             </div>
@@ -181,33 +195,57 @@ export default connect(
 
     dispatch => ({
 
-        dispatchSubmit: ({ to, amount, assetName, memo, issuer, errorCallback, success}) => {
-            const asset_to_issue = [parseFloat(amount, 10).toFixed(3), assetName].join(' ');
+        dispatchSubmit: ({ to, amount, assetName, memo, issuer, errorCallback, type, success}) => {
+            const _amount = [parseFloat(amount, 10).toFixed(3), assetName].join(' ');
+
+            const action =
+                type === 'asset_issue' ?
+                {
+                    type,
+                    operation: {
+                        issuer: issuer.get('username'),
+                        asset_to_issue: _amount,
+                        issue_to_account: to,
+                        memo,
+                        extensions: [],
+                        __config: {title: tt('asset_actions_jsx.issue_asset_confirm_title')},
+                    },
+                    confirm: tt('asset_actions_jsx.issue_asset_confirm_body', {amount: _amount}),
+                    message : tt('asset_actions_jsx.issue_asset_notification', {amount: _amount})
+                }
+                : type === 'asset_transfer' ?
+                {
+                    //TODO
+                }
+                :
+                {
+                    type, //asset_reserve
+                    operation: {
+                        payer: issuer.get('username'),
+                        amount_to_reserve: _amount,
+                        extensions: [],
+                        __config: {title: tt('asset_actions_jsx.issue_reserve_confirm_title')},
+                    },
+                    confirm: tt('asset_actions_jsx.issue_reserve_confirm_body', {amount: _amount}),
+                    message : tt('asset_actions_jsx.issue_reserve_notification', {amount: _amount})
+                };
 
             const successCallback = () => {
                 success();
+                dispatch({type: 'FETCH_ISSUER_ASSETS'})
                 dispatch({type: 'ADD_NOTIFICATION', payload:
                     {
-                        key: "asset_issue_" + Date.now(),
-                        message: tt('asset_actions_jsx.notification', {amount: asset_to_issue}),
+                        key: "asset_actions_" + Date.now(),
+                        message: action.message,
                         dismissAfter: 5000
                     }
                 })
             };
 
-            const operation = {
-                issuer: issuer.get('username'),
-                asset_to_issue,
-                issue_to_account: to,
-                memo,
-                extensions: [],
-                __config: {title: tt('asset_actions_jsx.confirm_title')}
-            };
-
             dispatch(transaction.actions.broadcastOperation({
-                type: 'asset_issue',
-                operation,
-                confirm: tt('asset_actions_jsx.confirm_issue_asset', {amount: asset_to_issue}),
+                type: action.type,
+                operation: action.operation,
+                confirm: action.confirm,
                 successCallback,
                 errorCallback
             }))

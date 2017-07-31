@@ -36,7 +36,7 @@ class AssetUpdate extends React.Component {
     resetState(asset_) {
         let asset = asset_.toJS();
         const isBitAsset = "bitasset_data" in asset;
-        const precision = utils.get_asset_precision(asset.precision);
+        const precision = utils.get_asset_precision(3);
         const max_market_fee = (new big(asset.options.max_market_fee)).div(precision).toString();
         const max_supply = (new big(asset.options.max_supply)).div(precision).toString();
         const core_exchange_rate = asset.options.core_exchange_rate;

@@ -9,6 +9,7 @@ import { api } from 'golos-js';
 
 export const assetsWatches = [
     watchLocationChange,
+    watchFetchIssuerAssets,
     watchGetAsset,
     watchCreateAsset,
     watchUpdateAsset
@@ -16,6 +17,10 @@ export const assetsWatches = [
 
 export function* watchLocationChange() {
     yield* takeLatest('@@router/LOCATION_CHANGE', fetchData);
+}
+
+export function* watchFetchIssuerAssets() {
+    yield* takeLatest('FETCH_ISSUER_ASSETS', getAssetsByIssuer);
 }
 
 export function* watchGetAsset() {
@@ -38,7 +43,7 @@ export function* fetchData(location_change_action) {
     }
 
     yield call(getCoreAsset);
-    yield call(getAssetsByIssuer);
+    yield put({type: 'FETCH_ISSUER_ASSETS'});
 }
 
 export function* getCoreAsset() {

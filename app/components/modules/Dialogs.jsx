@@ -97,7 +97,7 @@ class Dialogs extends React.Component {
                     <QrKeyView onClose={this['hide_' + k]} {...v.get('params').toJS()} />
                 </Reveal>
 +           </span>:
-             k === 'issue_asset' ? <span key={idx++} >
+             k === 'assetsActions' ? <span key={idx++} >
                 <Reveal onHide={this['hide_' + k]} show>
                     <CloseButton onClick={this['hide_' + k]} />
                     <AssetActions onClose={this['hide_' + k]} {...v.get('params').toJS()} />

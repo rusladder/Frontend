@@ -18,6 +18,15 @@ export function* getAccount(username, force = false) {
     if (force || !account) {
         [account] = yield call([api, api.getAccountsAsync], [username])
         if(account) {
+            const balances = yield call([api, api.getAccountBalancesAsync], username, ['GBG', 'GOLOS']);
+            if (balances.length === 2) {
+                const sbd_balance = balances[0].indexOf('GBG') ? balances[0] : balances[1];
+                const balance = balances[1].indexOf('GOLOS') ? balances[1] : balances[0];
+
+                account.sbd_balance = sbd_balance;
+                account.balance = balance;
+            }
+
             account = fromJS(account)
             yield put(g.actions.receiveAccount({account}))
         }

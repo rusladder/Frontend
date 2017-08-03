@@ -401,7 +401,7 @@ class AssetCreate extends React.Component {
         this.setState({is_prediction_market : !this.state.is_prediction_market});
 
         const { update } = this.state;
-        update.precision = utils.get_asset_precision(this.props.core);
+        update.precision = this.props.core.get("precision");
         this.setState({update});
     }
 
@@ -544,21 +544,22 @@ class AssetCreate extends React.Component {
                                         <label>{tt('user_issued_assets.mpa')}:
                                             <input
                                                 type="checkbox"
-                                                checked={isBitAsset} />
+                                                checked={isBitAsset}
+                                            />
                                         </label>
                                     </div>
                                 </div>
 
                                  <div className="column small-6 medium-6">
                                     {isBitAsset
-                                        ? null /* (<div className="switch" onClick={this.onTogglePM.bind(this)}>
+                                        ? (<div className="switch" onClick={this.onTogglePM.bind(this)}>
                                                 <label>{tt('user_issued_assets.pm')}:
                                                     <input
                                                         type="checkbox"
                                                         checked={is_prediction_market}
                                                     />
                                                 </label>
-                                            </div>)*/
+                                            </div>)
                                         : null
                                     }
                                 </div>

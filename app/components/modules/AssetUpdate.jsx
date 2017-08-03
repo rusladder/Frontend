@@ -329,17 +329,17 @@ class AssetUpdate extends React.Component {
             )
         }
 
-        const isPredictionMarketAsset = asset.getIn(["bitasset", "is_prediction_market"]);
+        const isPredictionMarketAsset = asset.getIn(["bitasset_data", "is_prediction_market"]);
 
         const quoteAmount = assetUtils.splitAmount(core_exchange_rate.quote);
         const baseAmount = assetUtils.splitAmount(core_exchange_rate.base);
-        // const price = utils.get_asset_price(
-        //     quoteAmount[0] * precision,
-        //     {precision: precision},
-        //     baseAmount[0] * 3,
-        //     core);
-        //
-        // const formattedPrice = price.toFixed((parseInt(precision, 10) || 8));
+        const price = utils.get_asset_price(
+            quoteAmount[0] * precision,
+            {precision: precision},
+            baseAmount[0] * 3,
+            core);
+
+        const formattedPrice = price.toFixed((parseInt(precision, 10) || 8));
 
         const tabs = <div className="AssetCreate_tabs">
             <h4>{tt('asset_update_jsx.header')}: {assetName}</h4>
@@ -394,7 +394,7 @@ class AssetUpdate extends React.Component {
                             <div>
                                 <h5>
                                     {tt('asset_create_jsx.price')}
-                                    <span>: {/*formattedPrice*/}</span>
+                                    <span>: {formattedPrice}</span>
                                     <span> {asset.get("asset_name")} / {core.get("asset_name")}</span>
                                 </h5>
                             </div>
@@ -481,23 +481,28 @@ class AssetUpdate extends React.Component {
 
                 <Tab title={tt('user_issued_assets.update_owner')}>
                     <div className="row margin">
-                        <div className="column small-12">
+                        <div className="column small-6">
                             {tt('user_issued_assets.current_issuer')}
-                            <input
-                                type="text"
-                                rows="1"
-                                value={this.state.issuer}
-                            />
+                            <div className="input-group" style={{marginTop: 5}}>
+                                <span className="input-group-label">@</span>
+                                <input
+                                    className="input-group-field"
+                                    type="text"
+                                    disabled
+                                    value={this.state.issuer}
+                                />
+                            </div>
 
-                            <br />
                             {tt('user_issued_assets.new_issuer')}
-                            <input
-                                type="text"
-                                rows="1"
-                                value={this.state.new_issuer}
-                                onChange={this.issuerNameChanged.bind(this)}
-                            />
-
+                            <div className="input-group" style={{marginTop: 5}}>
+                                <span className="input-group-label">@</span>
+                                <input
+                                    className="input-group-field"
+                                    type="text"
+                                    value={this.state.new_issuer || ""}
+                                    onChange={this.issuerNameChanged.bind(this)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </Tab>

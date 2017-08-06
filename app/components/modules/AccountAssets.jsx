@@ -38,8 +38,8 @@ class AccountAssets extends React.Component {
                 <tr key={asset.asset_name}>
                     <td><Link to={`/asset/${asset.asset_name}`}>{asset.asset_name}</Link></td>
                     <td style={{maxWidth: "250px"}}>{desc}</td>
-                    <td>{<FormattedAsset amount={parseFloat(asset.dynamic_data.current_supply, 10)} asset={asset} />}</td>
-                    <td>{<FormattedAsset amount={parseInt(asset.options.max_supply, 10)} asset={asset} />}</td>
+                    <td>{<FormattedAsset amount={parseFloat(asset.dynamic_data.current_supply)} asset={asset} />}</td>
+                    <td>{<FormattedAsset amount={parseFloat(asset.options.max_supply)} asset={asset} />}</td>
                     <td>
                         {!asset.bitasset_data
                             ? (<button onClick={this.issueButtonClick.bind(this, asset.asset_name)} className="tiny button slim">

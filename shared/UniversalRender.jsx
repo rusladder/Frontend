@@ -29,7 +29,7 @@ import {serverApiRecordEvent} from 'app/utils/ServerApiClient';
 import Translator from 'app/Translator';
 import {notificationsArrayToMap} from 'app/utils/Notifications';
 import {routeRegex} from "app/ResolveRoute";
-import {contentStats} from 'app/utils/StateFunctions'
+import { contentStats, accountBalances } from 'app/utils/StateFunctions'
 import {APP_NAME, IGNORE_TAGS, PUBLIC_API, SEO_TITLE} from 'app/client_config';
 import constants from 'app/redux/constants';
 
@@ -321,15 +321,13 @@ async function universalRender({ location, initial_state, offchain, ErrorPage, t
         const accounts = Object.keys(onchain.accounts);
         if (accounts.length === 1) {
             const name = accounts[0];
-            const balances = await api.getAccountBalancesAsync(name, ['GBG', 'GOLOS']);
+            const balances = await api.getAccountBalancesAsync(name, []);
+            const b = accountBalances(balances)
 
-            if (balances.length === 2) {
-                const sbd_balance = balances[0].indexOf('GBG') ? balances[0] : balances[1];
-                const balance = balances[1].indexOf('GOLOS') ? balances[1] : balances[0];
+            onchain.accounts[name].balance = b.balance;
+            onchain.accounts[name].sbd_balance = b.sbd_balance;
+            onchain.accounts[name].assets_balance = b.assets_balance;
 
-                onchain.accounts[name].sbd_balance = sbd_balance;
-                onchain.accounts[name].balance = balance;
-            }
         }
 
         if (Object.getOwnPropertyNames(onchain.accounts).length === 0 && (url.match(routeRegex.UserProfile1) || url.match(routeRegex.UserProfile3))) { // protect for invalid account

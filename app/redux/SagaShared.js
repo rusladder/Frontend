@@ -1,9 +1,10 @@
-import {fromJS} from 'immutable'
-import {call, put, select} from 'redux-saga/effects';
+import { fromJS } from 'immutable'
+import { call, put, select } from 'redux-saga/effects';
 import g from 'app/redux/GlobalReducer'
-import {takeEvery} from 'redux-saga';
+import { takeEvery } from 'redux-saga';
 import tt from 'counterpart';
-import {api} from 'golos-js';
+import { accountBalances } from 'app/utils/StateFunctions'
+import { api } from 'golos-js';
 
 const wait = ms => (
     new Promise(resolve => {
@@ -18,14 +19,12 @@ export function* getAccount(username, force = false) {
     if (force || !account) {
         [account] = yield call([api, api.getAccountsAsync], [username])
         if(account) {
-            const balances = yield call([api, api.getAccountBalancesAsync], username, ['GBG', 'GOLOS']);
-            if (balances.length === 2) {
-                const sbd_balance = balances[0].indexOf('GBG') ? balances[0] : balances[1];
-                const balance = balances[1].indexOf('GOLOS') ? balances[1] : balances[0];
+            const balances = yield call([api, api.getAccountBalancesAsync], username, []);
 
-                account.sbd_balance = sbd_balance;
-                account.balance = balance;
-            }
+            const b = accountBalances(balances)
+            account.balance = b.balance;
+            account.sbd_balance = b.sbd_balance;
+            account.assets_balance = b.assets_balance;
 
             account = fromJS(account)
             yield put(g.actions.receiveAccount({account}))
@@ -36,15 +35,12 @@ export function* getAccount(username, force = false) {
 
 /**with state mutation */
 export function* getAccountBalances (state, account) {
-    const balances = yield call([api, api.getAccountBalancesAsync], account, ['GBG', 'GOLOS']);
+    const balances = yield call([api, api.getAccountBalancesAsync], account, []);
 
-    if (balances.length === 2) {
-        const sbd_balance = balances[0].indexOf('GBG') ? balances[0] : balances[1];
-        const balance = balances[1].indexOf('GOLOS') ? balances[1] : balances[0];
-
-        state.accounts[account].sbd_balance = sbd_balance;
-        state.accounts[account].balance = balance;
-    }
+    const b = accountBalances(balances)
+    state.accounts[account].balance = b.balance;
+    state.accounts[account].sbd_balance = b.sbd_balance;
+    state.accounts[account].assets_balance = b.assets_balance;
 
     return state;
 }

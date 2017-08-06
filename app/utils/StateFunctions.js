@@ -1,9 +1,9 @@
 import assert from 'assert';
 import constants from 'app/redux/constants';
-import {parsePayoutAmount, repLog10} from 'app/utils/ParsersAndFormatters';
-import {Long} from 'bytebuffer';
-import {VEST_TICKER, LIQUID_TICKER} from 'app/client_config'
-import {fromJS} from 'immutable';
+import { parsePayoutAmount, repLog10 } from 'app/utils/ParsersAndFormatters';
+import { Long } from 'bytebuffer';
+import { VEST_TICKER, LIQUID_TICKER, DEBT_TICKER } from 'app/client_config'
+import { fromJS, Map } from 'immutable';
 
 export const numberWithCommas = (x) => x.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
@@ -116,4 +116,33 @@ export function contentStats(content) {
     const isNsfw = tags.filter(tag => tag && tag.match(/^nsfw$|^ru--mat$|^18\+$/i)).length > 0;
 
     return {hide, gray, pictures, netVoteSign, authorRepLog10, hasReplies, isNsfw, flagWeight, total_votes, up_votes, hasPendingPayout}
+}
+
+export function accountBalances(balances) {
+  let sbd_balance,
+      balance,
+      assets_balance = Map()
+
+  balances.forEach( asset => {
+    const assetName = asset.split(' ')[1]
+
+    switch (assetName) {
+      case LIQUID_TICKER: //GOLOS
+        balance = asset
+        break
+
+      case DEBT_TICKER: //GBG
+        sbd_balance = asset
+        break
+
+      default:
+        assets_balance = assets_balance.set(assetName, asset)
+    }
+  })
+
+  return {
+    balance,
+    sbd_balance,
+    assets_balance
+  }
 }

@@ -1,7 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux'
 import reactForm from 'app/utils/ReactForm';
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 import transaction from 'app/redux/Transaction';
 import user from 'app/redux/User';
 import LoadingIndicator from 'app/components/elements/LoadingIndicator';
@@ -209,8 +210,8 @@ class TransferForm extends Component {
                         <div className="input-group" style={{marginBottom: 5}}>
                             <input type="text" placeholder={tt('g.amount')} {...amount.props} ref="amount" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" disabled={loading} />
                             {asset && <span className="input-group-label" style={{paddingLeft: 0, paddingRight: 0}}>
-                                <select {...asset.props} placeholder={tt('transfer_jsx.asset')} disabled={loading} style={{minWidth: "5rem", height: "inherit", backgroundColor: "transparent", border: "none"}}>
-                                    <option value={LIQUID_TICKER}>{LIQUID_TOKEN}</option>
+                                <select {...asset.props} placeholder={tt('transfer_jsx.asset')} disabled={loading} style={{minWidth: "5.2rem", height: "inherit", backgroundColor: "transparent", border: "none"}}>
+                                    <option value={LIQUID_TICKER}>{LIQUID_TICKER}</option>
                                     <option value={DEBT_TICKER}>{DEBT_TICKER}</option>
                                 </select>
                             </span>}
@@ -258,8 +259,6 @@ class TransferForm extends Component {
 
 const AssetBalance = ({onClick, balanceValue}) =>
     <a onClick={onClick} style={{borderBottom: '#A09F9F 1px dotted', cursor: 'pointer'}}>{tt('transfer_jsx.balance') + ": " + balanceValue}</a>
-
-import {connect} from 'react-redux'
 
 export default connect(
     // mapStateToProps

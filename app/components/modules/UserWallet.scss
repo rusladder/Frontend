@@ -7,6 +7,12 @@
   }
 }
 
+.UserWallet__assets-balance {
+  > div:nth-child(2) {
+    background: $gray95;
+  }
+}
+
 .UserWallet__buysp {
   margin-right: 0 !important;
   margin-top: 1rem;

@@ -864,7 +864,10 @@
     "next_power_down_is_scheduled_to_happen": "Следующее понижение Силы запланировано",
     "transfers_are_temporary_disabled": "Переводы временно отключены.",
     "cancel_power_down": "Отменить понижение Силы",
-    "history": "ИСТОРИЯ"
+    "history": "ИСТОРИЯ",
+    "main": "Основные",
+    "assets": "Активы"
+
   },
   "votesandcomments_jsx": {
     "no_responses_yet_click_to_respond": "Ответов пока нет. Нажмите, чтобы ответить.",
@@ -1050,6 +1053,7 @@
     "asset_create": "Создание актива"
   },
   "asset_actions_jsx": {
+    "available": "Доступно",
     "issue_asset_title": "Выпуск актива",
     "issue_asset_submit" : "Выпустить актив",
     "issue_asset_confirm_title": "Подтвердите выпуск актива",

@@ -82,8 +82,16 @@ export function* getAsset({payload: {assetName}}) {
     let asset =  yield select(state => state.assets.getIn(['issuer_assets', assetName]));
 
     if (!asset) {
-        asset = yield call([api, api.getAssetsAsync], [assetName]);
-        asset = fromJS(asset[0]);
+		asset = yield call([api, api.getAssetsAsync], [assetName]);
+		const bitassetData = yield call([api, api.getBitassetsDataAsync], [assetName]);
+		const assetsDynamicData = yield call([api, api.getAssetsDynamicDataAsync], [assetName]);
+
+		asset = fromJS(asset[0])
+		asset = asset.setIn(['dynamic_data'], fromJS(assetsDynamicData[0]));
+
+		if (bitassetData[0]) {
+			asset = asset.setIn(['bitasset_data'], fromJS(bitassetData[0]));
+		}
     }
 
     yield put(AssetsReducer.actions.setReceivedAsset(asset));

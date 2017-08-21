@@ -1,24 +1,21 @@
-import {roundDown, roundUp} from "./MarketUtils";
-import { LIQUID_TICKER, DEBT_TICKER } from 'app/client_config'
-const precision = 1000;
+import { roundDown, roundUp } from "./MarketUtils";
 
-class Order {
+export class Order {
     constructor(order, side) {
         this.side = side;
-        this.price = parseFloat(order.real_price);
+        this.price = parseFloat(order.price);
         this.price = side === 'asks' ? roundUp(this.price, 6) : Math.max(roundDown(this.price, 6), 0.000001);
         this.stringPrice = this.price.toFixed(6);
-        this.steem = parseInt(order.steem, 10);
-        this.sbd = parseInt(order.sbd, 10);
-        this.date = order.created;
+        this.base = parseFloat(order.base);
+        this.quote = parseFloat(order.quote);
     }
 
-    getSteemAmount() {
-        return this.steem / precision;
+    getBaseAmount() {
+        return this.base;
     }
 
-    getStringSteem() {
-        return this.getSteemAmount().toFixed(3);
+    getStringBase() {
+        return this.getBaseAmount().toFixed(3);
     }
 
     getPrice() {
@@ -29,33 +26,32 @@ class Order {
         return this.stringPrice;
     }
 
-    getStringSBD() {
-        return this.getSBDAmount().toFixed(3);
+    getStringQuote() {
+        return this.getQuoteAmount().toFixed(3);
     }
 
-    getSBDAmount() {
-        return this.sbd / precision;
+    getQuoteAmount() {
+        return this.quote;
     }
 
     add(order) {
         return new Order({
-            real_price: this.price,
-            steem: this.steem + order.steem,
-            sbd: this.sbd + order.sbd,
-            date: this.date
+            real: this.price,
+            base: this.base + order.base,
+            quote: this.quote + order.quote,
         }, this.type);
     }
 
     equals(order) {
         return (
-            this.getStringSBD() === order.getStringSBD() &&
-            this.getStringSteem() === order.getStringSteem() &&
+            this.getStringQuote() === order.getStringQuote() &&
+            this.getStringBase() === order.getStringBase() &&
             this.getStringPrice() === order.getStringPrice()
         );
     }
 }
 
-class TradeHistory {
+export class TradeHistory {
 
     constructor(fill) {
         // Norm date (FF bug)
@@ -67,11 +63,11 @@ class TradeHistory {
         this.type = fill.current_pays.indexOf(DEBT_TICKER) !== -1 ? "bid" : "ask";
         this.color = this.type == "bid" ? "buy-color" : "sell-color";
         if (this.type === "bid") {
-            this.sbd = parseFloat(fill.current_pays.split(" " + DEBT_TICKER)[0]);
-            this.steem = parseFloat(fill.open_pays.split(" " + LIQUID_TICKER)[0]);
+            // this.sbd = parseFloat(fill.current_pays.split(" " + DEBT_TICKER)[0]);
+            // this.steem = parseFloat(fill.open_pays.split(" " + LIQUID_TICKER)[0]);
         } else {
-            this.sbd = parseFloat(fill.open_pays.split(" " + DEBT_TICKER)[0]);
-            this.steem = parseFloat(fill.current_pays.split(" " + LIQUID_TICKER)[0]);
+            // this.sbd = parseFloat(fill.open_pays.split(" " + DEBT_TICKER)[0]);
+            // this.steem = parseFloat(fill.current_pays.split(" " + LIQUID_TICKER)[0]);
         }
 
         this.price = this.sbd / this.steem;
@@ -110,9 +106,4 @@ class TradeHistory {
             this.getStringPrice() === order.getStringPrice()
         );
     }
-}
-
-module.exports = {
-    Order,
-    TradeHistory
 }

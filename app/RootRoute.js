@@ -47,7 +47,7 @@ export default {
         } else if (route.page === 'UserProfile') {
             cb(null, [require('app/components/pages/UserProfile')]);
         } else if (route.page === 'Market') {
-            cb(null, [require('app/components/pages/Market')]);
+            cb(null, [require('app/components/pages/Market1')]);
         } else if (route.page === 'Asset') {
             cb(null, [require('app/components/pages/Asset')]);
         } else if (route.page === 'Post') {

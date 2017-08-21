@@ -12,6 +12,7 @@ export const routeRegex = {
     UserJson: /^\/(@[\w\.\d-]+)(\.json)$/,
     UserNameJson: /^.*(?=(\.json))/,
     Assets: /^\/asset\/([\w\d.]+)/,
+	Market: /^\/market\/?(([\w\d.]+)_([\w\d.]+))?/,
 };
 
 export default function resolveRoute(path)
@@ -64,16 +65,17 @@ export default function resolveRoute(path)
     if (path === '/waiting_list.html') {
         return {page: 'WaitingList'};
     }
-    if (path === '/market') {
-        return {page: 'Market'};
-    }
+	let match = path.match(routeRegex.Market);
+	if (match) {
+		return {page: 'Market', params: ['base_quote', match[1]]};
+	}
     if (path === '/~witnesses') {
         return {page: 'Witnesses'};
     }
     if (path === '/submit.html') {
         return {page: 'SubmitPost'};
     }
-    let match = path.match(routeRegex.PostsIndex);
+    match = path.match(routeRegex.PostsIndex);
     if (match) {
         return {page: 'PostsIndex', params: ['home', match[1]]};
     }

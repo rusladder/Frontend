@@ -26,6 +26,24 @@ input.sell-color:hover {
   background-color: smart-scale($sell-color, 90%) !important;
 }
 
+.block-header {
+  padding-left: 1rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  border: 1px solid $light-gray;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.block-body {
+  margin-bottom: 1rem;
+  line-height: 1;
+  padding: 1rem 0 1rem 1rem;
+  border: 1px solid $light-gray;
+  border-top: 0;
+  border-radius: 0 0 0.25rem 0.25rem;
+}
+
 .tab-selector {
   margin-bottom: 1rem;
 
@@ -92,29 +110,7 @@ input.sell-color:hover {
 
 
 .Market__orderform {
-  margin-bottom: 1rem;
-  line-height: 1;
 
-  .input-group-label {
-    min-width: 6rem;
-    font-size: 83%;
-  }
-
-  label {
-    //display: inline-block; width: 20%;
-  }
-
-  input[type='text'] {
-    display: inline-block;
-    width: auto;
-    height: auto;
-    padding: 0.1rem 0.5rem 0.1rem 0.25rem;
-    text-align: right;
-  }
-
-  input.price_warning {
-    background: rgba(255, 153, 0, 0.13);
-  }
 }
 
 .Market__ticker-pct-up {

@@ -1,9 +1,15 @@
-import React from "react";
+import React, { PropTypes, Component } from "react"
 import OrderbookRow from "./OrderbookRow";
 import tt from 'counterpart';
 import { DEBT_TOKEN_SHORT } from 'app/client_config';
+import {Order} from "app/utils/MarketClasses";
 
-export default class Orderbook extends React.Component {
+export default class Orderbook extends Component {
+
+	static propTypes = {
+		base: PropTypes.string.isRequired,
+		quote: PropTypes.string.isRequired,
+	}
 
     constructor() {
         super();
@@ -18,7 +24,7 @@ export default class Orderbook extends React.Component {
     componentDidMount() {
         setTimeout(() => {
             this.setState({
-            animate: true
+            	animate: true
             });
         }, 2000);
     }
@@ -43,42 +49,24 @@ export default class Orderbook extends React.Component {
         });
     }
 
-    renderBuySellHeader() {
-        const LIQUID_TOKEN = tt('token_names.LIQUID_TOKEN')
-
-        let buy = this.props.side === "bids";
-
-        return (
-            <thead>
-                <tr>
-                    <th>{buy ? tt('market_jsx.total_DEBT_TOKEN_SHORT_CURRENCY_SIGN', {DEBT_TOKEN_SHORT}) : tt('g.price')}</th>
-                    <th>{buy ? `${DEBT_TOKEN_SHORT}` : LIQUID_TOKEN}</th>
-                    <th>{buy ? LIQUID_TOKEN : `${DEBT_TOKEN_SHORT}`}</th>
-                    <th>{buy ? tt('g.price') : tt('market_jsx.total_DEBT_TOKEN_SHORT_CURRENCY_SIGN', {DEBT_TOKEN_SHORT})}</th>
-                </tr>
-            </thead>
-        );
-    }
-
-    renderOrdersRows() {
-        const {orders, side} = this.props;
-        const buy = side === "bids";
-
+    renderOrdersRows(ordersbook, side) {
+        const buy = side === "bids"
+		const orders = buy ? ordersbook.asks : ordersbook.bids
         if (!orders.length) {
-            return null;
+            return null
         }
-        const {buyIndex, sellIndex} = this.state;
+        const { buyIndex, sellIndex } = this.state
 
-        let total = 0;
+        let total = 0
         return orders
         .map((order, index) => {
-            total += order.getSBDAmount();
+            total += order.getQuoteAmount()
             if (index >= (buy ? buyIndex : sellIndex) && index < ((buy ? buyIndex : sellIndex) + 10)) {
                 return (
                     <OrderbookRow
                         onClick={this.props.onClick}
                         animate={this.state.animate}
-                        key={side + order.getStringSBD() + order.getStringPrice()}
+                        key={side + order.getStringQuote() + order.getStringPrice()}
                         index={index}
                         order={order}
                         side={side}
@@ -87,24 +75,63 @@ export default class Orderbook extends React.Component {
                 );
             }
             return null;
+
         }).filter(a => {
-            return !!a;
-        });
+            return !!a
+        })
+
     }
 
+	// Take raw orders from API and put them into a format that's clean & useful
+	normalizeOrders(orders) {
+		if(typeof orders == 'undefined') return {'bids': [], 'asks': []}
+		return ['bids', 'asks'].reduce( (out, side) => {
+			out[side] = orders[side].map( o => {
+				return new Order(o, side)
+			});
+			return out
+		}, {})
+	}
+
+	 aggOrders(orders) {
+		return ['bids', 'asks'].reduce( (out, side) => {
+
+			var buff = [], last = null
+			orders[side].map( o => {
+				if(last !== null && o.getStringPrice() === last.getStringPrice()) {
+					buff[buff.length-1] = buff[buff.length-1].add(o);
+				} else {
+					buff.push(o)
+				}
+				last = o
+			});
+
+			out[side] = buff
+			return out
+		}, {})
+	}
+
     render() {
-        const {orders} = this.props;
-        const buy = this.props.side === "bids";
-        const {buyIndex, sellIndex} = this.state;
+        const { base, quote, side } = this.props
+        const { buyIndex, sellIndex } = this.state
+        const buy = side === "bids"
+
+		let orderbook = this.aggOrders(this.normalizeOrders(this.props.orderbook));
 
         const currentIndex = buy ? buyIndex : sellIndex;
-
         return (
-            <div>
+            <div style={{marginRight: "1rem"}}>
                 <table className="Market__orderbook">
-                    {this.renderBuySellHeader()}
+					<thead>
+					<tr>
+						<th>{buy ? `Total(${quote})` : tt('g.price')}</th>
+						<th>{buy ? `${quote}` : `${base}`}</th>
+						<th>{buy ? `${base}` : `${quote}`}</th>
+						<th>{buy ? tt('g.price') : `Total(${quote})`}</th>
+					</tr>
+					</thead>
                     <tbody>
-                            {this.renderOrdersRows()}
+                            {this.renderOrdersRows(orderbook, side)}
                     </tbody>
                 </table>
                 <nav>
@@ -115,7 +142,7 @@ export default class Orderbook extends React.Component {
                         </div>
                     </li>
                     <li>
-                        <div className={"button tiny hollow " + (buy ? "float-right" : "float-right") + (currentIndex >= (orders.length - 10) ? " disabled" : "")} onClick={this._setBuySellPage.bind(this, true)} aria-label="Next">
+                        <div className={"button tiny hollow " + (buy ? "float-right" : "float-right") + (currentIndex >= 10 ? " disabled" : "")} onClick={this._setBuySellPage.bind(this, true)} aria-label="Next">
                             <span aria-hidden="true">{tt(buy ? 'market_jsx.lower' : 'market_jsx.higher')} &rarr;</span>
                         </div>
                     </li>

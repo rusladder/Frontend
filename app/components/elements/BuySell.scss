@@ -1,0 +1,29 @@
+.BuySell {
+
+  .BuySell__orderform {
+
+    >label {
+      padding-left: 1.1rem;
+    }
+
+    .input-group-label {
+      min-width: 8rem;
+      font-size: 83%;
+    }
+
+    input[type='text'] {
+      display: inline-block;
+      width: auto;
+      height: auto;
+      margin-left: 1.5rem;
+      padding: 0.1rem 0.5rem 0.1rem 0.25rem;
+      text-align: right;
+    }
+
+    input.price_warning {
+      background: rgba(255, 153, 0, 0.13);
+    }
+
+  }
+
+}

@@ -33,7 +33,7 @@ export default class OrderHistory extends React.Component {
             if (index >= historyIndex && index < (historyIndex + 10)) {
                 return (
                     <HistoryRow
-                        key={order.date.getTime() + order.getStringPrice() + order.getStringSBD()}
+                        key={order.date + order.price + order.value}
                         index={index}
                         order={order}
                         animate={this.state.animate}
@@ -61,19 +61,19 @@ export default class OrderHistory extends React.Component {
     }
 
     render() {
-        const {history} = this.props;
+        const {history, base, quote} = this.props;
         const {historyIndex} = this.state;
 
         return (
-            <section>
+            <section  style={{marginRight: "1rem"}}>
                 <table className="Market__trade-history">
                     <thead>
                         <tr>
-                            <th>{tt('g.date')}</th>
-                            <th>Buy/Sell</th>
                             <th>{tt('g.price')}</th>
-                            <th>{tt('token_names.LIQUID_TOKEN')}</th>
-                            <th>{`${DEBT_TOKEN_SHORT}`}</th>
+							<th>{quote}</th>
+							<th>{base}</th>
+							<th>{tt('g.date')}</th>
+
                         </tr>
                     </thead>
                     <tbody>

@@ -30,9 +30,9 @@ export default class OrderhistoryRow extends React.Component {
             });
         }
 
-        if (!this.props.order.equals(nextProps.order)) {
-            return this.setState({animate: true}, this._clearAnimate);
-        }
+        // if (!this.props.order.equals(nextProps.order)) {
+        //     return this.setState({animate: true}, this._clearAnimate);
+        // }
 
         // if (this.props.index === 0) {
         //     console.log("*******\n", nextProps.order.getSBDAmount(), this.props.order.getSBDAmount());
@@ -51,13 +51,13 @@ export default class OrderhistoryRow extends React.Component {
         clearTimeout(this.timeout);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return (
-            !this.props.order.equals(nextProps.order) ||
-            this.props.total !== nextProps.total ||
-            this.state.animate !== nextState.animate
-        );
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return (
+    //         !this.props.order.equals(nextProps.order) ||
+    //         this.props.total !== nextProps.total ||
+    //         this.state.animate !== nextState.animate
+    //     );
+    // }
 
     render() {
         let {order, buy, total} = this.props;
@@ -72,11 +72,10 @@ export default class OrderhistoryRow extends React.Component {
 
         return (
             <tr className={className}>
+				<td>{parseFloat(order.price).toFixed(6)}</td>
+				<td>{parseFloat(order.amount).toFixed(6)}</td>
+				<td>{parseFloat(order.value).toFixed(6)}</td>
                 <td><TimeAgoWrapper date={order.date} /></td>
-                <td>{arrow}</td>
-                <td className={order.color}>{order.getStringPrice()}</td>
-                <td>{order.getSteemAmount().toFixed(3)}</td>
-                <td>{order.getSBDAmount().toFixed(3)}</td>
             </tr>
         )
     }

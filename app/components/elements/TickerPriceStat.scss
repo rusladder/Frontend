@@ -1,16 +1,26 @@
 .TickerPriceStat {
 
-  >div {
-    position: relative;
-    margin-bottom: 1rem;
-    padding-bottom: .7rem;
-    border-bottom: 1px solid #cacaca;
+  .price-stat {
+    >div {
+      position: relative;
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: .7rem;
+      border-bottom: 1px solid $medium-gray;
 
-    > span {
-      display: inline-block;
-      position: absolute;
-      top: 0;
-      right: 0;
+      > span {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+    }
+
+    div:last-child {
+      border: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
   }
+
 }

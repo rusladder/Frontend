@@ -1,12 +1,11 @@
 import createModule from 'redux-modules';
-import {fromJS, Map} from 'immutable';
+import { Map } from 'immutable';
 
 const defaultState = {
     assets: {},
-    asset: Map(),
+    asset: null,
     core: Map(),
-    issuer_assets: Map(),
-    received : null
+    issuer_assets: Map()
 };
 
 export default createModule({
@@ -28,7 +27,7 @@ export default createModule({
         {
             action: 'SET_RECEIVED_ASSET',
             reducer: (state, {payload}) => {
-                return state.set('received', payload)
+                return state.set('asset', payload)
             }
         },
         {

@@ -281,9 +281,9 @@ class Asset extends React.Component {
         const short_name = description.short_name ? description.short_name : null;
 
         let preferredMarket = description.market ? description.market : "GOLOS";
-        // if ("bitasset_data" in asset && asset.bitasset_data.is_prediction_market) {
-        //     preferredMarket = asset.bitasset_data.options.short_backing_asset;
-        // }
+        if ("bitasset_data" in asset && asset.bitasset_data.is_prediction_market) {
+            preferredMarket = asset.bitasset_data.options.short_backing_asset;
+        }
 
         const { name, prefix } = utils.replaceName(asset.asset_name, "bitasset_data" in asset);
 
@@ -293,7 +293,7 @@ class Asset extends React.Component {
                 <p>{description.main}</p>
                 <p><Link to={`/@${asset.issuer}`}>{asset.issuer}</Link></p>
                 {short_name ? <p>{short_name}</p> : null}
-                <a style={{textTransform: "uppercase"}} href={`/market/${asset.asset_name}_${preferredMarket}`}>{tt('asset_jsx.market')}</a>
+                <a style={{textTransform: "uppercase"}} href={`/market/${preferredMarket}_${asset.asset_name}`}>{tt('asset_jsx.market')}</a>
             </div>
         );
 
@@ -358,10 +358,10 @@ module.exports = {
         (state, ownProps) => {
             if (!process.env.BROWSER) {
                 return {
-                    received: null
+					asset: null
                 }
             }
-            const asset = state.assets.get('received');
+            const asset = state.assets.get('asset');
             return {...ownProps, asset}
         },
         dispatch => ({

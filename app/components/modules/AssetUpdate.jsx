@@ -598,7 +598,7 @@ class AssetUpdate extends React.Component {
 export default connect(
 
     (state, props) => {
-        const asset = state.assets.get('received');
+        const asset = state.assets.get('asset');
         const core = state.assets.get('core');
 
         return {...props, asset, core};

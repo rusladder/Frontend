@@ -23,13 +23,13 @@ export function roundDown(num, precision) {
 export function isMarketAsset(quote, base) {
 	let isMarketAsset = false, marketAsset, inverted = false;
 
-	if (quote.get("bitasset") && base.get("id") === quote.getIn(["bitasset", "options", "short_backing_asset"])) {
+	if (quote.get("bitasset_data") && base.get("asset_name") === quote.getIn(["bitasset_data", "options", "short_backing_asset"])) {
 		isMarketAsset = true;
-		marketAsset = {id: quote.get("id")};
-	} else if (base.get("bitasset") && quote.get("id") === base.getIn(["bitasset", "options", "short_backing_asset"])) {
+		marketAsset = {asset_name: quote.get("asset_name")};
+	} else if (base.get("bitasset_data") && quote.get("asset_name") === base.getIn(["bitasset_data", "options", "short_backing_asset"])) {
 		inverted = true;
 		isMarketAsset = true;
-		marketAsset = {id: base.get("id")};
+		marketAsset = {asset_name: base.get("asset_name")};
 	}
 
 	return {

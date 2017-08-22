@@ -1,6 +1,7 @@
 import assert from 'assert'
+import { Map } from 'immutable'
 
-import { roundUp, roundDown, getBalance } from 'app/utils/MarketUtils'
+import { roundUp, roundDown, isMarketAsset, getBalance } from 'app/utils/MarketUtils'
 
 describe('MarketUtils: roundUp/roundDown', () => {
 
@@ -36,6 +37,44 @@ describe('MarketUtils: roundUp/roundDown', () => {
 
 		assert.equal(roundDown(1.9999, 3), '1.999')
 		assert.equal(roundDown(1.999999, 3), '1.999')
+	})
+})
+
+describe('MarketUtils: isMarketAsset', () => {
+
+	it('should check is marked asset', () => {
+		const quote = Map().set('asset_name', 'ABC').setIn(['bitasset_data', 'options', 'short_backing_asset'], 'GOLOS')
+		const base = Map().set('asset_name', 'GOLOS')
+
+		const marketAsset = isMarketAsset(quote, base)
+		const ma = marketAsset.marketAsset
+
+		assert.equal(marketAsset.isMarketAsset, true)
+		assert.equal(ma.asset_name, 'ABC')
+		assert.equal(marketAsset.inverted, false)
+	})
+
+	it('should check is marked asset inverted', () => {
+		const quote = Map().set('asset_name', 'ABC').setIn(['bitasset_data', 'options', 'short_backing_asset'], 'GOLOS')
+		const base = Map().set('asset_name', 'GOLOS')
+
+		const marketAsset = isMarketAsset(base, quote)
+		const ma = marketAsset.marketAsset
+
+		assert.equal(marketAsset.isMarketAsset, true)
+		assert.equal(ma.asset_name, 'ABC')
+		assert.equal(marketAsset.inverted, true)
+	})
+
+	it('should check is not marked asset', () => {
+		const quote = Map().set('asset_name', 'ABC')
+		const base = Map().set('asset_name', 'GOLOS')
+		const marketAsset = isMarketAsset(quote, base)
+		const ma = marketAsset.marketAsset
+
+		assert.equal(marketAsset.isMarketAsset, false)
+		assert.equal(ma, undefined)
+		assert.equal(marketAsset.inverted, false)
 	})
 })
 

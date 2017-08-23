@@ -43,6 +43,16 @@ describe('MarketUtils: roundUp/roundDown', () => {
 describe('MarketUtils: isMarketAsset', () => {
 
 	it('should check is marked asset', () => {
+		const quote = Map().set('asset_name', 'GBG')
+		const base = Map().set('asset_name', 'GOLOS')
+
+		const marketAsset = isMarketAsset(quote, base)
+
+		assert.equal(marketAsset.isMarketAsset, false)
+		assert.equal(marketAsset.inverted, false)
+	})
+
+	it('should check is marked asset', () => {
 		const quote = Map().set('asset_name', 'ABC').setIn(['bitasset_data', 'options', 'short_backing_asset'], 'GOLOS')
 		const base = Map().set('asset_name', 'GOLOS')
 

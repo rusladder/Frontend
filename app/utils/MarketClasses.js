@@ -36,7 +36,7 @@ export class Order {
 
     add(order) {
         return new Order({
-            real: this.price,
+			price: this.price,
             base: this.base + order.base,
             quote: this.quote + order.quote,
         }, this.type);

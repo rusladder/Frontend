@@ -93,7 +93,7 @@ describe('MarketClasses: Order', () => {
 	it("can be summed with another order #2", function() {
 		const order1 = new Order(o1, '')
 		const order2 = new Order(o2, '')
-
+" "
 		const order3 = order1.add(order2)
 
 		assert.equal(order3.getBaseAmount(), '4.355')
@@ -108,5 +108,16 @@ describe('MarketClasses: Order', () => {
 		assert.equal(order1.equals(order3), false);
 		assert.equal(order1.equals(order2), true, "Orders are the same");
 	});
+
+	it('should add two orders ', () => {
+		const order1 = new Order(o1, '')
+		const order2 = new Order(o1, '')
+
+		const order3 = order1.add(order2)
+
+		assert.equal(order3.getPrice(), '0.50000000000000000')
+		assert.equal(order3.getBaseAmount(), '4.00000000000000000')
+		assert.equal(order3.getQuoteAmount(), '8.00000000000000000')
+	})
 
 })

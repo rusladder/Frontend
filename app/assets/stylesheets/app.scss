@@ -124,3 +124,26 @@ a, path, circle {
 }
 
 .anchor { padding-top: 90px; }
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  border-radius: 8px;
+  height: 7px;
+  border: 1px solid #bdc3c7;
+  background-color: #fff;
+}
+//add mozilla
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #4ba2f2;
+  border: 1px solid #ccc;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+input[type=range]:focus {
+  outline: none;
+}

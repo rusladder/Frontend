@@ -1,9 +1,9 @@
-import React from 'react';
-import {connect} from 'react-redux';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import CloseButton from 'react-foundation-components/lib/global/close-button';
 import Reveal from 'react-foundation-components/lib/global/reveal';
 import g from 'app/redux/GlobalReducer';
-import {Map, List} from 'immutable';
+import { Map, List } from 'immutable';
 import shouldComponentUpdate from 'app/utils/shouldComponentUpdate';
 import BlocktradesDeposit from 'app/components/modules/BlocktradesDeposit';
 import QrReader from 'app/components/elements/QrReader';
@@ -16,11 +16,13 @@ import PromotePost from 'app/components/modules/PromotePost';
 import ProlongPost from 'app/components/modules/ProlongPost';
 import ExplorePost from 'app/components/modules/ExplorePost';
 import AssetActions from 'app/components/modules/AssetActions';
+import BorrowBitAsset from 'app/components/modules/BorrowBitAsset';
 
-class Dialogs extends React.Component {
-    static propTypes = {
-        active_dialogs: React.PropTypes.object,
-        hide: React.PropTypes.func.isRequired,
+class Dialogs extends Component {
+
+	static propTypes = {
+        active_dialogs: PropTypes.object,
+        hide: PropTypes.func.isRequired,
     }
 
     constructor() {
@@ -40,7 +42,7 @@ class Dialogs extends React.Component {
     }
 
     render() {
-        const {active_dialogs} = this.props
+        const { active_dialogs } = this.props
         let idx = 0
         const dialogs = active_dialogs.reduce((r, v, k) => {
             const cmp = k === 'blocktrades_deposit' ? <span key={idx++}>
@@ -96,13 +98,19 @@ class Dialogs extends React.Component {
                     <CloseButton onClick={this['hide_' + k]} />
                     <QrKeyView onClose={this['hide_' + k]} {...v.get('params').toJS()} />
                 </Reveal>
-+           </span>:
+            </span>:
              k === 'assetsActions' ? <span key={idx++} >
                 <Reveal onHide={this['hide_' + k]} show>
                     <CloseButton onClick={this['hide_' + k]} />
                     <AssetActions onClose={this['hide_' + k]} {...v.get('params').toJS()} />
                 </Reveal>
-+           </span>:
+            </span>:
+			k === 'borrowBitAsset' ? <span key={idx++} >
+                <Reveal onHide={this['hide_' + k]} show>
+                    <CloseButton onClick={this['hide_' + k]} />
+                    <BorrowBitAsset onClose={this['hide_' + k]} {...v.get('params').toJS()} />
+                </Reveal>
+            </span>:
             null
             return cmp ? r.push(cmp) : r
         }, List())

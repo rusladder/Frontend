@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
+import g from 'app/redux/GlobalReducer'
 import transaction from 'app/redux/Transaction'
 import TransactionError from 'app/components/elements/TransactionError'
 import DepthChart from 'app/components/elements/DepthChart';
@@ -13,14 +14,14 @@ import BuySell from 'app/components/elements/BuySell'
 import OpenOrdersTable from 'app/components/elements/OpenOrdersTable'
 import TickerPriceStat from 'app/components/elements/TickerPriceStat'
 import tt from 'counterpart';
-import { DEBT_TOKEN_SHORT, LIQUID_TICKER, DEBT_TICKER, LIQUID_TOKEN_UPPERCASE } from 'app/client_config';
+import { LIQUID_TICKER, DEBT_TICKER } from 'app/client_config';
 
 class Market1 extends React.Component {
-    static propTypes = {
+
+	static propTypes = {
         orderbook: React.PropTypes.object,
         open_orders: React.PropTypes.array,
         ticker: React.PropTypes.object,
-        // redux PropTypes
         placeOrder: React.PropTypes.func.isRequired,
         user: React.PropTypes.string,
     };
@@ -100,10 +101,16 @@ class Market1 extends React.Component {
 		this.setState({price})
     }
 
+	showBorrowDialog = () => {
+		this.props.borrowBitasset()
+	}
+
     render() {
-		const account  = this.props.account ? this.props.account.toJS() : null;
+		const account = this.props.account ? this.props.account.toJS() : null;
         const { cancelOrderClick, setFormPrice } = this
         const { base_quote, price } = this.state
+
+		const { isMarketAsset } = this.props
 
 		const [ base, quote ] = base_quote.split('_')
 
@@ -118,7 +125,7 @@ class Market1 extends React.Component {
 
         if(typeof this.props.ticker != 'undefined') {
             let { latest, lowest_ask, highest_bid, percent_change, base_volume, quote_volume } = this.props.ticker;
-            let {base, quote} = this.props.feed
+            let { base, quote } = this.props.feed
             ticker = {
                 latest:         parseFloat(latest),
                 lowest_ask:     roundUp(parseFloat(lowest_ask), 6),
@@ -134,11 +141,6 @@ class Market1 extends React.Component {
             if (!trades || !trades.length) {
                 return [];
             }
-            // debugger
-            // const norm = (trades) => {return trades.map( t => {
-            //     return new TradeHistory(t);
-            // } )}
-
             return <OrderHistory history={trades} base={base} quote={quote} />
         }
 
@@ -151,8 +153,7 @@ class Market1 extends React.Component {
                             </Tab>
 
                             <Tab title="Depth Chart">
-								{/*<DepthChart bids={orderbook.bids} asks={orderbook.asks} />*/}
-
+								{/*<DepthChart orderbook={this.props.orderbook} />*/}
                           </Tab>
                         </Tabs>
                     </div>
@@ -199,6 +200,8 @@ class Market1 extends React.Component {
 											reload={this.props.reload.bind(this)}
 											notify={this.props.notify.bind(this)}
 											price={price}
+											isMarketAsset={isMarketAsset}
+											showBorrowDialog={this.showBorrowDialog.bind(this)}
 										/>
 									</div>
 
@@ -249,6 +252,7 @@ class Market1 extends React.Component {
                     </div>
 
                 </div>
+
                 <div className="row ">
                     <div className="small-12 column">
 						<div className="block-header">
@@ -269,87 +273,113 @@ class Market1 extends React.Component {
 							</div>
 							<div className="block-body">
 								<div  style={{marginRight: "1rem"}}>
-
-								<OpenOrdersTable
-									openOrders={this.props.open_orders}
-									cancelOrder={cancelOrderClick}
-								/>
+									<OpenOrdersTable
+										openOrders={this.props.open_orders}
+										cancelOrder={cancelOrderClick}
+									/>
 								</div>
 							</div>
                         </div>
-                    </div>}
+                    </div>
+                }
 
             </div>
         );
     }
 }
+
 const DEFAULT_EXPIRE = 0xFFFFFFFF//Math.floor((Date.now() / 1000) + (60 * 60 * 24)) // 24 hours
+
 module.exports = {
     path: 'market(/:base_quote)',
-    component: connect(state => {
-        const username = state.user.get('current') ? state.user.get('current').get('username') : null;
-        return {
-            orderbook:   state.market.get('orderbook'),
-            open_orders: process.env.BROWSER ? state.market.get('open_orders') : [],
-            ticker:      state.market.get('ticker'),
-            account:     state.global.getIn(['accounts', username]),
-            history:     state.market.get('history'),
-            user:        username,
-            feed:        state.global.get('feed_price').toJS()
-        }
-    },
-    dispatch => ({
-        notify: (message) => {
-            dispatch({type: 'ADD_NOTIFICATION', payload:
-                {key: "mkt_" + Date.now(),
-                 message: message,
-                 dismissAfter: 5000}
-            });
-        },
+    component: connect(
+    	state => {
+			const user = state.user.get('current') ? state.user.get('current').get('username') : null
+			const orderbook = state.market.get('orderbook')
+			const open_orders = process.env.BROWSER ? state.market.get('open_orders') : []
+			const ticker = state.market.get('ticker')
+			const account = state.global.getIn(['accounts', user])
+			const history = state.market.get('history')
+			const feed = state.global.get('feed_price').toJS()
+			const isMarketAsset = state.market.get('quote_asset') ? state.market.get('quote_asset').get('market_issued') : null
 
-        reload: (username, base_quote) => {
-          console.log("Reload market state... ", username, base_quote)
-          dispatch({type: 'market/UPDATE_MARKET', payload: {username: username, base_quote}})
-        },
+			return {
+				orderbook,
+				open_orders,
+				ticker,
+				account,
+				history,
+				user,
+				feed,
+				isMarketAsset
+			}
+    	},
 
-        cancelOrder: (owner, order_id, successCallback) => {
-            const confirm = tt('market_jsx.order_cancel_confirm', {order_id, user: owner})
-            const successMessage = tt('market_jsx.order_cancelled', {order_id})
-            dispatch(transaction.actions.broadcastOperation({
-               type: 'limit_order_cancel',
-                operation: {owner, order_id/*, __config: {successMessage}*/},
-                confirm,
-                successCallback: () => {successCallback(successMessage);}
-            }))
-        },
-        placeOrder: (isSell, owner, amount_to_sell, min_to_receive, effectivePrice, priceWarning, marketPrice, successCallback, fill_or_kill = false, expiration = DEFAULT_EXPIRE) => {
-            // create_order jsc 12345 "1.000 SBD" "100.000 STEEM" true 1467122240 false
+		dispatch => ({
 
-            // Padd amounts to 3 decimal places
-            amount_to_sell = amount_to_sell.replace(amount_to_sell.split(' ')[0],
-                String(parseFloat(amount_to_sell).toFixed(3)))
-            min_to_receive = min_to_receive.replace(min_to_receive.split(' ')[0],
-                String(parseFloat(min_to_receive).toFixed(3)))
+			notify: (message) => {
+				dispatch({type: 'ADD_NOTIFICATION', payload:
+					{key: "mkt_" + Date.now(),
+					 message: message,
+					 dismissAfter: 5000}
+				});
+			},
 
-            // const isSell = amount_to_sell.indexOf(LIQUID_TICKER) > 0;
-            const confirmStr = tt(isSell
-                                ? 'market_jsx.sell_amount_for_atleast'
-                                : 'market_jsx.buy_atleast_amount_for',
-                                {amount_to_sell, min_to_receive, effectivePrice}
-                            )
-            const successMessage = tt('g.order_placed') + ': ' + confirmStr
-            const confirm = confirmStr + '?'
-            const warning = priceWarning ? tt('market_jsx.price_warning_'+(isSell ? "below" : "above"), {marketPrice: DEBT_TICKER + parseFloat(marketPrice).toFixed(4) + "/" + LIQUID_TOKEN_UPPERCASE}) : null;
-            const order_id = Math.floor(Date.now() / 1000)
-            dispatch(transaction.actions.broadcastOperation({
-                type: 'limit_order_create',
-                operation: {owner, order_id, amount_to_sell, min_to_receive, fill_or_kill, expiration},
-                    //__config: {successMessage}},
-                confirm,
-                warning,
-                successCallback: () => {successCallback(successMessage);}
-            }))
-        }
-    })
+			reload: (username, base_quote) => {
+			  dispatch({type: 'market/UPDATE_MARKET', payload: {username: username, base_quote}})
+			},
+
+			cancelOrder: (owner, order_id, successCallback) => {
+				const confirm = tt('market_jsx.order_cancel_confirm', {order_id, user: owner})
+				const successMessage = tt('market_jsx.order_cancelled', {order_id})
+
+				dispatch(transaction.actions.broadcastOperation({
+				    type: 'limit_order_cancel',
+					operation: {
+				    	owner,
+						order_id
+						//, __config: {successMessage}
+				    },
+					confirm,
+					successCallback: () => {successCallback(successMessage);}
+				}))
+			},
+
+			placeOrder: (isSell, owner, amount_to_sell, min_to_receive, effectivePrice, priceWarning,
+						 marketPrice, successCallback, fill_or_kill = false, expiration = DEFAULT_EXPIRE) => {
+
+				// Padd amounts to 3 decimal places
+				amount_to_sell = amount_to_sell.replace(amount_to_sell.split(' ')[0],
+					String(parseFloat(amount_to_sell).toFixed(3)))
+				min_to_receive = min_to_receive.replace(min_to_receive.split(' ')[0],
+					String(parseFloat(min_to_receive).toFixed(3)))
+
+				const order_id = Math.floor(Date.now() / 1000)
+				const confirmStr = tt(isSell
+									? 'market_jsx.sell_amount_for_atleast'
+									: 'market_jsx.buy_atleast_amount_for',
+									{amount_to_sell, min_to_receive, effectivePrice})
+				const successMessage = tt('g.order_placed') + ': ' + confirmStr
+
+
+				dispatch(transaction.actions.broadcastOperation({
+					type: 'limit_order_create',
+					operation: {
+						owner,
+						order_id,
+						amount_to_sell,
+						min_to_receive,
+						fill_or_kill,
+						expiration
+					},
+					confirm: confirmStr + '?',
+					successCallback: () => {successCallback(successMessage);}
+				}))
+			},
+
+			borrowBitasset: () => {
+				dispatch(g.actions.showDialog({name: 'borrowBitAsset', params: {}}));
+			}
+		})
     )(Market1)
 };

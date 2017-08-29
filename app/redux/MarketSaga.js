@@ -1,10 +1,14 @@
-import {takeLatest} from 'redux-saga';
-import {call, put} from 'redux-saga/effects';
-import MarketReducer from './MarketReducer';
-import {getAccount} from './SagaShared';
-import {api} from 'golos-js';
+import { takeLatest } from 'redux-saga'
+import { call, put } from 'redux-saga/effects'
+import MarketReducer from './MarketReducer'
+import { api } from 'golos-js'
+import { getAccount } from './SagaShared';
+import { fromJS } from 'immutable'
+import { fetchAsset } from './AssetsSaga'
+import { isMarketAsset } from 'app/utils/MarketUtils'
+import { LIQUID_TICKER, DEBT_TICKER } from 'app/client_config'
 
-export const marketWatches = [watchLocationChange, watchUserLogin, watchMarketUpdate];
+export const marketWatches = [watchLocationChange, watchUserLogin, watchMarketUpdate]
 
 const wait = ms => (
     new Promise(resolve => {
@@ -12,76 +16,107 @@ const wait = ms => (
     }))
 
 let polling = false
-let active_user = null
-let last_trade = null
 
 export function* fetchMarket(location_change_action) {
-    const {pathname} = location_change_action.payload;
-    if (pathname && pathname != "/market") {
+    const { pathname } = location_change_action.payload
+
+	if (pathname && pathname.indexOf('/market') == -1) {
         polling = false
         return
     }
 
-    if(polling == true) return
+    if (polling == true) return
     polling = true
 
-    while(polling) {
+	let base, quote
 
+	const match = pathname.match(/^\/market\/?(?:([\w\d.]+)_([\w\d.]+))?/)
+	if (match.length === 3) {
+		base = match[1] ? match[1] : LIQUID_TICKER
+		quote = match[2] ? match[2] : DEBT_TICKER
+	}
+
+	let asset =	yield call(fetchAsset, quote)
+	if (!asset) return
+
+	yield put(MarketReducer.actions.setQuoteAsset(asset))
+
+  	const isma = isMarketAsset(asset, fromJS({asset_name: base}))
+	if (isma.isMarketAsset) {
+		//fetchCallOrders
+		//fetchSettleOrders
+	}
+
+    while (polling) {
         try {
-            const state = yield call([api, api.getOrderBookAsync], 500);
-            yield put(MarketReducer.actions.receiveOrderbook(state));
 
-            let trades;
-            if(last_trade == null ) {
-                trades = yield call([api, api.getRecentTradesAsync], 25);
-                yield put(MarketReducer.actions.receiveTradeHistory(trades));
-            } else {
-                let start = last_trade.toISOString().slice(0, -5)
-                trades = yield call([api, api.getTradeHistoryAsync], start, "1969-12-31T23:59:59", 1000);
-                trades = trades.reverse()
-                yield put(MarketReducer.actions.appendTradeHistory(trades));
-            }
-            if(trades.length > 0) {
-              last_trade = new Date((new Date(Date.parse(trades[0]['date']))).getTime() + 1000)
-            }
+            const orderBook = yield call([api, api.getOrderBook], base, quote, 49)
+            yield put(MarketReducer.actions.receiveOrderbook(orderBook))
 
-            const state3 = yield call([api, api.getTickerAsync]);
-            yield put(MarketReducer.actions.receiveTicker(state3));
+			let startDate = new Date()
+			let endDate = new Date()
+			endDate.setDate(endDate.getDate() - 1)
+
+            const tradeHistory = yield call([api, api.getTradeHistoryAsync], base, quote,
+				startDate.toISOString().slice(0, -5), endDate.toISOString().slice(0, -5), 25)
+            yield put(MarketReducer.actions.receiveTradeHistory(tradeHistory))
+
+            const ticker = yield call([api, api.getTickerAsync], base, quote)
+            yield put(MarketReducer.actions.receiveTicker(ticker))
+
         } catch (error) {
-            console.error('~~ Saga fetchMarket error ~~>', error);
-            yield put({type: 'global/CHAIN_API_ERROR', error: error.message});
+            console.error('~~ Saga fetchMarket error ~~>', error)
+            yield put({type: 'global/CHAIN_API_ERROR', error: error.message})
         }
 
-        yield call(wait, 3000);
+        yield call(wait, 3000)
     }
 }
 
-export function* fetchOpenOrders(set_user_action) {
-    const {username} = set_user_action.payload
+export function* fetchOpenOrdersByOwner(set_user_action) {
+    const { username } = set_user_action.payload
 
     try {
-       // const state = yield call([api, api.getOpenOrdersAsync], username);
-        //yield put(MarketReducer.actions.receiveOpenOrders(state));
-       // yield call(getAccount, username, true);
+       const openOrders = yield call([api, api.getLimitOrdersByOwner], username);
+       yield put(MarketReducer.actions.receiveOpenOrders(openOrders));
+       yield call(getAccount, username, true);
     } catch (error) {
-        console.error('~~ Saga fetchOpenOrders error ~~>', error);
-        yield put({type: 'global/CHAIN_API_ERROR', error: error.message});
+        console.error('~~ Saga fetchOpenOrdersByOwner error ~~>', error)
+        yield put({type: 'global/CHAIN_API_ERROR', error: error.message})
     }
+}
+
+export function* fetchCallOrders(username) {
+	const callOrders = yield call([api, api.getCallOrdersByOwner], username)
+	yield put(MarketReducer.actions.receiveCallOrders(callOrders))
+}
+
+export function* fetchSettleOrders(assetName) {
+	const settleOrders = yield call([api, api.getSettleOrdersAsync], quote, 200)
+
+}
+
+export function* fetchMarketHistory(base, quote) {
+	const bucketSize = 86400
+	const marketHistory = yield call([api, api.getMarketHistoryAsync], base, quote, bucketSize,
+		startDate.toISOString().slice(0, -5), endDate.toISOString().slice(0, -5), 25)
+
 }
 
 export function* reloadMarket(reload_action) {
-    yield fetchMarket(reload_action);
-    yield fetchOpenOrders(reload_action);
+    yield fetchMarket(reload_action)
+    yield fetchOpenOrdersByOwner(reload_action)
+	yield fetchCallOrders(reload_action.payload.username)
 }
 
 export function* watchUserLogin() {
-    yield* takeLatest('user/SET_USER', fetchOpenOrders);
+    yield* takeLatest('user/SET_USER', fetchOpenOrdersByOwner)
 }
 
 export function* watchLocationChange() {
-    yield* takeLatest('@@router/LOCATION_CHANGE', fetchMarket);
+    yield* takeLatest('@@router/LOCATION_CHANGE', fetchMarket)
 }
 
 export function* watchMarketUpdate() {
-    yield* takeLatest('market/UPDATE_MARKET', reloadMarket);
+    yield* takeLatest('market/UPDATE_MARKET', reloadMarket)
 }

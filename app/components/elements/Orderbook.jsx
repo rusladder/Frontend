@@ -134,7 +134,7 @@ export default class Orderbook extends Component {
                             {this.renderOrdersRows(orderbook, side)}
                     </tbody>
                 </table>
-                <nav>
+                <nav style={{paddingBottom: "1rem"}}>
                   <ul className="pager">
                     <li>
                         <div className={"button tiny hollow " + (buy ? "float-left" : "float-left") + (currentIndex === 0 ? " disabled" : "")} onClick={this._setBuySellPage.bind(this, false)} aria-label="Previous">

@@ -26,7 +26,7 @@ global.$STM_Config = {
     google_analytics_id: config.get('google_analytics_id'),
     chain_id: config.get('chain_id'),
     lang_server: config.get('lang_server'),
-    isTestnet: config.get('is_testnet')
+    is_testnet: config.get('is_testnet')
 };
 
 const WebpackIsomorphicTools = require('webpack-isomorphic-tools');

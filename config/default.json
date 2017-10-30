@@ -85,11 +85,25 @@
       "waiting_list_invite": false
     }
   },
+  "postmark": {
+    "from": "noreply@example.com",
+    "key": "postmark server key",
+    "templates": {
+      "confirm_email": false,
+      "waiting_list_invite": false
+    }
+  },
   "server_session_secret": "exiKdyF+IwRIXJDmtGIl4vWUz4i3eVSISpfZoeYc0s4=",
   "session_cookie_key": "gls.session",
   "session_key": "golos",
   "site_domain": "golos.io",
   "tarantool": {
+    "host": "localhost",
+    "password": "",
+    "port": "3301",
+    "username": "guest"
+  },
+  "chainproxy": {
     "host": "localhost",
     "password": "",
     "port": "3301",

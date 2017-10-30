@@ -10,9 +10,10 @@ import VerticalMenu from 'app/components/elements/VerticalMenu';
 import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 import NotifiCounter from 'app/components/elements/NotifiCounter';
 import tt from 'counterpart';
-import { DEFAULT_LANGUAGE, LANGUAGES, LIQUID_TICKER, DEBT_TICKER } from 'app/client_config';
+import { DEFAULT_LANGUAGE, LANGUAGES, LOCALE_COOKIE_KEY, LIQUID_TICKER, DEBT_TICKER } from 'app/client_config';
 import LocalizedCurrency from 'app/components/elements/LocalizedCurrency';
 import {vestingSteem} from 'app/utils/StateFunctions';
+import cookie from "react-cookie";
 
 const defaultNavigate = (e) => {
     if (e.metaKey || e.ctrlKey) {
@@ -77,7 +78,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
     const submitStoryPencil = $STM_Config.read_only_mode ? null : <li className="show-for-small-only">
       <Link to="/submit.html"><Icon name="pencil" /></Link>
     </li>;
-    const golosFest = <li className={lcn + ' buttons'}><Link to="/golos/@golosevents/yaidunagolosfest-or-ceny-spikery-volontyory-besplatnyi-bilet" className="button alert fest">{tt('g.golos_fest')}</Link></li>;
+    //const golosFest = <li className={lcn + ' buttons'}><Link to="/created/ru--godgolosu" className="button alert fest">{tt('g.golos_fest')}</Link></li>;
     const feedLink = `/@${username}/feed`;
     const repliesLink = `/@${username}/recent-replies`;
     const walletLink = `/@${username}/transfers`;
@@ -90,12 +91,12 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
     const inIco = location && location.pathname.indexOf("/about") == 0;
     const ico_menu = [
         {link: '#what-is-golos', value: tt('g.video')},
-        {link: '#docs', value: tt('g.documentation')},
+        {link: 'https://developers.golos.io', value: tt('g.documentation')},
         {link: '#faq', value: tt('navigation.faq')},
         {link: '#team', value: tt('g.team')},
     ];
     let currentLang = LANGUAGES[DEFAULT_LANGUAGE].substr(0,3).toUpperCase();
-    const locale = process.env.BROWSER ? localStorage.getItem('language') || DEFAULT_LANGUAGE : DEFAULT_LANGUAGE
+    const locale = process.env.BROWSER ? cookie.load(LOCALE_COOKIE_KEY) || DEFAULT_LANGUAGE : DEFAULT_LANGUAGE
     const lang_menu = [];
     for (var key in LANGUAGES) {
       if (locale === key)
@@ -158,7 +159,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
         ];
         return (
             <ul className={mcn + mcl}>
-                {!inIco && golosFest}
+                {/*!inIco && golosFest*/}
                 {inIco && ico_menu.map((o,i) => {return <li key={i} className={lcn}><a href={o.link}>{o.value}</a></li>})}
                 {!inIco && aboutItem}
                 {!inIco && !vertical && submitFeedback}
@@ -188,7 +189,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
     }
     return (
         <ul className={mcn + mcl}>
-            {!inIco && golosFest}
+            {/*!inIco && golosFest*/}
             {inIco && ico_menu.map((o,i) => {return <li key={i} className={lcn}><a href={o.link}>{o.value}</a></li>})}
             {!inIco && aboutItem}
             {!inIco && !vertical && <li>
@@ -272,6 +273,7 @@ export default connect(
               if (targetLanguage.localeCompare(LANGUAGES[key]) == 0)
                 language = key
             }
+            cookie.save(LOCALE_COOKIE_KEY, language, {path: "/", expires: new Date(Date.now() + 60 * 60 * 24 * 365 * 10 * 1000)});
             localStorage.setItem('language', language)
             dispatch(user.actions.changeLanguage(language))
         },

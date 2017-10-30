@@ -27,6 +27,18 @@ export default createModule({
             }
         },
         {
+          action: 'FETCHING_JSON',
+          reducer: (state, {payload: fetchingJson}) => {
+              return state.mergeDeep({fetchingJson: fetchingJson});
+          }
+        },
+        {
+          action: 'FETCHING_XCHANGE',
+          reducer: (state, {payload: fetchingXchange}) => {
+            return state.mergeDeep({fetchingXchange: fetchingXchange});
+          }
+        },
+        {
             action: 'RECEIVE_STATE',
             reducer: (state, action) => {
                 let payload = fromJS(action.payload)
@@ -280,6 +292,10 @@ export default createModule({
         },
         {
             action: 'FETCH_JSON',
+            reducer: state => state // saga
+        },
+        {
+            action: 'FETCH_EXCHANGE_RATES',
             reducer: state => state // saga
         },
         {

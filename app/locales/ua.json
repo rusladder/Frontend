@@ -70,6 +70,7 @@
     "confirm": "Підтвердити"
   },
   "converttosteem_jsx": {
+    "confirm_title" : "Подтвердіть Конвертацію",
     "this_is_a_price_feed_conversion": "Це котування ціни. Потрібен тиждень відстрочки, щоб запобігти зловживанням від гри на середній ціновій катировці.",
     "convert_to_LIQUID_TOKEN": "Перевести в %(LIQUID_TOKEN)s",
     "your_existing_DEBT_TOKEN_are_liquid_and_transferable": "Токени %(DEBT_TOKEN)s ліквідні, та їх можливо передавати між акаунтами. Перед запуском конвертації, перевірте опції %(link)s %(DEBT_TOKEN)s, на внутрішній біржі. Також, токен %(DEBT_TOKEN)s, доступний до віводу (і торгівлі) на зовнішніх біржах.",
@@ -95,14 +96,27 @@
     "phone_verification_helps_with_preventing_spam": "Phone verification helps with preventing spam and allows $(APP_NAME)s to assist with Account Recovery in case your account is ever compromised. Your phone number will not be used for any other purpose other than phone verification and account recovery.",
     "country_code": "Country Code",
     "phone_number": "Phone number",
-    "examples": "Examples: 541-754-3010 | 89-636-48018",
-    "land_lines_cannot_receive_sms_messages": "* Land lines cannot receive SMS messages",
+    "without_country_code": "Without country code",
+    "examples": "Enter number without country code, for example: 541-754-3010 | 89-636-48018",
+    "land_lines_cannot_receive_sms_messages": "* Land lines cannot send or receive SMS messages",
     "message_and_data_rates_may_apply": "* Message and data rates may apply",
+    "why_send_sms": "Навiщо вiдправляти СМС?",
+    "mobile_description": {
+      "one": " Реєстрація в медіаблокчейні % (APP_NAME) s - платна, в даний час з метою зростання і популяризації нашого співтовариства, ми беремо ці витрати на себе, нараховуючи по 5 токенів % (APP_NAME) s на кожен новий акаунт. ",
+      "second": "На жаль, ми зіткнулися з тим, що почастішали випадки реєстрації акаунтів в автоматичному режимі. Способи верифікації живих користувачів, такі як скрипти, поштове підтвердження, підтвердження телефону шляхом відправки користувачеві текстового коду і системи верифікації  'Я не робот' не працюють.",
+      "third": " Прийом текстового смс повідомлення від користувача - гарний спосіб підтвердження мотивації користувача до реєстрації на нашому ресурсі, до того ж це економічно вигідніше для екосистеми всієї медіаблокчейн платфроми % (APP_NAME) s.",
+      "fourth": "Ми зацікавлені в реєстраціях справжніх людей (не роботів), саме тому просимо Вас відправити СМС на вказаний номер. Це не більше ніж умовна верифікація, що Ви - людина. Дане обмеження працює на благо всієї спільноти."
+    },
+    "APP_NAME_wants_you_to_know": "* Вартість відправки та отримання текстових повідомлень відповідає  поточному тарифному плану Вашого мобільного оператора.",
     "thank_you_for_providing_your_phone_number": "Thank you for providing your phone number.",
     "to_continue_please_enter_the_sms_code_weve_sent_you": "To continue please enter the SMS code we've sent you.",
+    "to_continue_please_send_sms_code": "To continue please send SMS message from your mobile phone with code %(code)s to %(phone_number)s. The text message should consist of only 4-digit code.",
     "confirmation_code": "Confirmation code",
     "didnt_receive_the_verification_code": "Didn't receive the verification code? ",
-    "re_send": "Re-send"
+    "you_can_change_your_number": "You can change your number at any time if we didn't receive your sms with verification code. ",
+    "re_send": "Re-send",
+    "phone_number_has_been_verified": "Phone number has been verified",
+    "this_phone_number_has_already_been_used": "This phone number has already been used"
   },
   "curationrewards_jsx": {
     "curation_rewards_last_24_hours": "Кураторські нагороди за останні 24 години",
@@ -134,13 +148,20 @@
     "copy": "Скопіювати",
     "alternative_sources": "Альтернативні джерела"
   },
+  "illegal_content": {
+    "hidden": "схований",
+    "unavailable" : "Користувача заблоковано",
+    "due_to_illegal_content": "через порушення",
+    "terms_of_service": "Умов користування",
+    "terms_of_service_section": ", пункт 5.5.7"
+  },
   "g": {
-    "golos_fest" : "#яИдуНаГОЛОСфест",
+    "golos_fest" : "#годГОЛОСу",
     "APP_NAME" : "Голос",
     "24_hour": "24 години",
     "30_day": "30 днів",
     "age": "вік",
-    "active" : "Обговорюване",
+    "active" : "Активний ключ",
     "advanced": "Розширені опції",
     "amount": "Кількість",
     "and": "та",
@@ -195,7 +216,7 @@
     "loading": "Завантаження",
     "login": "Увійти",
     "logout": "Вийти",
-    "memo": "Замітка",
+    "memo": "Ключ заміток",
     "more": "більше",
     "mute": "Блокувати",
     "new": "Нове",
@@ -207,12 +228,12 @@
     "older": "Старіше",
     "or": "або",
     "order_placed": "Замовлення розміщенно",
-    "owner" : "Власник",
+    "owner" : "Ключ власника",
     "password": "Пароль",
     "payouts": "Виплати",
     "permissions": "Дозволи",
     "post": "Пост",
-    "posting": "Постинг",
+    "posting": "Постинг ключ",
     "post_as": "Запостить як",
     "posts": "Пости",
     "power_up": "Посилити %(VESTING_TOKEN2)s",
@@ -436,7 +457,7 @@
     "you_account_has_been_successfully_created": "Ваш акаунт був успішно створений!",
     "you_account_has_been_successfully_recovered": "Ваш акаунт був успішно відновлений!",
     "password_update_succes": "Пароль для %(accountName)s був успішно оновлений",
-    "password_info": "Цей пароль закритий ключ був введений неправильно. Ймовірно, є помилка почерку або введення даних. Підказка: пароль або закритий ключ, згенерований Голос, ніколи не буде містити символи 0 (нуль), O (прописна o), I (прописна i) та l (нижній регістр L).",
+    "password_info": "Цей пароль закритий ключ був введений неправильно. Ймовірно, є помилка почерку або введення даних.",
     "enter_your_username": "Введіть своє ім'я користувача",
     "password_or_wif": "Пароль або WIF",
     "this_operation_requires_your_key_or_master_password": "Ця операція вимагає введення Вашого ключа власника або введення Вашого активного ключа (використовуйте головний пароль)",
@@ -505,7 +526,8 @@
     "welcome": "Ласкаво просимо",
     "feedback": "Зворотній зв'язок",
     "wiki": "Вікі",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "sale_agreement": "Договор купли-продажи"
   },
   "oauth": {
     "we_couldnt_verify_your_account_contact_us_at_SUPPORT_EMAIL": "Ми не змогли верифікувати обліковий запис. Напишіть на пошту %(SUPPORT_EMAIL)s для отримання додаткової інформації.",
@@ -541,6 +563,7 @@
   },
   "postfull_jsx": {
     "this_post_is_not_available_due_to_a_copyright_claim": "Цей пост недоступний через скарги про порушення авторських прав.",
+    "this_post_is_not_available_due_to_breach_of_legislation": "This post is not available due to breach of legislation.",
     "share_on_facebook": "Поділитись у Facebook",
     "share_on_twitter": "Поділитись у Twitter",
     "share_on_vk": "Поділитись у ВКонтакте",
@@ -569,7 +592,7 @@
     "account_name_is_not_available": "Ім'я акаунта недоступне"
   },
   "postsummary_jsx": {
-    "resteemed": "Поделитись",
+    "resteemed": "Репост",
     "resteemed_by": "Репостнуто",
     "this_post_is": "Цей пост",
     "you_can": "Ви можете",
@@ -617,7 +640,9 @@
     "login_with_social_media_to_verify_identity": "Будь ласка, увійдіть використовуючи %(provider)s для підтвердження Вашої особистості",
     "enter_email_toverify_identity": "Нам потрібно підтвердити Вашу особу. Будь ласка, вкажіть Вашу електронну пошту для початку перевірки.",
     "continue_with_email": "Продовжити з електронною поштою",
-    "thanks_for_submitting_request_for_account_recovery": "<p>Дякуємо Вам за відправку запиту на відновлення облікового запису використовуючи засновану на блокчейне мультифакторна аутентифікацію %(APP_NAME)s’a.</p> <p>Ми відповімо Вам якнайшвидше, проте, будь ласка, очікуйте що може бути деяка затримка через великий обсяг листів.</p> <p>Будь ласка, будьте готові підтвердити свою особистість.</p>",
+    "thanks_for_submitting_request_for_account_recovery_1": "Дякуємо Вам за відправку запиту на відновлення облікового запису використовуючи засновану на блокчейне мультифакторна аутентифікацію %(APP_NAME)s’a.",
+    "thanks_for_submitting_request_for_account_recovery_2": "Ми відповімо Вам якнайшвидше, проте, будь ласка, очікуйте що може бути деяка затримка через великий обсяг листів.",
+    "thanks_for_submitting_request_for_account_recovery_3": "Будь ласка, будьте готові підтвердити свою особистість.",
     "recovering_account": "Відновлюємо акаунт",
     "recover_account": "Відновити акаунт",
     "checking_account_owner": "Перевіряємо власника акаунта",
@@ -633,7 +658,7 @@
     "are_you_sure_you_want_to_clear_this_form": "Ви впевнені, що хочете очистити цю форму?",
     "uploading": "Завантаження",
     "draft_saved": "Чернетка збережена.",
-    "editor": "Редактор",
+    "editor": "pедактор",
     "insert_images_by_dragging_dropping": "Вставте зображення перетягнувши їх за допомогою мишки, або ",
     "pasting_from_the_clipboard": " їх з буфера обміну. ",
     "selecting_them": "вибрав",
@@ -674,6 +699,7 @@
     "muted_users": "Заблоковані користувачі",
     "update": "Оновити",
     "profile_image_url": "Додайте URL Вашого зображення",
+    "cover_image_url": "Додайте URL Вашої обкладинки",
     "profile_name": "Відображаєме ім'я ",
     "profile_about": "Про проект",
     "profile_location": "Місцезнаходження",
@@ -712,7 +738,7 @@
     "influence_tokens_which_give_you_more_control_over": "%(VESTING_TOKEN)s непереміщувана, її кількість збільшується при довгостроковому зберіганні. Чим більше у Вас %(VESTING_TOKENS)s, тим сильніше ви впливаєте на винагороди за пост і тим більше заробляєте за голосування.",
     "the_more_you_hold_the_more_you_influence_post_rewards": "Чим їх більше, тим сильніше Ви впливаєте на винагороди за пост і тим більше заробляєте за голосування.",
     "the_estimated_value_is_based_on_an_average_value_of_steem_in_US_dollars": "Оціночна вартість розраховується з 7-ми денної середньої вартості %(LIQUID_TOKEN)s.",
-    "VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN": "%(VESTING_TOKEN2)s не можна передати і буде потрібно 20 тижнів щоб перевести її назад в %(LIQUID_TOKEN)s.",
+    "VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN": "%(VESTING_TOKEN2)s не можна передати, і Вам буде потрібно 20 тижнів, щоб перевести її назад в токени %(LIQUID_TOKEN)s.",
     "converted_VESTING_TOKEN_can_be_sent_to_yourself_but_can_not_transfer_again": "Конвертована %(VESTING_TOKEN)s може бути відправлена собі або будь-кому ще, але не може бути передана знову без конвертації назад в %(LIQUID_TOKEN)s.",
     "profile": "Профіль",
     "send_to_account": "Відправити акаунту",
@@ -733,6 +759,7 @@
     "power_up": "Збільшити Силу Голоса",
     "submit": "Передати",
     "basic": "Основні",
+    "memo" : "Примітка",
     "advanced": "Розширені опції",
     "convert_to_VESTING_TOKEN": "Перевести у %(VESTING_TOKEN2)s",
     "balance_subject_to_3_day_withdraw_waiting_period": "Вивід балансу з сейфа на звичайний рахунок займає 3 дні.",
@@ -748,7 +775,8 @@
     "cancel_transfer_from_savings": "Скасувати переказ з сейфа",
     "stop_power_down": "Ослаблення Сили Голоса зупинено",
     "start_power_down_of": "Ослаблення Сили Голоса розпочато з",
-    "receive_interest_of": "Отримувати відсотки за"
+    "receive_interest_of": "Отримано відсотки ",
+    "transfer": "Відправлено"
   },
   "user_profile": {
     "unknown_account": "Невідомий аккаунт",
@@ -887,11 +915,24 @@
     "paste_a_youtube_or_vimeo_and_press_enter": "Вставте YouTube або Vimeo посилання і натисніть Enter",
     "there_was_an_error_uploading_your_image": "Сталася помилка під час завантаження зображення",
     "raw_html": "HTML код",
-    "please_remove_following_html_elements": "Будь ласка, видаліть ці HTML елементи з Вашого поста: "
+    "please_remove_following_html_elements": "Будь ласка, видаліть ці HTML елементи з Вашого поста: ",
+    "payouts_declined": "Виплати відключені"
   },
   "witnesses_jsx": {
     "witness_thread": "пост делегата",
     "top_witnesses": "Топ делегатів",
+    "approval": "Глосiв",
+    "missed_1": "Пропущено",
+    "missed_2": "блоків",
+    "last_block": "Останній блок",
+    "price_feed": "Прайс фід",
+    "props": "Параметри",
+    "reg_fee": "Комісія за реєстрацію",
+    "apr": "APR",
+    "block_size": "Размір блоку",
+    "witness_deactive": "Делегат призупинив підпис блоків",
+    "no_price_feed": "Делегат не опублікував прайс фід",
+    "version": "Версія",
     "you_have_votes_remaining": "У Вас залишилося ",
     "you_have_votes_remaining_count": {
       "zero": "0 голосів",

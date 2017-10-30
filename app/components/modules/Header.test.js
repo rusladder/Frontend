@@ -2,7 +2,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { Map} from 'immutable';
+import { Map } from 'immutable';
 import {_Header_} from './Header.jsx';
 
 describe('Header', () => {

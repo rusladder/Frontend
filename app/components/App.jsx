@@ -28,6 +28,7 @@ class App extends React.Component {
         this.state = {open: null, showCallout: true, showBanner: true, expandCallout: false};
         this.toggleOffCanvasMenu = this.toggleOffCanvasMenu.bind(this);
         this.showSignUp = this.props.showSignUp.bind(this);
+        this.checkLogin = this.checkLogin.bind(this);
         // this.shouldComponentUpdate = shouldComponentUpdate(this, 'App')
     }
 
@@ -35,11 +36,17 @@ class App extends React.Component {
     componentWillMount() {
         if (process.env.BROWSER) localStorage.removeItem('autopost') // July 14 '16 compromise, renamed to autopost2
         this.props.loginUser();
+        this.props.loadExchangeRates();
         // this.initVendorScripts()
     }
 
     componentDidMount() {
+        window.addEventListener('storage', this.checkLogin);
         // setTimeout(() => this.setState({showCallout: false}), 15000);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('storage', this.checkLogin);
     }
 
     componentDidUpdate(nextProps) {
@@ -56,6 +63,15 @@ class App extends React.Component {
                   p.location !== n.location ||
                   p.visitor !== n.visitor ||
                   p.flash !== n.flash || this.state !== nextState;
+    }
+
+    checkLogin(event) {
+      if (event.key === 'autopost2') {
+        if (! event.newValue)
+          this.props.logoutUser();
+        else if (! event.oldValue || event.oldValue !== event.newValue)
+          this.props.loginUser();
+      }
     }
 
     toggleOffCanvasMenu(e) {
@@ -168,7 +184,7 @@ class App extends React.Component {
                                 <b>
                                   {tt('submit_a_story.get_sp_when_sign_up1')}
                                   <LocalizedCurrency amount={Number(signup_bonus)} />
-                                  {tt('submit_a_story.get_sp_when_sign_up2', {VESTING_TOKENS})}
+                                  {tt('submit_a_story.get_sp_when_sign_up2', {VESTING_TOKENS: ""})}
                                 </b>
                             </div>
                         </div>
@@ -240,12 +256,17 @@ class App extends React.Component {
                 </ul>
                 <ul className="vertical menu">
                     <li>
-                      <a href={TERMS_OF_SERVICE_URL} onClick={this.navigate} rel="nofollow">
+                      <a href="https://golos.io/ru--golos/@golos/dogovor-kupli-prodazhi-tokenov-sila-golosa" onClick={this.navigate} rel="nofollow">
+                            {tt("navigation.sale_agreement")}
+                        </a>
+                    </li>
+                    <li>
+                      <a href={TERMS_OF_SERVICE_URL} target="_blank" rel="nofollow">
                             {tt("navigation.terms_of_service")}
                         </a>
                     </li>
                     <li>
-                      <a href={PRIVACY_POLICY_URL} onClick={this.navigate} rel="nofollow">
+                      <a href={PRIVACY_POLICY_URL} target="_blank" rel="nofollow">
                             {tt("navigation.privacy_policy")}
                         </a>
                     </li>
@@ -273,6 +294,7 @@ App.propTypes = {
     location: React.PropTypes.object,
     signup_bonus: React.PropTypes.string,
     loginUser: React.PropTypes.func.isRequired,
+    logoutUser: React.PropTypes.func.isRequired,
     depositSteem: React.PropTypes.func.isRequired,
     showSignUp: React.PropTypes.func.isRequired
 };
@@ -293,6 +315,8 @@ export default connect(
     dispatch => ({
         loginUser: () =>
             dispatch(user.actions.usernamePasswordLogin()),
+        logoutUser: () =>
+            dispatch(user.actions.logout()),
         depositSteem: () => {
             dispatch(g.actions.showDialog({name: 'blocktrades_deposit', params: {outputCoinType: VEST_TICKER}}));
         },
@@ -300,5 +324,8 @@ export default connect(
             if (e) e.preventDefault();
             dispatch(user.actions.showSignUp())
         },
+        loadExchangeRates: () => {
+            dispatch(g.actions.fetchExchangeRates())
+        }
     })
 )(App);

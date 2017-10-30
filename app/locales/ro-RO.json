@@ -70,6 +70,7 @@
     "confirm":"Confirmă"
   },
   "converttosteem_jsx":{
+    "confirm_title" : "Подтвердите Конвертацию",
     "this_is_a_price_feed_conversion":"Săptămâna de repaos prin conversia automată este necesară pentru a preveni abuzul de speculații, la o cotatie medie de preț.",
     "convert_to_LIQUID_TOKEN":"Convertați în %(LIQUID_TOKEN)s",
     "your_existing_DEBT_TOKEN_are_liquid_and_transferable":"Tokenurile %(DEBT_TOKEN)s sunt lichide și pot fi transferate între conturi. Înainte de a începe conversia, verificați opțiunile %(link)s %(DEBT_TOKEN)s, la bursa internă. De asemenea, tokenul %(DEBT_TOKEN)s, e accesibil retrage (și comerț) pe bursele externe.",
@@ -95,14 +96,27 @@
     "phone_verification_helps_with_preventing_spam": "Phone verification helps with preventing spam and allows $(APP_NAME)s to assist with Account Recovery in case your account is ever compromised. Your phone number will not be used for any other purpose other than phone verification and account recovery.",
     "country_code": "Country Code",
     "phone_number": "Phone number",
-    "examples": "Examples: 541-754-3010 | 89-636-48018",
-    "land_lines_cannot_receive_sms_messages": "* Land lines cannot receive SMS messages",
+    "without_country_code": "Without country code",
+    "examples": "Enter number without country code, for example: 541-754-3010 | 89-636-48018",
+    "land_lines_cannot_receive_sms_messages": "* Land lines cannot send or receive SMS messages",
     "message_and_data_rates_may_apply": "* Message and data rates may apply",
+    "why_send_sms": "Why send SMS?",
+    "mobile_description": {
+      "one": "Right now, the registration on media-blockchain %(APP_NAME)s costs money for the system. In order for the community to grow quicker, we take those costs on board and pay out 5 %(APP_NAME)s tokens to each new member.",
+      "second": "Unfortunately, people have started to take advantage of that and automated account registration had started to grow. Verification methods like: email checks, scripts or sending out a free sms verification, simply do not work. And cannot prove that the registry isn't a robot.",
+      "third": "Accepting a paid sms from a user, is a good method to check out his motivation to register on the %(APP_NAME)s platform, also it is by far, more economically efficient for the whole system.",
+      "fourth": "We are interested in real users (not bots) to register on our platform, hence, we kindly ask you to send out an sms to the stated number. It is no more than a human verification process. And works for the best of the whole community. Thank you!"
+    },
+    "APP_NAME_wants_you_to_know": "* Your mobile provider's standard rates for sending and receiving text messages still apply.",
     "thank_you_for_providing_your_phone_number": "Thank you for providing your phone number.",
     "to_continue_please_enter_the_sms_code_weve_sent_you": "To continue please enter the SMS code we've sent you.",
+    "to_continue_please_send_sms_code": "To continue please send SMS message from your mobile phone with code %(code)s to %(phone_number)s. The text message should consist of only 4-digit code.",
     "confirmation_code": "Confirmation code",
     "didnt_receive_the_verification_code": "Didn't receive the verification code? ",
-    "re_send": "Re-send"
+    "you_can_change_your_number": "You can change your number at any time if we didn't receive your sms with verification code. ",
+    "re_send": "Re-send",
+    "phone_number_has_been_verified": "Phone number has been verified",
+    "this_phone_number_has_already_been_used": "This phone number has already been used"
   },
   "curationrewards_jsx":{
     "curation_rewards_last_24_hours":"Atribuire curatorială în ultimele 24 de ore",
@@ -134,7 +148,15 @@
     "copy":"Copie",
     "alternative_sources":"Resurse alternative "
   },
+  "illegal_content": {
+    "hidden": "скрыт",
+    "unavailable" : "Пользователь заблокирован",
+    "due_to_illegal_content": "из-за нарушений",
+    "terms_of_service": "Условий пользования",
+    "terms_of_service_section": ", пункт 5.5.7"
+  },
   "g":{
+    "golos_fest" : "#годГОЛОСу",
     "APP_NAME":"Golos",
     "24_hour":"24 ore",
     "30_day":"30 zile",
@@ -436,7 +458,7 @@
     "you_account_has_been_successfully_created":"Contul dvs. a fost creat cu succes!",
     "you_account_has_been_successfully_recovered":"Contul dvs. a fost restabilit cu succes!",
     "password_update_succes":"Parolă pentru %(accountName)s a fost reînnoită cu succes",
-    "password_info":"Această parolă sau cheie privată a fost introdusă incorect. Probabil, există o eroare la introducerea datelor. Sugestie: Parolă sau o cheia privată, generată de Golos nu va conține caractere 0 (zero), O (litere mici o), I (litere mari i) și l (L cu litere mici).",
+    "password_info":"Această parolă sau cheie privată a fost introdusă incorect. Probabil, există o eroare la introducerea datelor.",
     "enter_your_username":"Introdu numele de utilizator",
     "password_or_wif":"Parola sau WIF",
     "this_operation_requires_your_key_or_master_password":"Această operație necesită introducerea cheii proprietarului sau cheii active",
@@ -505,7 +527,8 @@
     "welcome":"Bine ați venit",
     "feedback":"Feedback-ul",
     "wiki":"WIKI",
-    "faq":"FAQ"
+    "faq":"FAQ",
+    "sale_agreement": "Sale Agreement"
   },
   "oauth":{
     "we_couldnt_verify_your_account_contact_us_at_SUPPORT_EMAIL":"Nu am putut verifica contul. Scrie pe e-mailul: %(SUPPORT_EMAIL)s pentru a primi mai multe informații.",
@@ -541,6 +564,7 @@
   },
   "postfull_jsx":{
     "this_post_is_not_available_due_to_a_copyright_claim":"Această postare nu este disponibilă din cauza plângerilor cu privire la încălcarea drepturilor de autor.",
+    "this_post_is_not_available_due_to_breach_of_legislation": "This post is not available due to breach of legislation.",
     "share_on_facebook":"Distribuiți pe Facebook",
     "share_on_twitter":"Distribuiți pe Twitter",
     "share_on_vk":"Distribuiți pe ВКонтакте",
@@ -619,7 +643,9 @@
     "login_with_social_media_to_verify_identity":"Conectați-vă utilizând %(provider)s entru a vă verifica identitatea",
     "enter_email_toverify_identity":"Trebuie să vă verificăm identitatea. Vă rugăm să introduceți adresa de email mai jos, pentru a începe verificarea.",
     "continue_with_email":"Continuați cu e-mailul",
-    "thanks_for_submitting_request_for_account_recovery":"<p>Vă mulțumim pentru trimiterea cererii pentru a recupera contului dvs. folosind autentificarea multifactorială pe bază de blokchain a %(APP_NAME)s.</p><p>Vă vom răspunde în cel mai scurt timp posibil, cu toate acestea, vă rugăm să ne așteptați că pot exista unele întârzieri din cauza volumului mare de e-mailuri.</p><p>Vă rugăm să fiți pregătiți pentru a vă dovedi identitatea.</p>",
+    "thanks_for_submitting_request_for_account_recovery_1":"Vă mulțumim pentru trimiterea cererii pentru a recupera contului dvs. folosind autentificarea multifactorială pe bază de blokchain a %(APP_NAME)s.",
+    "thanks_for_submitting_request_for_account_recovery_2":"Vă vom răspunde în cel mai scurt timp posibil, cu toate acestea, vă rugăm să ne așteptați că pot exista unele întârzieri din cauza volumului mare de e-mailuri.",
+    "thanks_for_submitting_request_for_account_recovery_3":"Vă rugăm să fiți pregătiți pentru a vă dovedi identitatea.",
     "recovering_account":"Recuperăm contul",
     "recover_account":"Recuperează contul",
     "checking_account_owner":"Verificăm proprietarul",
@@ -635,7 +661,7 @@
     "are_you_sure_you_want_to_clear_this_form":"Sunteți sigur că doriți să curățați acest formular?",
     "uploading":"Încărcare",
     "draft_saved":"Schiță salvată.",
-    "editor":"Editor",
+    "editor":"editor",
     "insert_images_by_dragging_dropping":"Inserați imaginea trăgându-o cu mouse-ul, sau ",
     "pasting_from_the_clipboard":" lipiți datele din bufer. ",
     "selecting_them":"selectând",
@@ -684,6 +710,7 @@
     "muted_users":"Utilizatori blocați",
     "update":"Actualizți",
     "profile_image_url":"Adăugați adresa URL a imaginii",
+    "cover_image_url": "Cover image url",
     "profile_name":"Numele afișat",
     "profile_about":"Despre poriect",
     "profile_location":"Locația",
@@ -743,6 +770,7 @@
     "power_up":"Creșterea puterea de vot",
     "submit":"Transmite",
     "basic":"De bază",
+    "memo" : "Заметка",
     "advanced":"Opțiuni avansate",
     "convert_to_VESTING_TOKEN":"Convertați în %(VESTING_TOKEN2)s",
     "balance_subject_to_3_day_withdraw_waiting_period":"Retragerea din seif în cont obișnuit, durează 3 zile.",
@@ -758,7 +786,8 @@
     "cancel_transfer_from_savings":"Anulați transferul din seif",
     "stop_power_down":"Diminuarea %(VESTING_TOKENS)s oprită",
     "start_power_down_of":"Diminuarea %(VESTING_TOKENS)s începută de pe",
-    "receive_interest_of":"Primiți procente pentru"
+    "receive_interest_of":"Primiți procente pentru",
+    "transfer": "Отправлено"
   },
   "user_profile":{
     "unknown_account":"Cont necunoscut",
@@ -897,11 +926,24 @@
     "paste_a_youtube_or_vimeo_and_press_enter":"Introduceți link-ul Vimeo sau YouTube și apăsați Enter",
     "there_was_an_error_uploading_your_image":"A apărut o eroare în timpul încărcării imaginii",
     "raw_html":"Codul HTML",
-    "please_remove_following_html_elements":"Vă rugăm să eliminați aceste elemente HTML din postare: "
+    "please_remove_following_html_elements":"Vă rugăm să eliminați aceste elemente HTML din postare: ",
+    "payouts_declined": "Выплаты отключены"
   },
   "witnesses_jsx":{
     "witness_thread":"postarea delegatului",
     "top_witnesses":"Top delegați",
+    "approval": "Глосов",
+    "missed_1": "Пропущенно",
+    "missed_2": "блоков",
+    "last_block": "Последний блок",
+    "price_feed": "Прайс фид",
+    "props": "Параметры",
+    "reg_fee": "Комиссия за регистрацию",
+    "apr": "APR",
+    "block_size": "Размер блока",
+    "witness_deactive": "Делегат приостановил подпись блоков",
+    "no_price_feed": "Делегат не опубликовал прайс фид",
+    "version": "Версия",
     "you_have_votes_remaining":"V-a rămas ",
     "you_have_votes_remaining_count":{
       "zero":"0 voturi",

@@ -1,6 +1,6 @@
 import React from 'react';
 import tt from 'counterpart';
-import { APP_NAME } from 'app/client_config';
+import { APP_NAME, SUPPORT_EMAIL } from 'app/client_config';
 
 class Support extends React.Component {
     render() {
@@ -9,7 +9,7 @@ class Support extends React.Component {
                 <div>
                     <h2>{tt('g.APP_NAME_support', {APP_NAME})}</h2>
                     <p>
-                        {tt('g.please_email_questions_to')} <a href="mailto:t@cyber.fund">t@cyber.fund</a>.
+                        {tt('g.please_email_questions_to')} <a href={'mailto:' + SUPPORT_EMAIL}>{SUPPORT_EMAIL}</a>.
                     </p>
                 </div>
             </div>

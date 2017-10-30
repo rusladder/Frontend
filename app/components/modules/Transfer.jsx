@@ -132,7 +132,7 @@ class TransferForm extends Component {
 			'Savings Withdraw':    tt('transfer_jsx.withdraw_funds_after_the_required_3_day_waiting_period'),
 		}
 		const powerTip = tt('tips_js.influence_tokens_which_give_you_more_control_over', {VESTING_TOKEN, VESTING_TOKENS})
-		const powerTip2 = tt('tips_js.VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN', {LIQUID_TOKEN, VESTING_TOKEN2})
+		const powerTip2 = tt('tips_js.VESTING_TOKEN_is_non_transferrable_and_requires_convert_back_to_LIQUID_TOKEN', {LIQUID_TOKEN: LIQUID_TICKER, VESTING_TOKEN2})
 		const powerTip3 = tt('tips_js.converted_VESTING_TOKEN_can_be_sent_to_yourself_but_can_not_transfer_again', {LIQUID_TOKEN, VESTING_TOKEN})
         const {to, amount, asset, memo} = this.state
         const {loading, trxError, advanced} = this.state
@@ -228,10 +228,10 @@ class TransferForm extends Component {
                 </div>
 
                 {memo && <div className="row">
-                    <div className="column small-2" style={{paddingTop: 33}}>{tt('g.memo')}</div>
+                    <div className="column small-2" style={{paddingTop: 33}}>{tt('transfer_jsx.memo')}</div>
                     <div className="column small-10">
-                        <small>{tt('transfer_jsx.this_memo_is') + isMemoPrivate ? tt('transfer_jsx.private') : tt('transfer_jsx.public')}</small>
-                        <input type="text" placeholder={tt('g.memo')} {...memo.props}
+                        <small>{tt('transfer_jsx.this_memo_is') + isMemoPrivate ? tt('transfer_jsx.public') : tt('transfer_jsx.private')}</small>
+                        <input type="text" placeholder={tt('transfer_jsx.memo')} {...memo.props}
                             ref="memo" autoComplete="on" autoCorrect="off" autoCapitalize="off" spellCheck="false" disabled={loading} />
                         <div className="error">{memo.touched && memo.error && memo.error}&nbsp;</div>
                     </div>

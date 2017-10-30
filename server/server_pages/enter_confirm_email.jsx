@@ -5,21 +5,21 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import models from "db/models";
 import ServerHTML from "../server-html";
+import AnalyticsScripts from "../analylics";
 import sendEmail from "../sendEmail";
 import { checkCSRF, getRemoteIp } from "server/utils/misc";
 import config from "config";
 import SignupProgressBar from "app/components/elements/SignupProgressBar";
 import MiniHeader from "app/components/modules/MiniHeader";
 import secureRandom from "secure-random";
-import Mixpanel from "mixpanel";
+// import Mixpanel from "mixpanel";
 import tt from 'counterpart';
 import {metrics} from 'server/metrics';
 
 // FIXME copy paste code, refactor mixpanel out
-var mixpanel = null;
-if (config.has("mixpanel") && config.get("mixpanel")) {
-    mixpanel = Mixpanel.init(config.get("mixpanel"));
-}
+// if (config.has("mixpanel") && config.get("mixpanel")) {
+//     mixpanel = Mixpanel.init(config.get("mixpanel"));
+// }
 
 var assets_file = "tmp/webpack-stats-dev.json";
 if (process.env.NODE_ENV === "production") {
@@ -89,7 +89,7 @@ export default function useEnterAndConfirmEmailPages(app) {
     const router = koa_router();
     app.use(router.routes());
     const koaBody = koa_body();
-    const rc_site_key = config.get('recaptcha.site_key');
+    const rc_site_key = false; // config.get('recaptcha.site_key');
 
     router.get("/enter_email", function*() {
         console.log("-- /enter_email -->", this.session.uid, this.session.user);
@@ -124,19 +124,20 @@ export default function useEnterAndConfirmEmailPages(app) {
                               ?
                                 <button className="button g-recaptcha" data-sitekey={rc_site_key} data-callback="submit_email_form">{tt('g.continue').toUpperCase()}</button>
                               :
-                                <input type="submit" className="button" value="{tt('g.continue').toUpperCase()}" />
+                                <input type="submit" className="button" value={tt('g.continue').toUpperCase()} />
                             }
                         </form>
                     </div>
                 </div>
+                <AnalyticsScripts />
             </div>
         );
         const props = { body, title: 'Email Address', assets, meta: [] };
         this.body = '<!DOCTYPE html>' +
             renderToString(<ServerHTML {...props} />);
         if (metrics) metrics.increment('_signup_step_1');
-        if (mixpanel)
-            mixpanel.track('SignupStep1', { distinct_id: this.session.uid });
+        // if (mixpanel)
+        //     mixpanel.track('SignupStep1', { distinct_id: this.session.uid });
     });
 
     router.post("/submit_email", koaBody, function*() {
@@ -149,7 +150,7 @@ export default function useEnterAndConfirmEmailPages(app) {
             return;
         }
 
-        if (config.get('recaptcha.site_key')) {
+        if (rc_site_key) {
             if (!(yield checkRecaptcha(this))) {
                 console.log(
                   "-- /submit_email captcha verification failed -->",
@@ -302,6 +303,7 @@ export default function useEnterAndConfirmEmailPages(app) {
                         </span>
                     </div>
                 </div>
+                <AnalyticsScripts />
             </div>
         );
         const props = { body, title: "Email Confirmation", assets, meta: [] };

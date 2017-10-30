@@ -7,12 +7,12 @@ import recordWebEvent from 'server/record_web_event';
 import {esc, escAttrs} from 'db/models';
 import {emailRegex, getRemoteIp, rateLimitReq, checkCSRF} from 'server/utils/misc';
 import coBody from 'co-body';
-import Mixpanel from 'mixpanel';
+// import Mixpanel from 'mixpanel';
 import Tarantool from 'db/tarantool';
 import {PublicKey, Signature, hash} from 'golos-js/lib/auth/ecc';
 import {api, broadcast} from 'golos-js';
 
-const mixpanel = config.get('mixpanel') ? Mixpanel.init(config.get('mixpanel')) : null;
+// const mixpanel = config.get('mixpanel') ? Mixpanel.init(config.get('mixpanel')) : null;
 
 export default function useGeneralApi(app) {
     const router = koa_router({prefix: '/api/v1'});
@@ -42,7 +42,7 @@ export default function useGeneralApi(app) {
         }
 
         try {
-            const lock_entity_res = yield Tarantool.instance().call('lock_entity', user_id+'');
+            const lock_entity_res = yield Tarantool.instance('tarantool').call('lock_entity', user_id+'');
             if (!lock_entity_res[0][0]) {
                 console.log('-- /accounts lock_entity -->', user_id, lock_entity_res[0][0]);
                 this.body = JSON.stringify({error: 'Conflict'});
@@ -164,13 +164,13 @@ export default function useGeneralApi(app) {
                     memo: account.memo_key
                 });
                 console.log('-- create_account_with_keys created -->', this.session.uid, account.name, user_id, account.owner_key);
-                if (mixpanel) {
-                    mixpanel.track('Signup', {
-                        distinct_id: this.session.uid,
-                        ip: remote_ip
-                    });
-                    mixpanel.people.set(this.session.uid, {ip: remote_ip});
-                }
+                // if (mixpanel) {
+                //     mixpanel.track('Signup', {
+                //         distinct_id: this.session.uid,
+                //         ip: remote_ip
+                //     });
+                //     mixpanel.people.set(this.session.uid, {ip: remote_ip});
+                // }
                 this.body = JSON.stringify({status: 'ok'});
             }
         } catch (error) {
@@ -179,7 +179,7 @@ export default function useGeneralApi(app) {
             this.status = 500;
         } finally {
             // console.log('-- /accounts unlock_entity -->', user_id);
-            try { yield Tarantool.instance().call('unlock_entity', user_id + ''); } catch(e) {/* ram lock */}
+            try { yield Tarantool.instance('tarantool').call('unlock_entity', user_id + ''); } catch(e) {/* ram lock */}
         }
         recordWebEvent(this, 'api/accounts', account ? account.name : 'n/a');
     });
@@ -254,10 +254,10 @@ export default function useGeneralApi(app) {
 
             this.body = JSON.stringify({status: 'ok'});
             const remote_ip = getRemoteIp(this.req);
-            if (mixpanel) {
-                mixpanel.people.set(this.session.uid, {ip: remote_ip, $ip: remote_ip});
-                mixpanel.people.increment(this.session.uid, 'Logins', 1);
-            }
+            // if (mixpanel) {
+            //     mixpanel.people.set(this.session.uid, {ip: remote_ip, $ip: remote_ip});
+            //     mixpanel.people.increment(this.session.uid, 'Logins', 1);
+            // }
         } catch (error) {
             console.error('Error in /login_account api call', this.session.uid, error.message);
             this.body = JSON.stringify({error: error.message});
@@ -290,12 +290,12 @@ export default function useGeneralApi(app) {
             if (!checkCSRF(this, csrf)) return;
             console.log('-- /record_event -->', this.session.uid, type, value);
             const str_value = typeof value === 'string' ? value : JSON.stringify(value);
-            if (type.match(/^[A-Z]/) && mixpanel) {
-                mixpanel.track(type, {distinct_id: this.session.uid, Page: str_value});
-                mixpanel.people.increment(this.session.uid, type, 1);
-            } else {
-                // recordWebEvent(this, type, str_value);
-            }
+            // if (type.match(/^[A-Z]/) && mixpanel) {
+            //     mixpanel.track(type, {distinct_id: this.session.uid, Page: str_value});
+            //     mixpanel.people.increment(this.session.uid, type, 1);
+            // } else {
+                recordWebEvent(this, type, str_value);
+            // }
             this.body = JSON.stringify({status: 'ok'});
         } catch (error) {
             console.error('Error in /record_event api call', error.message);
@@ -320,12 +320,13 @@ export default function useGeneralApi(app) {
             return;
         }
         console.log('-- /page_view -->', this.session.uid, page);
+        recordWebEvent(this, 'PageView', page);
         const remote_ip = getRemoteIp(this.req);
         try {
             let views = 1, unique = true;
             if (config.has('tarantool') && config.has('tarantool.host')) {
                 try {
-                    const res = yield Tarantool.instance().call('page_view', page, remote_ip, this.session.uid, ref);
+                    const res = yield Tarantool.instance('tarantool').call('page_view', page, remote_ip, this.session.uid, ref);
                     unique = res[0][0];
                 } catch (e) {}
             }
@@ -343,28 +344,28 @@ export default function useGeneralApi(app) {
                 if (page_model) views = page_model.views;
             }
             this.body = JSON.stringify({views});
-            if (mixpanel) {
-                let referring_domain = '';
-                if (ref) {
-                    const matches = ref.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
-                    referring_domain = matches && matches[1];
-                }
-                const mp_params = {
-                    distinct_id: this.session.uid,
-                    Page: page,
-                    ip: remote_ip,
-                    $referrer: ref,
-                    $referring_domain: referring_domain
-                };
-                mixpanel.track('PageView', mp_params);
-                if (!this.session.mp) {
-                    mixpanel.track('FirstVisit', mp_params);
-                    this.session.mp = 1;
-                }
-                if (ref) mixpanel.people.set_once(this.session.uid, '$referrer', ref);
-                mixpanel.people.set_once(this.session.uid, 'FirstPage', page);
-                mixpanel.people.increment(this.session.uid, 'PageView', 1);
-            }
+            // if (mixpanel) {
+            //     let referring_domain = '';
+            //     if (ref) {
+            //         const matches = ref.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+            //         referring_domain = matches && matches[1];
+            //     }
+            //     const mp_params = {
+            //         distinct_id: this.session.uid,
+            //         Page: page,
+            //         ip: remote_ip,
+            //         $referrer: ref,
+            //         $referring_domain: referring_domain
+            //     };
+            //     mixpanel.track('PageView', mp_params);
+            //     if (!this.session.mp) {
+            //         mixpanel.track('FirstVisit', mp_params);
+            //         this.session.mp = 1;
+            //     }
+            //     if (ref) mixpanel.people.set_once(this.session.uid, '$referrer', ref);
+            //     mixpanel.people.set_once(this.session.uid, 'FirstPage', page);
+            //     mixpanel.people.increment(this.session.uid, 'PageView', 1);
+            // }
         } catch (error) {
             console.error('Error in /page_view api call', this.session.uid, error.message);
             this.body = JSON.stringify({error: error.message});

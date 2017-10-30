@@ -8,6 +8,7 @@ import Reblog from 'app/components/elements/Reblog';
 import Voting from 'app/components/elements/Voting';
 import {immutableAccessor} from 'app/utils/Accessors';
 import extractContent from 'app/utils/ExtractContent';
+import { blockedUsers } from 'app/utils/IllegalContent'
 import { browserHistory } from 'react-router';
 import VotesAndComments from 'app/components/elements/VotesAndComments';
 import TagList from 'app/components/elements/TagList';
@@ -16,8 +17,9 @@ import {Map} from 'immutable';
 import Author from 'app/components/elements/Author';
 import UserNames from 'app/components/elements/UserNames';
 import tt from 'counterpart';
-import { APP_ICON } from 'app/client_config';
+import { APP_ICON, TERMS_OF_SERVICE_URL } from 'app/client_config';
 import { detransliterate } from 'app/utils/ParsersAndFormatters';
+import {serverApiRecordEvent} from 'app/utils/ServerApiClient';
 
 
 function isLeftClickEvent(event) {
@@ -74,6 +76,11 @@ class PostSummary extends React.Component {
         const {post, content, pending_payout, total_payout, cashout_time} = this.props;
         const {account} = this.props;
         if (!content) return null;
+        
+        if(blockedUsers.includes(content.get('author'))) {
+            serverApiRecordEvent('illegal content', `${content.get('author')} /${content.get('permlink')}`)
+			return null
+		}
 
         const archived = content.get('cashout_time') === '1969-12-31T23:59:59' // TODO: audit after HF17. #1259
 
@@ -84,6 +91,7 @@ class PostSummary extends React.Component {
             // TODO: this case is backwards-compat for 0.16.1. remove after upgrading.
             reblogged_by = [content.get('first_reblogged_by')]
         }
+
 
         if(reblogged_by) {
           reblogged_by = <div className="PostSummary__reblogged_by">

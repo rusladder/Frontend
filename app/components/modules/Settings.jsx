@@ -1,8 +1,9 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import user from 'app/redux/User';
+import g from 'app/redux/GlobalReducer';
 import tt from 'counterpart';
-import { CURRENCIES, DEFAULT_CURRENCY, CURRENCY_COOKIE_KEY, LANGUAGES, DEFAULT_LANGUAGE, THEMES, DEFAULT_THEME } from 'app/client_config'
+import { CURRENCIES, DEFAULT_CURRENCY, CURRENCY_COOKIE_KEY, LANGUAGES, DEFAULT_LANGUAGE, LOCALE_COOKIE_KEY, THEMES, DEFAULT_THEME } from 'app/client_config'
 import transaction from 'app/redux/Transaction'
 import o2j from 'shared/clash/object2json'
 import LoadingIndicator from 'app/components/elements/LoadingIndicator'
@@ -10,7 +11,6 @@ import Userpic from 'app/components/elements/Userpic';
 import reactForm from 'app/utils/ReactForm'
 import UserList from 'app/components/elements/UserList';
 import cookie from "react-cookie";
-
 
 class Settings extends React.Component {
 
@@ -30,10 +30,11 @@ class Settings extends React.Component {
         reactForm({
             instance: this,
             name: 'accountSettings',
-            fields: ['profile_image', 'name', 'about', 'location', 'website'],
+            fields: ['profile_image', 'cover_image', 'name', 'about', 'location', 'website'],
             initialValues: props.profile,
             validation: values => ({
                 profile_image: values.profile_image && !/^https?:\/\//.test(values.profile_image) ? tt('settings_jsx.invalid_url') : null,
+                cover_image: values.cover_image && !/^https?:\/\//.test(values.cover_image) ? tt('settings_jsx.invalid_url') : null,
                 name: values.name && values.name.length > 20 ? tt('settings_jsx.name_is_too_long') : values.name && /^\s*@/.test(values.name) ? tt('settings_jsx.name_must_not_begin_with') : null,
                 about: values.about && values.about.length > 160 ? tt('settings_jsx.about_is_too_long') : null,
                 location: values.location && values.location.length > 30 ? tt('settings_jsx.location_is_too_long') : null,
@@ -62,32 +63,50 @@ class Settings extends React.Component {
         this.setState({oldNsfwPref: nsfwPref})
     }
 
-    onCurrencyChange(event) {
-        cookie.save(CURRENCY_COOKIE_KEY, event.target.value, {path: "/", expires: new Date(Date.now() + 60 * 60 * 24 * 365 * 10 * 1000)});
+    notify = () => {
+        this.props.notify(tt('g.saved'))
+    }
+
+    onCurrencyChange = (event) => {
+        localStorage.setItem('xchange.created', 0);
+        localStorage.setItem('xchange.picked', event.target.value);
+        this.props.reloadExchangeRates()
+        this.notify()
     }
 
     onLanguageChange = (event) => {
         const language = event.target.value
+        cookie.save(LOCALE_COOKIE_KEY, language, {path: "/", expires: new Date(Date.now() + 60 * 60 * 24 * 365 * 10 * 1000)});
         localStorage.setItem('language', language)
         this.props.changeLanguage(language)
+        this.notify()
     }
 
     onThemeChange = (event) => {
         const theme = event.target.value
         localStorage.setItem('theme', theme)
         this.props.changeTheme(theme)
+        this.notify()
     }
 
     handleSubmit = ({updateInitialValues}) => {
         let {metaData} = this.props
         if (!metaData) metaData = {}
+
+        //fix https://github.com/GolosChain/tolstoy/issues/450
+        if (typeof metaData === 'string' && metaData.localeCompare("{created_at: 'GENESIS'}") == 0) {
+            metaData = {}
+            metaData.created_at = 'GENESIS'
+        }
+
         if(!metaData.profile) metaData.profile = {}
         delete metaData.user_image; // old field... cleanup
 
-        const {profile_image, name, about, location, website} = this.state
+        const {profile_image, cover_image, name, about, location, website} = this.state
 
         // Update relevant fields
         metaData.profile.profile_image = profile_image.value
+        metaData.profile.cover_image = cover_image.value
         metaData.profile.name = name.value
         metaData.profile.about = about.value
         metaData.profile.location = location.value
@@ -95,6 +114,7 @@ class Settings extends React.Component {
 
         // Remove empty keys
         if(!metaData.profile.profile_image) delete metaData.profile.profile_image;
+        if(!metaData.profile.cover_image) delete metaData.profile.cover_image;
         if(!metaData.profile.name) delete metaData.profile.name;
         if(!metaData.profile.about) delete metaData.profile.about;
         if(!metaData.profile.location) delete metaData.profile.location;
@@ -141,13 +161,13 @@ class Settings extends React.Component {
         const {submitting, valid, touched} = this.state.accountSettings
         const disabled = !props.isOwnAccount || state.loading || submitting || !valid || !touched
 
-        const {profile_image, name, about, location, website} = this.state
+        const {profile_image, cover_image, name, about, location, website} = this.state
 
         const {follow, account, isOwnAccount} = this.props
         const following = follow && follow.getIn(['getFollowingAsync', account.name]);
         const ignores = isOwnAccount && following && following.get('ignore_result')
 
-        const languageSelectBox = <select defaultValue={process.env.BROWSER ? localStorage.getItem('language') : DEFAULT_LANGUAGE} onChange={this.onLanguageChange}>
+        const languageSelectBox = <select defaultValue={process.env.BROWSER ? cookie.load(LOCALE_COOKIE_KEY) : DEFAULT_LANGUAGE} onChange={this.onLanguageChange}>
           {Object.keys(LANGUAGES).map(key => {
             return <option key={key} value={key}>{LANGUAGES[key]}</option>
           })}
@@ -164,15 +184,15 @@ class Settings extends React.Component {
             <div className="row">
                 <form onSubmit={this.handleSubmitForm} className="small-12 medium-6 large-4 columns">
                     <h3>{tt('settings_jsx.public_profile_settings')}</h3>
-                    {/* CHOOSE LANGUAGE */}
+                    
                     <label>
                         {tt('settings_jsx.choose_language')}
                         {languageSelectBox}
                     </label>
                     <div className="error"></div>
-                    {/* CHOOSE CURRENCY */}
+                    
                     <label>{tt('settings_jsx.choose_currency')}
-                        <select defaultValue={process.env.BROWSER ? cookie.load(CURRENCY_COOKIE_KEY) : DEFAULT_CURRENCY} onChange={this.onCurrencyChange}>
+                        <select defaultValue={process.env.BROWSER ? localStorage.getItem('xchange.picked') : DEFAULT_CURRENCY} onChange={this.onCurrencyChange}>
                             {
                                 CURRENCIES.map(i => {
                                     return <option key={i} value={i}>{i}</option>
@@ -180,17 +200,24 @@ class Settings extends React.Component {
                             }
                         </select>
                     </label>
-                    {/* CHOOSE THEME */}
+                    
                     <label>
                         {tt('settings_jsx.choose_theme')}
                         {themeSelectBox}
                     </label>
                     <div className="error"></div>
+
                     <label>
                         {tt('settings_jsx.profile_image_url')}
                         <input type="url" {...profile_image.props} autoComplete="off" />
                     </label>
                     <div className="error">{profile_image.blur && profile_image.touched && profile_image.error}</div>
+
+                    <label>
+                        {tt('settings_jsx.cover_image_url')}
+                        <input type="url" {...cover_image.props} autoComplete="off" />
+                    </label>
+                    <div className="error">{cover_image.blur && cover_image.touched && cover_image.error}</div>
 
                     <label>
                         {tt('settings_jsx.profile_name')}
@@ -243,7 +270,13 @@ class Settings extends React.Component {
                             <option value="show">{tt('settings_jsx.always_show')}</option>
                         </select>
                         <br /><br />
-                        <input type="submit" onClick={this.onNsfwPrefSubmit} className="button" value={tt('settings_jsx.update')} disabled={this.state.nsfwPref == this.state.oldNsfwPref} />
+                        <input 
+                            type="submit"
+                            onClick={this.onNsfwPrefSubmit}
+                            className="button"
+                            value={tt('settings_jsx.update')}
+                            disabled={this.state.nsfwPref == this.state.oldNsfwPref}
+                        />
                     </div>
                 </div>}
             {ignores && ignores.size > 0 &&
@@ -283,12 +316,22 @@ export default connect(
         changeLanguage: (language) => {
             dispatch(user.actions.changeLanguage(language))
         },
+        reloadExchangeRates: () => {
+          dispatch(g.actions.fetchExchangeRates())
+        },
         changeTheme: (theme) => {
             dispatch(user.actions.changeTheme(theme))
         },
         updateAccount: ({successCallback, errorCallback, ...operation}) => {
             const options = {type: 'account_update', operation, successCallback, errorCallback}
             dispatch(transaction.actions.broadcastOperation(options))
+        },
+        notify: (message) => {
+            dispatch({type: 'ADD_NOTIFICATION', payload: {
+                key: "settings_" + Date.now(),
+                message,
+                dismissAfter: 3000}
+            });
         }
     })
 )(Settings)

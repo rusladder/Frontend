@@ -19,23 +19,29 @@ export default function normalizeProfile(account) {
 
     // Parse
     let profile = {};
-    if(account.json_metadata) {
+    if (account.json_metadata) {
+        let metadata = account.json_metadata;
+        // https://github.com/GolosChain/tolstoy/issues/450
+        if (metadata.localeCompare("{created_at: 'GENESIS'}") == 0) {
+           metadata = '{"created_at": "GENESIS"}';
+           profile = {};
+        }
         try {
-            const md = JSON.parse(account.json_metadata);
-            if(md.profile) {
+            const md = JSON.parse(metadata);
+            if (md.profile) {
                 profile = md.profile;
             }
-            if(!(typeof profile == 'object')) {
+            if (typeof profile !== 'object') {
                 console.error('Expecting object in account.json_metadata.profile:', profile);
                 profile = {};
             }
         } catch (e) {
-            console.error('Invalid json metadata string', account.json_metadata, 'in account', account.name);
+            console.error('Invalid json metadata string', metadata, 'in account', account.name);
         }
     }
 
     // Read & normalize
-    let {name, about, location, website, profile_image} = profile
+    let { name, about, location, website, profile_image, cover_image } = profile
 
     name = truncate(name, 20)
     about = truncate(about, 160)
@@ -55,6 +61,7 @@ export default function normalizeProfile(account) {
     }
 
     if(profile_image && !/^https?:\/\//.test(profile_image)) profile_image = null;
+    if(cover_image && !/^https?:\/\//.test(cover_image)) cover_image = null;
 
     return {
         name,
@@ -62,5 +69,6 @@ export default function normalizeProfile(account) {
         location,
         website,
         profile_image,
+        cover_image,
     };
 }

@@ -1,6 +1,7 @@
 import {fromJS} from 'immutable';
 import createModule from 'redux-modules';
-import { DEFAULT_LANGUAGE, DEFAULT_DOMESTIC, DEFAULT_THEME } from 'app/client_config';
+import {DEFAULT_LANGUAGE, LOCALE_COOKIE_KEY, DEFAULT_DOMESTIC, DEFAULT_THEME} from 'app/client_config';
+import cookie from "react-cookie";
 
 const defaultState = fromJS({
     current: null,
@@ -13,6 +14,11 @@ const defaultState = fromJS({
     domestic: DEFAULT_DOMESTIC,
     theme: DEFAULT_THEME
 });
+
+if (process.env.BROWSER) {
+    const locale = cookie.load(LOCALE_COOKIE_KEY)
+    if (locale) defaultState.locale = locale;
+}
 
 export default createModule({
     name: 'user',
@@ -56,6 +62,9 @@ export default createModule({
             state = state.setIn(['authority', username, 'owner'], 'none')
             return state
         }},
+        { action: 'CHANGE_CURRENCY', reducer: (state, {payload}) => {
+            return state.set('currency', payload)}
+        },
         { action: 'CHANGE_LANGUAGE', reducer: (state, {payload}) => {
             return state.set('locale', payload)}
         },

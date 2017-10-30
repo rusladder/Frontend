@@ -18,9 +18,9 @@ import Dropzone from 'react-dropzone'
 import { LinkWithDropdown } from 'react-foundation-components/lib/global/dropdown'
 import VerticalMenu from 'app/components/elements/VerticalMenu'
 import tt from 'counterpart'
-import {DEBT_TICKER, DEFAULT_DOMESTIC, DOMESTIC} from 'app/client_config'
+import {DEBT_TICKER, DEFAULT_DOMESTIC, DOMESTIC, SUPPORT_EMAIL} from 'app/client_config'
 import Icon from 'app/components/elements/Icon.jsx'
-import {detransliterate} from 'app/utils/ParsersAndFormatters'
+import {detransliterate, capitalizeFirstLetter} from 'app/utils/ParsersAndFormatters';
 
 const remarkable = new Remarkable({ html: true, linkify: false, breaks: true })
 const RichTextEditor = process.env.BROWSER ? require('react-rte-image').default : null;
@@ -68,7 +68,7 @@ class ReplyEditor extends React.Component {
 
         if(process.env.BROWSER) {
             // Check for rte editor preference
-            let rte = this.props.isStory && JSON.parse(localStorage.getItem('replyEditorData-rte') || RTE_DEFAULT);
+            let rte = this.props.isStory && RTE_DEFAULT // && JSON.parse(localStorage.getItem('replyEditorData-rte') || RTE_DEFAULT);
             let raw = null;
 
             // Process initial body value (if this is an edit)
@@ -239,7 +239,7 @@ class ReplyEditor extends React.Component {
             state.rte_value = isHtmlTest(body.value) ? stateFromHtml(body.value) : stateFromMarkdown(body.value)
         }
         this.setState(state);
-        localStorage.setItem('replyEditorData-rte', !this.state.rte)
+        //localStorage.setItem('replyEditorData-rte', !this.state.rte)
     }
     showDraftSaved() {
         const {draft} = this.refs
@@ -384,6 +384,7 @@ class ReplyEditor extends React.Component {
                           <Link to="/submit.html"><Icon name="pencil" /> {tt('g.submit_a_story')}</Link>
                           {tt('reply_editor.feedback_welcome.message4')}
                         </p>
+                        <p>{capitalizeFirstLetter(tt('g.or'))} <a href={"mailto:" + SUPPORT_EMAIL}>{tt('createaccount_jsx.send_us_email')}</a></p>
                         <p>{tt('reply_editor.feedback_welcome.message5')}</p>
                       </div>
                     }
@@ -410,8 +411,8 @@ class ReplyEditor extends React.Component {
                                           {currentDomesticTitle} <Icon name="caret-down" />
                                         </a>
                                     </LinkWithDropdown>
-                                    {rte && <a href="#" onClick={this.toggleRte}>{body.value ? 'Raw HTML' : 'Markdown'}</a>}
-                                    {!rte && <a href="#" onClick={this.toggleRte}>{tt('reply_editor.editor')}</a>}
+                                    {rte && <a href="#" onClick={this.toggleRte}>{body.value ? 'Raw HTML' : `Markdown ${tt('reply_editor.editor')}`}</a>}
+                                    {!rte && <a href="#" onClick={this.toggleRte}>{`HTML ${tt('reply_editor.editor')}`}</a>}
                                 </div>
                                 {titleError}
                             </span>}
@@ -497,7 +498,12 @@ class ReplyEditor extends React.Component {
                             </div>}
                         </div>
                         {!loading && !rte && body.value && <div className={'Preview ' + vframe_section_shrink_class}>
-                            {!isHtml && <div className="float-right"><a target="_blank" href="https://guides.github.com/features/mastering-markdown/">{tt('reply_editor.markdown_styling_guide')}</a></div>}
+                            {!isHtml && (<div className="float-right">
+								<a target="_blank" href="https://golos.io/ru--golos/@on0tole/osnovy-oformleniya-postov-na-golose-polnyi-kurs-po-rabote-s-markdown">
+									{tt('reply_editor.markdown_styling_guide')}
+								</a>
+							</div>)
+                            }
                             <h6>{tt('g.preview')}</h6>
                             <MarkdownViewer formId={formId} text={body.value} canEdit jsonMetadata={jsonMetadata} large={isStory} noImage={noImage} />
                         </div>}
@@ -725,7 +731,6 @@ export default formId => connect(
                   if (res.error || res.status !== 'ok') {
                       console.error('Determine language server error', res.error);
                   } else {
-                    console.log(res)
                     if (res.iso6391code) {
                       data.operation.json_metadata.language = res.iso6391code
                     }
@@ -737,22 +742,22 @@ export default formId => connect(
               });
             }
 
-            if (!meta.language) {
-              determineLanguage({
-                type: 'comment',
-                operation,
-                errorCallback,
-                successCallback,
-              })
-            }
-            else {
+            // if (!meta.language) {
+            //   determineLanguage({
+            //     type: 'comment',
+            //     operation,
+            //     errorCallback,
+            //     successCallback,
+            //   })
+            // }
+            // else {
                 dispatch(transaction.actions.broadcastOperation({
                   type: 'comment',
                   operation,
                   errorCallback,
                   successCallback,
                 }))
-            }
+            // }
         },
     })
 )(ReplyEditor)

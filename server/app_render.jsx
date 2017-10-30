@@ -6,7 +6,10 @@ import universalRender from '../shared/UniversalRender';
 import models from 'db/models';
 import secureRandom from 'secure-random';
 import ErrorPage from 'server/server-error';
-import { CURRENCIES, DEFAULT_CURRENCY, SELECT_TAGS_KEY, LOCALE_COOKIE_KEY, CURRENCY_COOKIE_KEY } from 'app/client_config';
+import {
+  DEFAULT_LANGUAGE, LANGUAGES, LOCALE_COOKIE_KEY,
+  SELECT_TAGS_KEY
+} from 'app/client_config';
 
 const DB_RECONNECT_TIMEOUT = process.env.NODE_ENV === 'development' ? 1000 * 60 * 60 : 1000 * 60 * 10;
 
@@ -31,10 +34,9 @@ async function appRender(ctx) {
             account: ctx.session.a,
             config: $STM_Config,
             login_challenge,
+            locale: Object.keys(LANGUAGES).indexOf(ctx.cookies.get(LOCALE_COOKIE_KEY)) !== -1 ? ctx.cookies.get(LOCALE_COOKIE_KEY) : DEFAULT_LANGUAGE,
             select_tags
         };
-        // Use global variable to store remote cookie current user selected currency value
-        $GLS_Config.currency = CURRENCIES.indexOf(ctx.cookies.get(CURRENCY_COOKIE_KEY)) !== -1 ? ctx.cookies.get(CURRENCY_COOKIE_KEY) : DEFAULT_CURRENCY
 
         const user_id = ctx.session.user;
         if (user_id) {
@@ -84,7 +86,19 @@ async function appRender(ctx) {
             }
         }
 
-        const { body, title, statusCode, meta } = await universalRender({location: ctx.request.url, store, offchain, ErrorPage, tarantool: Tarantool.instance()});
+        const {
+          body,
+          title,
+          statusCode,
+          meta
+        } = await universalRender({
+          location: ctx.request.url,
+          store,
+          offchain,
+          ErrorPage,
+          tarantool: Tarantool.instance('tarantool'),
+          chainproxy: Tarantool.instance('chainproxy')
+        });
 
         // Assets name are found in `webpack-stats` file
         const assets_filename = process.env.NODE_ENV === 'production' ? 'tmp/webpack-stats-prod.json' : 'tmp/webpack-stats-dev.json';

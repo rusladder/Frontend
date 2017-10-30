@@ -277,6 +277,8 @@ function* accepted_withdraw_vesting({operation}) {
 
 function* accepted_account_update({operation}) {
     const account = yield call(getAccount, operation.account)
+    // let [account] = yield call([api, api.getAccountsAsync], [operation.account]) //v16
+    // account = fromJS(account)
     yield put(g.actions.receiveAccount({account}))
 
     // bug, fork, etc.. the folowing would be mis-leading
@@ -503,10 +505,10 @@ function* recoverAccount({payload: {account_to_recover, old_password, new_passwo
     const newMemo = pwPubkey(account_to_recover, new_password.trim(), 'memo')
 
     const new_owner_authority = {weight_threshold: 1, account_auths: [],
-        key_auths: [[newOwner.toPublicKey(), 1]]}
+        key_auths: [[newOwner, 1]]}
 
     const recent_owner_authority = {weight_threshold: 1, account_auths: [],
-        key_auths: [[oldOwner.toPublicKey(), 1]]}
+        key_auths: [[oldOwner, 1]]}
 
     try {
         yield broadcast.sendAsync({extensions: [], operations: [

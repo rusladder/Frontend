@@ -190,14 +190,6 @@ class RecoverAccountStep1 extends React.Component {
                     <input type="hidden" name="account_name" value={name} />
                     <input type="hidden" name="owner_key" value={owner_key} />
                     <div className="row">
-                        <div className="column large-4">
-                            {show_social_login === 'both' ? <p>{tt('recoveraccountstep1_jsx.login_with_facebook_or_reddit_media_to_verify_identity')}.</p>
-                        : <p>{tt('recoveraccountstep1_jsx.login_with_social_media_to_verify_identity', {
-                            provider: show_social_login.charAt(0).toUpperCase() + show_social_login.slice(1)
-                        })}.</p>}
-                        </div>
-                    </div>
-                    <div className="row">
                         &nbsp;
                     </div>
                     {(show_social_login === 'both' || show_social_login === 'facebook') && <div className="row">

@@ -36,16 +36,14 @@ class SignUp extends React.Component {
             </div>;
         }
 
-        const VESTING_TOKEN =  tt('token_names.VESTING_TOKEN')
-
         return <div className="SignUp">
             <div className="row">
                 <div className="column">
                     <h3>{tt("g.sign_up")}</h3>
                     <p>
-                        {tt("g.we_require_social_account1", {APP_NAME})}
+                        {tt("g.we_require_email_1", {APP_NAME})}
                         <LocalizedCurrency amount={Number(this.props.signup_bonus)} />
-                        {tt("g.we_require_social_account2", {VESTING_TOKEN})}
+                        {tt("g.we_require_email_2", {VESTING_TOKEN: tt('token_names.VESTING_TOKENS')})}
                         <br />
                         {tt("g.personal_info_will_be_private")}
                         {' '}
@@ -55,38 +53,7 @@ class SignUp extends React.Component {
                     </p>
                 </div>
             </div>
-            {/* <div className="row">
-                <div className="column large-4 shrink">
-                    <SvgImage name="vk" width="64px" height="64px" />
-                </div>
-                <div className="column large-8">
-                    <a href="/connect/vk" className="button SignUp--vk-button">
-                        {tt("g.continue_with_vk")}
-                    </a>
-                </div>
-                &nbsp;
-            </div>
-            <div className="row">
-            </div>
-            <div className="row">
-                <div className="column large-4 shrink">
-                      <SvgImage name="facebook" width="64px" height="64px" />
-                </div>
-                <div className="column large-8">
-                      <a href="/connect/facebook" className="button SignUp--fb-button">{tt("g.continue_with_facebook")}</a>
-                </div>
-            </div> */}
 
-            {/* <div className="row">
-                <div className="column">
-                    <br />
-                    {tt("g.dont_have_facebook")}
-                    <br />
-                    {this.state.waiting_list ? <AddToWaitingList /> : <a href="#" onClick={() => this.setState({waiting_list: true})}>
-                        <strong> {tt("g.subscribe_to_get_sms_confirm")}.</strong>
-                    </a>}
-                </div>
-            </div>*/}
             <div className="row">
                 <div className="column large-4 shrink">
                     <SvgImage name="golos" width="64px" height="64px" />

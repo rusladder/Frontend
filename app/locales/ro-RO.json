@@ -353,9 +353,6 @@
     "author_rewards":"Premii de autor",
     "curation_rewards":"Premii de curator",
     "connection_lost_reconnecting":"Conexiunea este pierdută, reconectați",
-    "sorry_your_reddit_account_doesnt_have_enough_karma":"Ne pare rău, contul dvs. de Reddit nu are karmă suficientă pentru a vă putea înregistra gratuit. Vă rugăm să adăugați e-mail pentru a vă înregistra pe o listă de așteptare",
-    "register_with_facebook":"Înregistrează-te cu Facebook",
-    "or_click_the_button_below_to_register_with_facebook":"Sau apăsați butonul de mai jos pentru a vă înregistra cu Facebook",
     "server_returned_error":"eroare de server",
     "APP_NAME_support":"%(APP_NAME)s suport",
     "please_email_questions_to":"Vă rugăm să trimiteți întrebările dvs. prin e-mail",
@@ -384,16 +381,10 @@
     "no_tags_selected":"tagurile nu au fost selectate",
     "filter":"Filtru",
     "show_more_topics":"Afișați mai multe topicuri",
-    "we_require_social_account":"%(APP_NAME)s sponsorizarea fiecare cont cu valoarea de aproximativ %(signup_bonus)s în %(VESTING_TOKEN)s; pentru a preveni abuzurile, cerem noilor utilizatori să se înregistreze folosind rețelele de socializare.",
-    "we_require_social_account1":"%(APP_NAME)s sponsorizează fiecare cont cu suma de aproximativ ",
-    "we_require_social_account2":"; pentru a preveni abuzurile, cerem noilor utilizatori să se înregistreze folosind rețelele de socializare.",
+    "we_require_email_1":"%(APP_NAME)s sponsorizează fiecare cont cu suma de aproximativ ",
+    "we_require_email_2":"%(VESTING_TOKEN)s.",
     "personal_info_will_be_private":"Informațiile dvs. personale vor rămâne",
     "personal_info_will_be_private_link":"privată",
-    "continue_with_facebook":"Continuă cu Facebook",
-    "continue_with_reddit":"Continuă cu Reddit",
-    "continue_with_vk":"Continuă cu Vk",
-    "requires_positive_karma":"necesară karmă pozitivă la comentariile de pe Reddit",
-    "dont_have_facebook":"Nu aveți cont Facebook sau Reddit?",
     "subscribe_to_get_sms_confirm":"Înscrieți-vă pentru a primi SMS de confirmare atunci când va fi disponibil",
     "by_verifying_you_agree":"Confirmând contul, sunteți de acord cu Termenii proiectului %(APP_NAME)s",
     "by_verifying_you_agree_terms_and_conditions":"Termeni și Condiții",
@@ -530,14 +521,6 @@
     "faq":"FAQ",
     "sale_agreement": "Sale Agreement"
   },
-  "oauth":{
-    "we_couldnt_verify_your_account_contact_us_at_SUPPORT_EMAIL":"Nu am putut verifica contul. Scrie pe e-mailul: %(SUPPORT_EMAIL)s pentru a primi mai multe informații.",
-    "facebook_login_didnt_provide_any_email_addresses":"Conectarea prin Facebook nu a furnizat nici o adresă de e-mail. Asigurați-vă că contul dvs. Facebook are adresă de e-mail principală și încercați din nou.",
-    "we_are_sorry_we_cannot_sign_you_up_at_this_time_because_ip_associated_with_bots_activity":"Ne pare rău, nu vă puteți înregistra, pentru că în prezent adresa IP este asociată cu activitate de boti. Vă rugăm să contactați %(SUPPORT_EMAIL)s pentru mai multe informații.",
-    "not_supported_email_address":"Acest e-mail nu este acceptat",
-    "please_make_sure_you_dont_use_temporary_email_providers_contact_SUPPORT_EMAIL":"Asigurați-vă că nu utilizați un e-mail temporar, accesându-vă la %(SUPPORT_EMAIL)s .",
-    "successfully_authenticated_with":"Autentificarea s-a petrecut cu succes"
-  },
   "plurals":{
     "reply_count":{
       "zero":"0 răspunsuri",
@@ -609,7 +592,6 @@
     "you_successfully_promoted_this_post":"Ați promovat cu succes această postare",
     "leave_this_unchecked_to_receive_half_your_reward":"Lasă nemarcat pentru a primi premii de 1/2 %(VESTING_TOKEN)s și 1/2 %(DEBT_TOKEN)s",
     "pay_me_100_in_VESTING_TOKEN":"Plătiți-mi 100%% în %(VESTING_TOKEN3)s",
-    "requires_5_or_more_reddit_comment_karma":"aveți nevoie de 5 puncte de karmă, sau mai multe, la comentariile de pe Reddit",
     "this_post_was_hidden_due_to_low_ratings":"Această postare a fost ascunsă din cauza evaluarii scăzute",
     "reblogged_by":"Repostată",
     "updated":"actualizată",
@@ -626,8 +608,7 @@
     "spend_your_DEBT_TOKEN_to_prolong_payments_window_post":"Folosiți %(DEBT_TOKENS)s, pentru a extinde fereastra de plată la acest postare",
     "you_successfully_promoted_this_post":"Ați promovat cu succes această postare",
     "leave_this_unchecked_to_receive_half_your_reward":"Lasă nemarcat pentru a primi premii de 1/2 %(VESTING_TOKEN)s și 1/2 %(DEBT_TOKEN)s",
-    "pay_me_100_in_VESTING_TOKEN":"Plătiți-mi 100%% в %(VESTING_TOKEN)s",
-    "requires_5_or_more_reddit_comment_karma":"aveți nevoie de 5 puncte de karmă, sau mai multe pe Reddit"
+    "pay_me_100_in_VESTING_TOKEN":"Plătiți-mi 100%% в %(VESTING_TOKEN)s"
   },
   "reblog_jsx":{
 
@@ -639,8 +620,6 @@
     "password_not_used_in_last_days":"Această parolă nu a fost utilizată în acest cont în ultimele 30 de zile.",
     "request_already_submitted_contact_support":"Solicitarea dvs. a fost trimis, și lucrăm la ea. Vă rugăm să contactați %(SUPPORT_EMAIL)s pentru a obține starea solicitării.",
     "recover_account_intro":"Uneori se întâmplă că cheia proprietarului poate fi compromisă. Recuperarea contului furat dă proprietarului dreptul de a recupera  contul timp de 30 de zile de la schimbarea cheii posesorului. Recuperarea contului furat în %(APP_URL)s este posibilă numai dacă proprietarul contului au indicat anterior %(APP_NAME)s în calitate de administrator, și a fost de acord cu Termenii și Condițiile de utilizare a websiteului %(APP_NAME)s.",
-    "login_with_facebook_or_reddit_media_to_verify_identity":"Conectați-vă folosind Facebook sau Reddit pentru a vă verifica identitatea",
-    "login_with_social_media_to_verify_identity":"Conectați-vă utilizând %(provider)s entru a vă verifica identitatea",
     "enter_email_toverify_identity":"Trebuie să vă verificăm identitatea. Vă rugăm să introduceți adresa de email mai jos, pentru a începe verificarea.",
     "continue_with_email":"Continuați cu e-mailul",
     "thanks_for_submitting_request_for_account_recovery_1":"Vă mulțumim pentru trimiterea cererii pentru a recupera contului dvs. folosind autentificarea multifactorială pe bază de blokchain a %(APP_NAME)s.",

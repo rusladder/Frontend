@@ -1,6 +1,5 @@
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 import createModule from 'redux-modules';
-
 
 export default createModule({
     name: 'market',
@@ -25,6 +24,12 @@ export default createModule({
             }
         },
         {
+            action: 'RECEIVE_CALL_ORDERS',
+            reducer: (state, action) => {
+                return state.set('call_orders', action.payload);
+            }
+        },
+        {
             action: 'RECEIVE_TRADE_HISTORY',
             reducer: (state, action) => {
                 return state.set('history', action.payload);
@@ -35,6 +40,12 @@ export default createModule({
             reducer: (state, action) => {
                 return state.set('history', [...action.payload, ...state.get('history')]);
             }
-        }
+        },
+		{
+			action: 'SET_QUOTE_ASSET',
+			reducer: (state, action) => {
+				return state.set('quote_asset', action.payload);
+			}
+		},
     ]
 });

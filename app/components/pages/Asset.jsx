@@ -198,7 +198,7 @@ class Asset extends React.Component {
         }
 
         let now = new Date().getTime();
-        let oldestValidDate = new Date(now - bitAsset.feed_lifetime_sec * 1000);
+        let oldestValidDate = new Date(now - bitAsset.options.feed_lifetime_sec * 1000);
 
         // Filter by valid feed lifetime, Sort by published date
         let feeds = bitAsset.feeds;
@@ -215,15 +215,15 @@ class Asset extends React.Component {
         }
 
         let rows = [];
-        const settlement_price_header = feeds[0][1][1].settlement_price;
-        const core_exchange_rate_header = feeds[0][1][1].core_exchange_rate;
+        // const settlement_price_header = feeds[0][1][1].settlement_price;
+        // const core_exchange_rate_header = feeds[0][1][1].core_exchange_rate;
         const header = (
             <thead>
             <tr>
                 <th> {tt('asset_jsx.settlement_price')} –
-                    {this.formattedPrice(settlement_price_header, false, true)}</th>
+                    {/*this.formattedPrice(settlement_price_header, false, true)*/}</th>
                 <th> {tt('asset_jsx.core_exchange_rate')} –
-                    {this.formattedPrice(core_exchange_rate_header, false, true)}</th>
+                    {/*this.formattedPrice(core_exchange_rate_header, false, true)*/}</th>
                 <th> {tt('asset_jsx.maintenance_collateral_ratio')}</th>
                 <th> {tt('asset_jsx.maximum_short_squeeze_ratio')}</th>
                 <th> {tt('asset_jsx.publisher')}</th>
@@ -245,7 +245,7 @@ class Asset extends React.Component {
                     <td> {this.formattedPrice(core_exchange_rate, true)} </td>
                     <td style={{textAlign:"center"}}> {maintenance_collateral_ratio}</td>
                     <td style={{textAlign:"center"}}> {maximum_short_squeeze_ratio}</td>
-                    <td> {publisher} </td>
+                    <td>{publisher}</td>
                     <td>{publishDate.toLocaleString()}</td>
                 </tr>
             );

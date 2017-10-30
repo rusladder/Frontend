@@ -89,15 +89,19 @@ export function* getAsset({payload: {assetName}}) {
 }
 
 export function* fetchAsset(assetName) {
-	let asset = yield call([api, api.getAssetsAsync], [assetName])
-	const bitassetData = yield call([api, api.getBitassetsDataAsync], [assetName])
-	const assetsDynamicData = yield call([api, api.getAssetsDynamicDataAsync], [assetName])
+	const assets = yield call([api, api.getAssetsAsync], [assetName])
+	let asset = assets[0]
 
-	asset = fromJS(asset[0])
-	asset = asset.setIn(['dynamic_data'], fromJS(assetsDynamicData[0]))
+	if (asset) {
+		const bitassetData = yield call([api, api.getBitassetsDataAsync], [assetName])
+		const assetDynamicData = yield call([api, api.getAssetsDynamicDataAsync], [assetName])
 
-	if (bitassetData[0]) {
-		asset = asset.setIn(['bitasset_data'], fromJS(bitassetData[0]))
+		asset = fromJS(asset)
+		asset = asset.setIn(['dynamic_data'], fromJS(assetDynamicData[0]))
+
+		if (bitassetData[0]) {
+			asset = asset.setIn(['bitasset_data'], fromJS(bitassetData[0]))
+		}
 	}
 
 	return asset

@@ -10,12 +10,14 @@ export default class BuySell extends Component {
 		quote: PropTypes.string,
 		price: PropTypes.number,
 		type: PropTypes.oneOf(['bid', 'ask']),
-		ticker: React.PropTypes.object,
-		account: React.PropTypes.object,
-		user: React.PropTypes.string,
+		ticker: PropTypes.object,
+		account: PropTypes.object,
+		user: PropTypes.string,
 		placeOrder: PropTypes.func.isRequired,
 		reload: PropTypes.func.isRequired,
-		notify: PropTypes.func.isRequired
+		notify: PropTypes.func.isRequired,
+		isMarketAsset: PropTypes.bool,
+		showBorrowDialog: PropTypes.func
 	};
 
 	static defaultProps = {
@@ -122,7 +124,7 @@ export default class BuySell extends Component {
 		const { validate } = this
 		const { buy_disabled, sell_disabled, buy_price_warning, sell_price_warning } = this.state
 
-		const { base, quote, type, account, ticker } = this.props
+		const { base, quote, type, account, ticker, isMarketAsset } = this.props
 
 		const isAsk = (type === 'ask')
 		const color = isAsk ? "buy-color" : "sell-color"
@@ -136,7 +138,7 @@ export default class BuySell extends Component {
 							const amount = parseFloat(this.refs.amount.value)
 							const price = parseFloat(isAsk ? ticker.lowest_ask : ticker.highest_bid)
 							this.refs.price.value = isAsk ? ticker.lowest_ask : ticker.highest_bid
-							if(amount >= 0)
+							if (amount >= 0)
 								this.refs.total.value = isAsk ? roundUp(amount * price, 3).toFixed(3) : roundDown(parseFloat(price) * amount, 3)
 							validate()
 					   }
@@ -156,12 +158,12 @@ export default class BuySell extends Component {
 						if (isAsk) {
 							const total = totalBalance.split(' ')[0]
 							this.refs.total.value = total
-							if(price >= 0)
+							if (price >= 0)
 								this.refs.amount.value = roundDown(parseFloat(total) / price, 3).toFixed(3)
 						} else {
 							const amount = totalBalance.split(' ')[0]
 							this.refs.amount.value = amount
-							if(price >= 0)
+							if (price >= 0)
 								this.refs.total.value = roundDown(price * parseFloat(amount), 3)
 						}
 						validate()
@@ -173,10 +175,22 @@ export default class BuySell extends Component {
 			<div className="BuySell">
 				<div className="block-header">
 					<div className="row">
-						<div className="column small-6">
+						<div className="column small-8">
 							<span className={"uppercase " + color} >
 								{`${tt(isAsk ? 'g.buy' : 'g.sell')} ${quote}`}
 							</span>
+						</div>
+						<div className="column small-4">
+							{!isAsk && account && isMarketAsset
+								? <a href="#"
+									 style={{marginRight: '1rem'}}
+									 onClick={e => {
+												e.preventDefault()
+												this.props.showBorrowDialog()
+											}}
+								  >Borrow {quote}</a>
+								: null
+							}
 						</div>
 					</div>
 				</div>

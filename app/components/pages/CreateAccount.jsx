@@ -163,15 +163,6 @@ class CreateAccount extends React.Component {
             name_error;
         const submit_btn_class = 'button action' + (submit_btn_disabled ? ' disabled' : '');
 
-        if (serverBusy || $STM_Config.disable_signups) {
-            return <div className="row">
-                <div className="column">
-                    <div className="callout alert">
-                        <p>{tt('g.membership_invitation_only', {APP_DOMAIN})}</p>
-                    </div>
-                </div>
-            </div>;
-        }
         if (cryptographyFailure) {
             return <div className="row">
                 <div className="column">

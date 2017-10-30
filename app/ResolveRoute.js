@@ -62,9 +62,6 @@ export default function resolveRoute(path)
     if (path === '/recover_account_step_2') {
         return {page: 'RecoverAccountStep2'};
     }
-    if (path === '/waiting_list.html') {
-        return {page: 'WaitingList'};
-    }
 	let match = path.match(routeRegex.Market);
 	if (match) {
 		return {page: 'Market', params: ['base_quote', match[1]]};

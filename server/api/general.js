@@ -184,6 +184,7 @@ export default function useGeneralApi(app) {
         recordWebEvent(this, 'api/accounts', account ? account.name : 'n/a');
     });
 
+    //deprecated 
     router.post('/update_email', koaBody, function *() {
         if (rateLimitReq(this, this.req)) return;
         const params = this.request.body;

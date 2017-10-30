@@ -5,15 +5,11 @@ delete process.env.BROWSER;
 
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
-// const yahooapi = require('./utils/currency');
 
 // Tell `require` calls to look into `/app` also
 // it will avoid `../../../../../` require strings
 process.env.NODE_PATH = path.resolve(__dirname, '..');
 require('module').Module._initPaths();
-
-// Load Intl polyfill
-// require('utils/intl-polyfill')(require('./config/init').locales);
 
 global.$STM_Config = {
     fb_app: config.get('grant.facebook.key'),
@@ -29,23 +25,18 @@ global.$STM_Config = {
     facebook_app_id: config.get('facebook_app_id'),
     google_analytics_id: config.get('google_analytics_id'),
     chain_id: config.get('chain_id'),
-    lang_server: config.get('lang_server')
+    lang_server: config.get('lang_server'),
+    isTestnet: config.get('is_testnet')
 };
 
 const WebpackIsomorphicTools = require('webpack-isomorphic-tools');
-const WebpackIsomorphicToolsConfig = require(
-    '../webpack/webpack-isotools-config'
-);
+const WebpackIsomorphicToolsConfig = require('../webpack/webpack-isotools-config');
 
-global.webpackIsomorphicTools = new WebpackIsomorphicTools(
-    WebpackIsomorphicToolsConfig
-);
+global.webpackIsomorphicTools = new WebpackIsomorphicTools(WebpackIsomorphicToolsConfig);
 
 global.webpackIsomorphicTools.server(ROOT, () => {
     golos.config.set('websocket', config.get('ws_connection_server'));
 
-    // const CliWalletClient = require('shared/api_client/CliWalletClient').default;
-    // if (process.env.NODE_ENV === 'production') connect_promises.push(CliWalletClient.instance().connect_promise());
     try {
         require('./server');
     } catch (error) {

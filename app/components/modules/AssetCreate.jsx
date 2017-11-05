@@ -293,7 +293,7 @@ class AssetCreate extends React.Component {
         if (assetName.length > 0) {
             error = validate_asset_symbol(assetName);
             if (!error) {
-                promise = api.lookupAssetSymbolsAsync([assetName]).then(res => {
+                promise = api.getAssetsAsync([assetName]).then(res => {
                     return (res && res.length > 0 && res[0] != null) ? tt('user_issued_assets.exists') : '';
                 });
             }

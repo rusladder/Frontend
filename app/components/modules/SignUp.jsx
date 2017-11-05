@@ -5,11 +5,17 @@ import tt from 'counterpart';
 import { formatCoins } from 'app/utils/FormatCoins';
 import { APP_DOMAIN, PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from 'app/client_config';
 import LocalizedCurrency from 'app/components/elements/LocalizedCurrency';
-
+import CreateAccountTestnet from 'app/components/pages/CreateAccountTestnet'
 class SignUp extends React.Component {
     
     render() {
         const APP_NAME = tt('g.APP_NAME');
+
+        if ($STM_Config.is_testnet) {
+            return <div>
+                <CreateAccountTestnet/>
+            </div>
+        }
 
         return (
             <div className="SignUp">

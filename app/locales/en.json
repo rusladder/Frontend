@@ -136,6 +136,8 @@
     "transfer": "Transfer ",
     "trending_topics": "Trending Topics",
     "trending": "Trending",
+    "created": "New First",
+    "old": "Old First",
     "type": "Type",
     "unfollow": "Unfollow",
     "unknown": "Unknown",
@@ -348,7 +350,9 @@
     "placeholder" : "Tile",
     "update_post": "Update Post",
     "unable_to_contact_the_server" : "Unable to contact the server",
-    "please_insert_only_image_files":"Please insert only image files"
+    "please_insert_only_image_files":"Please insert only image files",
+    "questions_or_requests": "You can always send detailed questions or requests to us by e-mail:",
+    "support_by_telegram": "In addition, for operational technical assistance, we have introduced a Voice Support Service in Telegram"
   },
   "category_selector_jsx": {
     "tag_your_story": "Tag (up to 5 tags), the first tag is your main category.",
@@ -625,7 +629,7 @@
     "witness_deactive": "Withness suspended the signature of the blocks",
     "no_price_feed": "Withness did not publish the price feed",
     "version": "Version",
-    "if_you_want_to_vote_outside_of_top_enter_account_name": "If you would like to vote for a witness outside of the top 50, enter the account name below to cast a vote",
+    "if_you_want_to_vote_outside_of_top_enter_account_name": "If you would like to vote for a witness outside of the top 100, enter the account name below to cast a vote",
     "set_witness_proxy": "You can also choose a proxy that will vote for witnesses for you. This will reset your current witness selection.",
     "witness_set": "You have set a voting proxy. If you would like to reenable manual voting, please clear your proxy.",
     "witness_proxy_current": "Your current proxy is",
@@ -899,6 +903,14 @@
     "profile_image_url": "Profile picture url",
     "cover_image_url": "Cover image url",
     "profile_name": "Display Name",
+    "profile_gender": {
+      "title": "Gender",
+      "genders": {
+        "undefined": "Undefined",
+        "male": "Male",
+        "female": "Female"
+      }
+    },
     "profile_about": "About",
     "profile_location": "Location",
     "profile_website": "Website"
@@ -922,7 +934,8 @@
     "move_funds_to_another_account": "Move funds to another account.",
     "protect_funds_by_requiring_a_3_day_withdraw_waiting_period": "Protect funds by requiring a 3 day withdraw waiting period.",
     "withdraw_funds_after_the_required_3_day_waiting_period": "Withdraw funds after the required 3 day waiting period.",
-    "balance": "Balance"
+    "balance": "Balance",
+    "private_key_in_memo" : "Do not write your private keys in this field!"
   },
   "userwallet_jsx": {
     "conversion_complete_tip": "Will complete on",

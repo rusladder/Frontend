@@ -78,7 +78,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
     const submitStoryPencil = $STM_Config.read_only_mode ? null : <li className="show-for-small-only">
       <Link to="/submit.html"><Icon name="pencil" /></Link>
     </li>;
-    //const golosFest = <li className={lcn + ' buttons'}><Link to="/created/ru--godgolosu" className="button alert fest">{tt('g.golos_fest')}</Link></li>;
+    // const golosFest = <li className={lcn + ' buttons'}><Link to="/created/ru--godgolosu" className="button alert fest">{tt('g.golos_fest')}</Link></li>;
     const feedLink = `/@${username}/feed`;
     const repliesLink = `/@${username}/recent-replies`;
     const walletLink = `/@${username}/transfers`;
@@ -142,7 +142,14 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
       </li>
       : null
     ;
-    const estimateOutput = <LocalizedCurrency amount={calculateEstimateOutput({a:account, p: price_per_golos, sw: savings_withdraws, g: globalprops})} />;
+    const telegramItem = !vertical ? <li className={lcn + ' wrap-telegram'}>
+    <a href="https://t.me/golos_support" target="_blank">
+      <Icon name="telegram" />
+    </a>
+  </li>
+  : null
+;
+const estimateOutput = <LocalizedCurrency amount={calculateEstimateOutput({a:account, p: price_per_golos, sw: savings_withdraws, g: globalprops})} />;
 
     if (loggedIn) { // change back to if(username) after bug fix:  Clicking on Login does not cause drop-down to close #TEMP!
         const user_menu = [
@@ -165,6 +172,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
                 {!inIco && !vertical && submitFeedback}
                 {!inIco && searchItem}
                 {!inIco && languageMenu}
+                {!inIco && telegramItem}
                 {!inIco && rocketchatItem}
                 {!inIco && submitStory}
                 {!inIco && !vertical && submitStoryPencil}
@@ -198,6 +206,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
               </a>
             </li>}
             {!inIco && !vertical && languageMenu}
+            {!inIco && telegramItem}
             {!inIco && rocketchatItem}
             {!inIco && !probablyLoggedIn && <li className={lcn}>
               <a href="#" onClick={showSignUp}>{tt('g.sign_up')}</a>

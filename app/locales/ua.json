@@ -190,7 +190,8 @@
     "comments": "Коментарі",
     "continue": "продовжити",
     "convert": "Конвертувати",
-    "created": "Нове",
+    "created": "Cпочатку нові",
+    "old": "Cпочатку старі",
     "date": "Дата",
     "delete": "Видалити",
     "dismiss": "Приховати",
@@ -650,7 +651,9 @@
     "update_post": "Оновити пост",
     "feedback_placeholder": "Написати...",
     "unable_to_contact_the_server" : "Не вдалося зв'язатися з сервером",
-    "please_insert_only_image_files":"Вставляйте тільки файли зображень"
+    "please_insert_only_image_files":"Вставляйте тільки файли зображень",
+    "questions_or_requests": "You can always send detailed questions or requests to us by e-mail:",
+    "support_by_telegram": "In addition, for operational technical assistance, we have introduced a Voice Support Service in Telegram"
   },
   "savingswithdrawhistory_jsx": {
     "cancel_this_withdraw_request": "Скасувати запит виведення коштів?",
@@ -679,6 +682,14 @@
     "profile_image_url": "Додайте URL Вашого зображення",
     "cover_image_url": "Додайте URL Вашої обкладинки",
     "profile_name": "Відображаєме ім'я ",
+    "profile_gender": {
+      "title": "Стать",
+      "genders": {
+        "undefined": "Невизначено",
+        "male": "Чоловічий",
+        "female": "Жіночий"
+      }
+    },
     "profile_about": "Про проект",
     "profile_location": "Місцезнаходження",
     "profile_website": "Веб-сайт"
@@ -745,7 +756,8 @@
     "move_funds_to_another_account": "Надіслати кошти на інший рахунок.",
     "protect_funds_by_requiring_a_3_day_withdraw_waiting_period": "Захистіть кошти від виведення 3-х денним періодом очікування.",
     "withdraw_funds_after_the_required_3_day_waiting_period": "Зняти кошти після необхідного 3-х денного періоду очікування.",
-    "balance": "Баланс"
+    "balance": "Баланс",
+    "private_key_in_memo" : "Не пишіть в цьому полі свої приватні ключі!"
   },
   "transferhistoryrow_jsx": {
     "to_savings": "у сейф",
@@ -899,7 +911,7 @@
   "witnesses_jsx": {
     "witness_thread": "пост делегата",
     "top_witnesses": "Топ делегатів",
-    "approval": "Глосiв",
+    "approval": "Голосiв",
     "missed_1": "Пропущено",
     "missed_2": "блоків",
     "last_block": "Останній блок",
@@ -920,12 +932,16 @@
     "you_can_vote_for_maximum_of_witnesses": "Ви можете голосувати максимум за 30 делегатів",
     "witness": "Делегати",
     "information": "Інформація",
-    "if_you_want_to_vote_outside_of_top_enter_account_name": "Якщо Ви хочете проголосувати за делегата поза TOP 50, введіть ім'я акаунту нижче",
+    "if_you_want_to_vote_outside_of_top_enter_account_name": "Якщо Ви хочете проголосувати за делегата поза TOP 100, введіть ім'я акаунту нижче",
     "set_witness_proxy": "Вы также можете выбрать прокси, который будет вместо Вас голосовать за делегатов. Это сбросит Ваш текущий выбор делегата.",
     "witness_set": "Вы установили прокси для голосования. Если Вы хотите голосовать вручную, пожалуйста, очистите ваш прокси.",
     "witness_proxy_current": "Ваш текущий прокси",
     "witness_proxy_set": "Установить прокси",
     "witness_proxy_clear": "Очистить прокси",
     "proxy_update_error": "Ваш прокси не был обновлен"
+  },
+  "generated_password_input": {
+    "i_have_read_and_agree_to_the": "Я прочитав і згоден з",
+    "terms_of_service": "Умовами користування"
   }
 }

@@ -204,7 +204,8 @@
     "confirm_unfollow": "Вы действительно хотите отменить подписку на этого пользователя?",
     "continue": "продолжить",
     "convert": "Конвертировать",
-    "created": "Новое",
+    "created": "Сначала новые",
+    "old" : "Сначала старые",
     "date": "Дата",
     "delete": "Удалить",
     "dismiss": "Скрыть",
@@ -673,7 +674,9 @@
     "update_post": "Обновить пост",
     "feedback_placeholder": "Написать...",
     "unable_to_contact_the_server" : "Не удалось связаться с сервером",
-    "please_insert_only_image_files":"Вставляйте только файлы изображений"
+    "please_insert_only_image_files":"Вставляйте только файлы изображений",
+    "questions_or_requests": "Подробные вопросы или пожелания вы всегда можете отправить нам на электронную почту:",
+    "support_by_telegram": "Кроме того, для оперативной технической помощи мы ввели службу поддержки пользователей Голоса в Телеграме"
   },
   "savingswithdrawhistory_jsx": {
     "cancel_this_withdraw_request": "Отменить запрос вывода средств?",
@@ -702,6 +705,14 @@
     "profile_image_url": "Добавьте URL Вашего изображения",
     "cover_image_url": "Добавьте URL Вашей обложки",
     "profile_name": "Отображаемое имя",
+    "profile_gender": {
+      "title": "Пол",
+      "genders": {
+        "undefined": "Неизвестен",
+        "male": "Мужской",
+        "female": "Женский"
+      }
+    },
     "profile_about": "О проекте",
     "profile_location": "Местоположение",
     "profile_website": "Веб-сайт"
@@ -768,7 +779,8 @@
     "move_funds_to_another_account": "Отправить средства на другой аккаунт.",
     "protect_funds_by_requiring_a_3_day_withdraw_waiting_period": "Защитите средства от вывода 3-х дневным периодом ожидания.",
     "withdraw_funds_after_the_required_3_day_waiting_period": "Снять средства после необходимого 3-х дневного периода ожидания.",
-    "balance": "Баланс"
+    "balance": "Баланс",
+    "private_key_in_memo" : "Не пишите в этом поле свои приватные ключи!"
   },
   "transferhistoryrow_jsx": {
     "to_savings": "в сейф",
@@ -925,8 +937,8 @@
   "witnesses_jsx": {
     "witness_thread": "пост делегата",
     "top_witnesses": "Топ делегатов",
-    "approval": "Глосов",
-    "missed_1": "Пропущенно",
+    "approval": "Голосов",
+    "missed_1": "Пропущено",
     "missed_2": "блоков",
     "last_block": "Последний блок",
     "price_feed": "Прайс фид",
@@ -946,13 +958,17 @@
     "you_can_vote_for_maximum_of_witnesses": "Вы можете голосовать максимум за 30 делегатов",
     "witness": "Делегаты",
     "information": "Информация",
-    "if_you_want_to_vote_outside_of_top_enter_account_name": "Если Вы хотите проголосовать за делегата вне TOP 50, введите имя аккаунта ниже",
+    "if_you_want_to_vote_outside_of_top_enter_account_name": "Если Вы хотите проголосовать за делегата вне TOP 100, введите имя аккаунта ниже",
     "set_witness_proxy": "Вы также можете выбрать прокси, который будет вместо Вас голосовать за делегатов. Это сбросит Ваш текущий выбор делегата.",
     "witness_set": "Вы установили прокси для голосования. Если Вы хотите голосовать вручную, пожалуйста, очистите ваш прокси.",
     "witness_proxy_current": "Ваш текущий прокси",
     "witness_proxy_set": "Установить прокси",
     "witness_proxy_clear": "Очистить прокси",
     "proxy_update_error": "Ваш прокси не был обновлен"
+  },
+  "generated_password_input": {
+    "i_have_read_and_agree_to_the": "Я прочитал и согласен с",
+    "terms_of_service": "Условиями пользования"
   },
   "asset_create_jsx": {
     "header": "Создать актив",

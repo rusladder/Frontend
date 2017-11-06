@@ -192,6 +192,7 @@
     "continue":"continuă",
     "convert":"Convertează",
     "created":"Nou",
+    "old": "Сначала старые",
     "date":"Data",
     "delete":"Șterge",
     "dismiss":"Ascunde",
@@ -661,7 +662,9 @@
     "update_post":"Actualizează postarea",
     "feedback_placeholder":"Scrie...",
     "unable_to_contact_the_server":"Nu s-a putut conecta la server",
-    "please_insert_only_image_files":"Introduceți doar fișiere cu imagini"
+    "please_insert_only_image_files":"Introduceți doar fișiere cu imagini",
+    "questions_or_requests": "You can always send detailed questions or requests to us by e-mail:",
+    "support_by_telegram": "In addition, for operational technical assistance, we have introduced a Voice Support Service in Telegram"
   },
   "savingswithdrawhistory_jsx":{
     "cancel_this_withdraw_request":"Anulează cererea de a retragere de fonduri?",
@@ -690,6 +693,14 @@
     "profile_image_url":"Adăugați adresa URL a imaginii",
     "cover_image_url": "Cover image url",
     "profile_name":"Numele afișat",
+    "profile_gender": {
+      "title": "Gen",
+      "genders": {
+        "undefined": "Nedefinit",
+        "male": "Masculin",
+        "female": "Femeie"
+      }
+    },
     "profile_about":"Despre poriect",
     "profile_location":"Locația",
     "profile_website":"Siteul"
@@ -756,7 +767,8 @@
     "move_funds_to_another_account":"Trimiteți fondurile spre un alt cont.",
     "protect_funds_by_requiring_a_3_day_withdraw_waiting_period":"Protejați fondurile de la retragere pe o perioadă 3 zile.",
     "withdraw_funds_after_the_required_3_day_waiting_period":"Retrageți după perioada de așteptare necesară de 3 zile.",
-    "balance":"Balanța"
+    "balance":"Balanța",
+    "private_key_in_memo" : "Do not write your private keys in this field!"
   },
   "transferhistoryrow_jsx":{
     "to_savings":"în seif",
@@ -910,8 +922,8 @@
   "witnesses_jsx":{
     "witness_thread":"postarea delegatului",
     "top_witnesses":"Top delegați",
-    "approval": "Глосов",
-    "missed_1": "Пропущенно",
+    "approval": "Голосов",
+    "missed_1": "Пропущено",
     "missed_2": "блоков",
     "last_block": "Последний блок",
     "price_feed": "Прайс фид",
@@ -931,12 +943,16 @@
     "you_can_vote_for_maximum_of_witnesses":"Puteți vota maxim pentru 30 de delegați",
     "witness":"Delegați",
     "information":"Informație",
-    "if_you_want_to_vote_outside_of_top_enter_account_name":"Dacă doriți să votați pentru un delegat înafara TOP 50, introduceți mai jos numele contului ",
+    "if_you_want_to_vote_outside_of_top_enter_account_name":"Dacă doriți să votați pentru un delegat înafara TOP 100, introduceți mai jos numele contului ",
     "set_witness_proxy":"Puteți selecta de asemenea un proxy, care va vota pentru delegați în locul dvs. . Acest lucru va reseta selecția curentă a delegaților.",
     "witness_set":"Ați setat proxy pentru votare. Dacă doriți să votați maniual, vă rugăm să curățați câmpul proxy.",
     "witness_proxy_current":"Proxy curent",
     "witness_proxy_set":"Setează proxy",
     "witness_proxy_clear":"Șterge proxy",
     "proxy_update_error":"Proxy-ul dvs. nu a fost actualizat"
+  },
+  "generated_password_input": {
+    "i_have_read_and_agree_to_the": "Я прочитал и согласен с",
+    "terms_of_service": "Условиями пользования"
   }
 }

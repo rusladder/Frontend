@@ -192,6 +192,7 @@
     "continue":"Nastavi",
     "convert":"Konvertuj",
     "created":"kreiran",
+    "old": "Сначала старые",
     "date":"Datum",
     "delete":"Obriši",
     "dismiss":"Odbaci",
@@ -662,7 +663,9 @@
     "update_post":"Ažuriraj Post",
     "feedback_placeholder":"Написать...",
     "unable_to_contact_the_server":"Не удалось связаться с сервером",
-    "please_insert_only_image_files":"Вставляйте только файлы изображений"
+    "please_insert_only_image_files":"Вставляйте только файлы изображений",
+    "questions_or_requests": "You can always send detailed questions or requests to us by e-mail:",
+    "support_by_telegram": "In addition, for operational technical assistance, we have introduced a Voice Support Service in Telegram"
   },
   "savingswithdrawhistory_jsx":{
     "cancel_this_withdraw_request":"Otkaži ovaj nalog za transfer?",
@@ -690,6 +693,14 @@
     "profile_image_url":"URL za profilnu sliku",
     "cover_image_url": "Cover image url",
     "profile_name":"Pokazati ime",
+    "profile_gender": {
+      "title": "Pol",
+      "genders": {
+        "undefined": "Nedefinisan",
+        "male": "Muški",
+        "female": "Zenski"
+      }
+    },
     "profile_about":"O profilu",
     "profile_location":"Lokacija",
     "profile_website":"Website"
@@ -756,7 +767,9 @@
     "move_funds_to_another_account":"Prenesi sredstva na drugi Golos račun.",
     "protect_funds_by_requiring_a_3_day_withdraw_waiting_period":"Zaštitite sredstva zahtevajući 3-dnevni period povlačenja.",
     "withdraw_funds_after_the_required_3_day_waiting_period":"Povući sredstva nakon potrebnog 3 danevnog perioda čekanja.",
-    "balance":"Balans"
+    "balance":"Balans",
+    "private_key_in_memo" : "Do not write your private keys in this field!"
+
   },
   "transferhistoryrow_jsx":{
     "to_savings":"в сейф",
@@ -910,8 +923,8 @@
   "witnesses_jsx":{
     "witness_thread":"Teme svedoka",
     "top_witnesses":"Glasanje za svedoka",
-    "approval": "Глосов",
-    "missed_1": "Пропущенно",
+    "approval": "Голосов",
+    "missed_1": "Пропущено",
     "missed_2": "блоков",
     "last_block": "Последний блок",
     "price_feed": "Прайс фид",
@@ -931,12 +944,16 @@
     "you_can_vote_for_maximum_of_witnesses":"Možete glasati za najviše 30 svedoka",
     "witness":"Svedoci",
     "information":"Informacija",
-    "if_you_want_to_vote_outside_of_top_enter_account_name":"Ukoliko želite da glasate za spoljne svedoke koji nisumedju prvih 50, unesite ime naloga u nastavku kako bi ste dali svoj glas",
+    "if_you_want_to_vote_outside_of_top_enter_account_name":"Ukoliko želite da glasate za spoljne svedoke koji nisumedju prvih 100, unesite ime naloga u nastavku kako bi ste dali svoj glas",
     "set_witness_proxy":"Takođe možete da izaberete proxy koji će glasati za svedoke umesto vas. Ovo će resetovati vaš trenutni izbor svedoka.",
     "witness_set":"Vi ste postavili proxy glasanje. Ako želite da omogućite upotrebu manualnog glasanja, obrišite proxy.",
     "witness_proxy_current":"Vaš trenutni proxy je",
     "witness_proxy_set":"Postavi proxy",
     "witness_proxy_clear":"Obriši proxy",
     "proxy_update_error":"Vaš poxy nije ažuriran"
+  },
+  "generated_password_input": {
+    "i_have_read_and_agree_to_the": "Я прочитал и согласен с",
+    "terms_of_service": "Условиями пользования"
   }
 }

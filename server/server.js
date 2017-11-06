@@ -16,6 +16,7 @@ import useTestnetApi from './testnet_api';
 import useAccountRecoveryApi from './api/account_recovery';
 import useNotificationsApi from './api/notifications';
 import {proxyRoutes as useProxyRoutes} from './api/proxy';
+import {ratesRoutes as useRatesRoutes} from './api/rates';
 import useEnterAndConfirmEmailPages from './server_pages/enter_confirm_email';
 import useEnterAndConfirmMobilePages from './server_pages/enter_confirm_mobile';
 import useUserJson from './json/user_json';
@@ -61,6 +62,11 @@ function convertEntriesToArrays(obj) {
 
 // some redirects
 app.use(function*(next) {
+    // normalize url
+    if (this.url.indexOf('%') !== -1) {
+        this.redirect(decodeURIComponent(this.url));
+        return;
+    }
     // redirect to home page/feed if known account
     if (this.method === 'GET' && this.url === '/' && this.session.a) {
         this.status = 302;
@@ -191,6 +197,7 @@ useAccountRecoveryApi(app);
 useGeneralApi(app);
 useNotificationsApi(app);
 useProxyRoutes(app);
+useRatesRoutes(app);
 
 if (config.get('is_testnet')) {
     useTestnetApi(app);

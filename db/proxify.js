@@ -3,7 +3,7 @@ async function proxify(method, context, proxy, lifetime /*, options */) {
   const proxyKey = method + JSON.stringify(options);
   let res = [];
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || $STM_Config.is_testnet) {
     return await context[method].apply(context, options);
   }
 

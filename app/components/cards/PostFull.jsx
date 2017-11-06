@@ -308,7 +308,7 @@ class PostFull extends React.Component {
         const readonly = archived || $STM_Config.read_only_mode
         const showPromote = username && post_content.get('last_payout') === '1970-01-01T00:00:00' && post_content.get('depth') == 0 // TODO: audit after HF17. #1259
         const showProlong = showPromote
-        const showReplyOption = post_content.get('depth') < 6
+        const showReplyOption = post_content.get('depth') < 255
         const showEditOption = username === author
         const showDeleteOption = username === author && post_content.get('children') === 0 && content.stats.netVoteSign <= 0
 

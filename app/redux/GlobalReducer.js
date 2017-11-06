@@ -84,6 +84,8 @@ export default createModule({
                 if (parent_author !== '' && parent_permlink !== '') {
                     const parent_key = parent_author + '/' + parent_permlink
                     updatedState = updatedState.updateIn(['content', parent_key, 'replies'], List(), r => r.insert(0, key))
+                    const children = updatedState.getIn(['content', parent_key, 'replies'], List()).size;
+                    updatedState = updatedState.updateIn(['content', parent_key, 'children'], 0, r => children)
                     // console.log('updatedState parent', updatedState.toJS())
                 }
                 return updatedState
@@ -112,8 +114,11 @@ export default createModule({
                 const key = author + '/' + permlink
                 const parent_key = parent_author + '/' + parent_permlink
                 // Add key if not exist
-                return state.updateIn(['content', parent_key, 'replies'], List(),
+                let updatedState = state.updateIn(['content', parent_key, 'replies'], List(),
                     l => (l.findIndex(i => i === key) === -1 ? l.push(key) : l))
+                const children = updatedState.getIn(['content', parent_key, 'replies'], List()).size;
+                updatedState = updatedState.updateIn(['content', parent_key, 'children'], 0, r => children)
+                return updatedState;
             }
         },
         { // works...

@@ -942,7 +942,9 @@
     "next_power_down_is_scheduled_to_happen": "The next power down is scheduled to happen",
     "transfers_are_temporary_disabled": "Transfers are temporary disabled.",
     "cancel_power_down": "Cancel Power Down",
-    "history": "HISTORY"
+    "history": "HISTORY",
+    "main": "Main",
+    "assets": "Assets"
   },
   "asset_create_jsx": {
     "header": "Create Asset",

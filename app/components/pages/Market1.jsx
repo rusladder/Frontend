@@ -148,14 +148,14 @@ class Market1 extends React.Component {
             <div>
                 <div className="row">
                     <div className="column small-8">
-                        <Tabs>
+                       {/* <Tabs>
                             <Tab title="Trading Chart">
                             </Tab>
 
                             <Tab title="Depth Chart">
-								{/*<DepthChart orderbook={this.props.orderbook} />*/}
+								{<DepthChart orderbook={this.props.orderbook} />}
                           </Tab>
-                        </Tabs>
+                        </Tabs>*/}
                     </div>
                     <div className="column small-4">
                         <TickerPriceStat ticker={ticker} assetName={quote} />
@@ -169,8 +169,8 @@ class Market1 extends React.Component {
                 </div>
                   <div className="row">
                     <div className="column small-12">
-                        <Tabs>
-                            <Tab title="Limit Order">
+                        {/*<Tabs>
+                            <Tab title="Limit Order">*/}
 								<div className="row">
 
 									<div className="small-12 medium-6 columns">
@@ -206,12 +206,12 @@ class Market1 extends React.Component {
 									</div>
 
 								</div>
-                 			</Tab>
+                 			{/*</Tab>
 
                             <Tab title="Market Order">
 								<p>Market Order</p>
                             </Tab>
-                        </Tabs>
+                        </Tabs>*/}
                     </div>
                 </div>
 
@@ -223,7 +223,7 @@ class Market1 extends React.Component {
 						</div>
                         <div className="block-body">
 							<Orderbook
-								side={"bids"}
+								side={"asks"}
 								orderbook={this.props.orderbook}
 								base={base}
 								quote={quote}
@@ -240,7 +240,7 @@ class Market1 extends React.Component {
 						</div>
 						<div className="block-body">
 							<Orderbook
-								side={"asks"}
+								side={"bids"}
 								orderbook={this.props.orderbook}
 								base={base}
 								quote={quote}

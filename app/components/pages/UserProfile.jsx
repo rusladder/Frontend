@@ -199,9 +199,9 @@ export default class UserProfile extends React.Component {
         else if( section === 'followed' ) {
             if (following && following.has('blog_result')) {
                 tab_content = <UserList
-                    title="Followed"
-                    account={account}
-                    users={following.get('blog_result')}
+                        title={tt('user_profile.followed')}
+                        account={account}
+                        users={following.get('blog_result')}
                     />
             }
         }

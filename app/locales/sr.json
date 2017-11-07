@@ -797,6 +797,7 @@
     "users_permissions":"%(name)s's dozvole",
     "recent_replies_to_users_posts":"Nedavni odgovori ka %(name)s postovima",
     "followers":"Pratioci",
+    "followed": "Подписки",
     "this_is_users_reputations_score_it_is_based_on_history_of_votes":"This is %(name)s's reputation score.↵↵The reputation score is based on the history of votes received by the account, and is used to hide low quality content.",
     "follower_count":{
       "zero":"0 подписчиков",

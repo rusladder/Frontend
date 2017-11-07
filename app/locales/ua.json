@@ -785,6 +785,7 @@
     "users_permissions": "Дозволи %(name)s",
     "recent_replies_to_users_posts": "Недавні відповіді до постів користувача %(name)s",
     "followers": "Підписники",
+    "followed": "Підписки",
     "this_is_users_reputations_score_it_is_based_on_history_of_votes": "Це кількість очок репутації користувача %(name)s.\n\nКількість очок підраховується на основі історії отриманих голосів і використовується, щоб приховати неякісне вміст.",
     "follower_count": {
       "zero": "0 підписників",

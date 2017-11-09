@@ -9,6 +9,7 @@ import assetConstants from "app/utils/Assets/Constants";
 import assetUtils from "app/utils/Assets/AssetsUtils";
 import utils from 'app/utils/Assets/utils';
 import {validate_asset_symbol} from 'app/utils/ChainValidation';
+import { formatAmount } from 'app/utils/ParsersAndFormatters'
 import {api} from 'golos-js'
 
 let MAX_SAFE_INT = new big("9007199254740991");
@@ -159,6 +160,7 @@ class AssetCreate extends React.Component {
             errors: {
                 max_supply: null
             },
+            nameCost: null,
             isValid: true,
             flagBooleans: flagBooleans,
             permissionBooleans: permissionBooleans,
@@ -288,6 +290,7 @@ class AssetCreate extends React.Component {
     }
 
     validateAssetName(assetName) {
+        const balance = this.props.account.balance.split(' ')[0];
         let error = '';
         let promise;
         if (assetName.length > 0) {
@@ -295,6 +298,18 @@ class AssetCreate extends React.Component {
             if (!error) {
                 promise = api.getAssetsAsync([assetName]).then(res => {
                     return (res && res.length > 0 && res[0] != null) ? tt('user_issued_assets.exists') : '';
+                });
+
+                api.getNameCostAsync(assetName).then(res => {
+                    let cost = res.split(' ')[0]
+                    if (cost !== '0.000') {
+                        this.setState({ nameCost: res })
+                        if (parseInt(cost.split('.')[0]) > parseInt(balance.split('.')[0])) {
+                            this.setState({ isValid: false, errors: { symbol: tt('asset_create_jsx.insufficent_funds')} })
+                        }
+                    } else {
+                        this.setState({ nameCost: null })
+                    }
                 });
             }
         }
@@ -436,7 +451,7 @@ class AssetCreate extends React.Component {
     render() {
         const { core } = this.props;
         const { errors, isValid, update, flagBooleans, permissionBooleans,
-            core_exchange_rate, is_prediction_market, isBitAsset, bitasset_opts } = this.state;
+            core_exchange_rate, is_prediction_market, isBitAsset, bitasset_opts, nameCost } = this.state;
 
         // Loop over flags
         let flags = [];
@@ -505,7 +520,8 @@ class AssetCreate extends React.Component {
                                             onChange={this.onUpdateInput.bind(this, "symbol")}
                                         />
                                     </label>
-                                    { errors.symbol ? <p className="error">{errors.symbol}</p> : null}
+                                    { nameCost && <p className="warning">{ tt('asset_create_jsx.ticker_name_cost') }: { nameCost } </p> }
+                                    { errors.symbol ? <p className="error">{ errors.symbol }</p> : null }
                                 </div>
 
                                 <div className="column small-6">

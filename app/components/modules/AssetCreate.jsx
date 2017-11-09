@@ -167,7 +167,7 @@ class AssetCreate extends React.Component {
             isBitAsset: isBitAsset,
             is_prediction_market: false,
             core_exchange_rate: {
-                quote: '1 null',
+                quote: '1 -',
                 base: '1 GOLOS'
             },
             bitasset_opts: {
@@ -360,15 +360,10 @@ class AssetCreate extends React.Component {
     onCoreRateChange(type, e) {
         let amount, asset;
         if (type === "quote") {
-            amount = utils.limitByPrecision(e.target.value, this.props.core);
-            const { symbol } = this.state.update;
-            asset = symbol;
+            amount = e.amount == "" ? "0" :utils.limitByPrecision(e.amount, this.state.update.precision);
+            asset = this.state.update.symbol;
         } else {
-            if (!e || !("amount" in e)) {
-                return;
-            }
-            const precision = utils.get_asset_precision(this.props.core);
-            amount = e.amount == "" ? "0" : utils.limitByPrecision(e.amount, precision);
+            amount = e.amount == "" ? "0" : utils.limitByPrecision(e.amount, this.props.core.get('precision'));
             asset = 'GOLOS';
         }
 
@@ -588,27 +583,22 @@ class AssetCreate extends React.Component {
                                     {errors.quote_asset ? <p className="error">{errors.quote_asset}</p> : null}
                                     {errors.base_asset ? <p className="error">{errors.base_asset}</p> : null}
                                     <div className="column small-12 medium-6">
-                                        <div className="amount-selector" style={{width: "100%", paddingRight: "10px"}}>
-                                            {tt('user_issued_assets.quote')}
-                                            <div className="inline-label">
-                                                <input
-                                                    type="text"
-                                                    placeholder="0.001"
-                                                    onChange={this.onCoreRateChange.bind(this, "quote")}
-                                                    value={assetUtils.splitAmount(core_exchange_rate.quote)[0]}
-                                                />
-                                            </div>
-                                        </div>
+                                        <AmountSelector
+                                            label={tt('user_issued_assets.quote')}
+                                            amount={formatAmount(core_exchange_rate.quote.split(' ')[0])}
+                                            onChange={this.onCoreRateChange.bind(this, "quote")}
+                                            asset={assetUtils.splitAmount(core_exchange_rate.quote)[1]}
+                                            placeholder="0.001"
+                                        />
 
                                     </div>
                                     <div className="column small-12 medium-6">
                                          <AmountSelector
                                             label={tt('user_issued_assets.base')}
-                                            amount={assetUtils.splitAmount(core_exchange_rate.base)[0]}
+                                            amount={formatAmount(core_exchange_rate.base.split(' ')[0])}
                                             onChange={this.onCoreRateChange.bind(this, "base")}
                                             asset={assetUtils.splitAmount(core_exchange_rate.base)[1]}
                                             placeholder="0.001"
-                                            tabIndex={1}
                                         />
                                     </div>
                                 </div>

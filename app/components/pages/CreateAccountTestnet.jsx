@@ -17,7 +17,6 @@ export default class CreateAccountTestnet extends React.Component {
             password: '',
             password_valid: '',
             name_error: '',
-            nameCost: '',
             server_error: '',
             loading: false,
             cryptographyFailure: false,
@@ -105,15 +104,6 @@ export default class CreateAccountTestnet extends React.Component {
                 promise = api.getAccountsAsync([name]).then(res => {
                     return res && res.length > 0 ? tt('postfull_jsx.account_name_is_not_available') : '';
                 });
-
-                api.getNameCostAsync(name).then(res => {
-                    let cost = res.split(' ')[0]
-                    if (cost !== '0.000') {
-                        this.setState({nameCost: res})
-                    } else {
-                        this.setState({nameCost: ''})
-                    }
-                });
             }
         }
         if (promise) {
@@ -140,7 +130,7 @@ export default class CreateAccountTestnet extends React.Component {
 
         const {
             name, password_valid, showPasswordString,
-            name_error, server_error, loading, cryptographyFailure, showRules, nameCost
+            name_error, server_error, loading, cryptographyFailure, showRules
         } = this.state;
 
         const submit_btn_disabled =
@@ -180,7 +170,6 @@ export default class CreateAccountTestnet extends React.Component {
                                     <input type="text" name="name" autoComplete="off" onChange={this.onNameChange} value={name} />
                                 </label>
                                 <p>{name_error}</p>
-                                {nameCost && <p>Name cost: {nameCost}</p>}
                             </div>
                             <GeneratedPasswordInput onChange={this.onPasswordChange} disabled={loading} showPasswordString={name.length > 0 && !name_error} />
                             <br />

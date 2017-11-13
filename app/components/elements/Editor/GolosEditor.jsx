@@ -28,9 +28,10 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
 // load theme styles with webpack
 import 'medium-editor/dist/css/medium-editor.css'
-import 'medium-editor/dist/css/themes/bootstrap.css'
+import 'medium-editor/dist/css/themes/beagle.css'
 import Editor from 'react-medium-editor'
 import Feedback from './Feedback'
+import MediumMarkdown from 'medium-editor-markdown'
 
 class GolosEditor extends React.Component {
 
@@ -42,7 +43,6 @@ class GolosEditor extends React.Component {
             .oneOf(['submit_feedback', 'submit_story', 'submit_comment', 'edit']),
         successCallback: React.PropTypes.func, // indicator that the editor is done and can be hidden
         onCancel: React.PropTypes.func, // hide editor when cancel button clicked
-
         author: React.PropTypes.string, // empty or string for top-level post
         permlink: React.PropTypes.string, // new or existing category (default calculated from title)
         parent_author: React.PropTypes.string, // empty or string for top-level post
@@ -67,7 +67,7 @@ class GolosEditor extends React.Component {
         setMetaData(formId, jsonMetadata)
 
         if (process.env.BROWSER) {
-            // this.setAutoVote()
+            this.setAutoVote()
             this.setState({
                 payoutType: this.props.isStory
                     ? (localStorage.getItem('defaultPayoutType') || '50%')
@@ -76,6 +76,7 @@ class GolosEditor extends React.Component {
         }
     }
 
+    //OK
     componentDidMount() {
         setTimeout(() => {
             if (this.props.isStory) 
@@ -188,8 +189,10 @@ class GolosEditor extends React.Component {
         }
     }
 
+    //OK
     autoVoteOnChange = () => {
         const {autoVote} = this.state
+        
         const key = 'replyEditorData-autoVote-story'
         localStorage.setItem(key, !autoVote.value)
         autoVote
@@ -197,26 +200,43 @@ class GolosEditor extends React.Component {
             .onChange(!autoVote.value)
     }
 
+    onNsfwChange = e => {
+        let checked = e.target.checked
+        let {category} = this.state;
+        
+        console.log(category)
+    }
+
+
+
     // As rte_editor is updated, keep the (invisible) 'body' field in sync.
     onChange = (rte_value) => {
         this.setState({rte_value})
-        const html = stateToHtml(rte_value)
         const {body} = this.state
-        if (body.value !== html) 
-            body.props.onChange(html);
-        }
-    
-    // setAutoVote() {   const {isStory} = this.props   if(isStory) {       const
-    // {autoVote} = this.state       const key = 'replyEditorData-autoVote-story'
-    // const autoVoteDefault = JSON.parse(localStorage.getItem(key) || true)
-    // autoVote.props.onChange(autoVoteDefault)   } }
+        body
+            .props
+            .onChange(rte_value);
+    }
 
-    toggleRte = (e) => {
+    //OK
+    setAutoVote() {
+        const {isStory} = this.props
+        if (isStory) {
+            const {autoVote} = this.state
+            const key = 'replyEditorData-autoVote-story'
+            const autoVoteDefault = JSON.parse(localStorage.getItem(key) || true)
+            autoVote
+                .props
+                .onChange(autoVoteDefault)
+        }
+    }
+
+    toggleEditor = (e) => {
         e.preventDefault();
         const state = {
-            rte: !this.state.rte
-        };
-        if (state.rte) {
+            isVisualEditor: !this.state.isVisualEditor
+        }
+        if (state.isVisualEditor) {
             const {body} = this.state
             state.rte_value = isHtmlTest(body.value)
                 ? stateFromHtml(body.value)
@@ -225,6 +245,7 @@ class GolosEditor extends React.Component {
         this.setState(state);
         //localStorage.setItem('replyEditorData-rte', !this.state.rte)
     }
+
     showDraftSaved() {
         const {draft} = this.refs
         draft.className = 'ReplyEditor__draft'
@@ -271,8 +292,6 @@ class GolosEditor extends React.Component {
                     }
                 }
             } else {
-                // http://joelb.me/blog/2011/code-snippet-accessing-clipboard-images-with-javasc
-                // ript/ contenteditable element that catches all pasted data
                 this.setState({noClipboardData: true})
             }
         } catch (error) {
@@ -312,7 +331,7 @@ class GolosEditor extends React.Component {
             body: this.props.body
         }
 
-        const {onCancel, onTitleChange, autoVoteOnChange} = this
+        const {onCancel, onTitleChange, autoVoteOnChange, onNsfwChange} = this
 
         const {
             title,
@@ -322,7 +341,7 @@ class GolosEditor extends React.Component {
             autoVote,
             postError,
             titleWarn,
-            rte,
+            isVisualEditor,
             payoutType,
             progress,
             noClipboardData
@@ -436,92 +455,151 @@ class GolosEditor extends React.Component {
                     this.setState({postError: null})
                 }}>
 
-                    {isStory && <div className="column small-12">
-                        <div className="float-right secondary">
-                            <input type="hidden" {...domestic.props}/> {tt('settings_jsx.choose_domestic')}:
-                            <LinkWithDropdown
-                                closeOnClickOutside
-                                dropdownPosition="bottom"
-                                dropdownAlignment="left"
-                                dropdownContent=
-                                { <VerticalMenu items = { domestic_menu } title = { tt('settings_jsx.choose_domestic') } /> }>
-                                <a
-                                    className="ReplyEditor__domestic"
-                                    title={tt('settings_jsx.choose_domestic')}
-                                    onClick={e => e.preventDefault()}>
-                                    {currentDomesticTitle}
-                                    <Icon name="caret-down"/>
-                                </a>
-                            </LinkWithDropdown>
+                    {isStory && <div className='row'>
+                        <div className="column small-12">
+                            {
+                            <a href = "#" onClick = {
+                                this.toggleEditor
+                            } > {
+                                body.value
+                                    ? `Визуальный ${tt('reply_editor.editor')}`
+                                    : `Markdown ${tt('reply_editor.editor')}`
+                            } </a>}
+                            <div className="GolosEditor__settings float-right secondary">
+                                <input type="hidden" {...domestic.props}/> {tt('settings_jsx.choose_domestic')}: &nbsp;
+                                <LinkWithDropdown
+                                    closeOnClickOutside
+                                    dropdownPosition="bottom"
+                                    dropdownAlignment="left"
+                                    dropdownContent=
+                                    { <VerticalMenu items = { domestic_menu } title = { tt('settings_jsx.choose_domestic') } /> }>
+                                    <a
+                                        className="ReplyEditor__domestic"
+                                        title={tt('settings_jsx.choose_domestic')}
+                                        onClick={e => e.preventDefault()}>
+                                        {currentDomesticTitle}
+                                        <Icon name="caret-down"/>
+                                    </a>
+                                </LinkWithDropdown>
+                            </div>
                         </div>
+                    </div>}
 
-                        {/* Title */}
-                        <input
-                            {...title.props}
-                            type="text"
-                            onChange={onTitleChange}
-                            className="GolosEditor__title"
-                            placeholder={tt('reply_editor.placeholder')}
-                            autoComplete="off"
-                            ref="titleRef"/> {/* Title */}
-                    {titleError}
-                    </div>
-                    
-}
-                    <div className="column small-12 GolosEditor__body">
-                        <Editor
-                            {...body.props}
-                            text={this.state.text}
-                            options={{
-                            toolbar: {
-                                buttons: [
-                                    'bold',
-                                    'italic',
-                                    'underline',
-                                    'anchor',
-                                    'h2',
-                                    'h3',
-                                    'quote',
-                                    'image',
-                                    'orderedlist',
-                                    'unorderedlist'
-                                ]
-                            },
-                            placeholder: {
-                                text: tt('g.write_your_story'),
-                                hideOnClick: false
-                            }
-                        }}/>
+                    <div className='row'>
+                        <div className='column small-12'>
+                            <input
+                                {...title.props}
+                                type="text"
+                                onChange={onTitleChange}
+                                className='GolosEditor__title column small-12'
+                                placeholder={tt('reply_editor.placeholder')}
+                                autoComplete="off"
+                                ref="titleRef"/> {/* Title */}
+                            {titleError}
+                        </div>
                     </div>
 
-                    {isStory && !isFeedback && 
+                    <div className='GolosEditor__body row'>
+                        <div className='column small-12'>
+                            <Editor
+                                {...body.props}
+                                onBlur={body.onBlur}
+                                onChange={this.onChange}
+                                text={this.state.body.value}
+                                options={{
+                                toolbar: {
+                                    buttons: [
+                                        'bold',
+                                        'italic', 
+                                        'strikethrough',
+                                        'anchor',
+                                        'h1',
+                                        'h2',
+                                        'quote',
+                                        'orderedlist',
+                                        'unorderedlist',
+                                        'image'
+                                    ]
+                                },
+                                placeholder: {
+                                    text: tt('g.write_your_story'),
+                                    hideOnClick: true
+                                }
+                            }}/>
+                        </div>
+                        <div>
+                            {postError && <div className="error">{postError}</div>}
+                        </div>
+                    </div>
+
+                    {isStory && !isFeedback && <div className='row'>
                         <div className='column small-12 GolosEditor__categories'>
                             <CategorySelector {...category.props} disabled={loading} isEdit={isEdit}/>
                             <div className="error">{(category.touched || category.value) && category.error}&nbsp;</div>
-                        </div>}
+                        </div>
+                    </div>}
 
-                    <div className='column small-12 GolosEditor__submit'>
-                    {!loading &&
-                        <button type="submit" className="button" disabled={disabled}>
-                            {isEdit ? tt('reply_editor.update_post') : postLabel}
-                        </button>
-                    }
-                    {loading && 
-                        <span>
-                            <br/>
+                    {isStory && !isFeedback && <div className='GolosEditor__settings row'>
+                        <div className='column small-8 large-12'>
+                            <label
+                                className='float-left'
+                                title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
+                                Контент для взрослых&nbsp;
+                                <input type="checkbox" onChange={onNsfwChange}/>
+                            </label>
+
+                            <label title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
+                                {tt('g.upvote_post')}&nbsp;
+                                <input type="checkbox" checked={autoVote.value} onChange={autoVoteOnChange}/>
+                            </label>
+                        </div>
+                    </div>}
+
+                    <div className='GolosEditor__submit row'>
+                        <div className='column small-6 large-12'>
+                            {!loading && <button type="submit" className="button" disabled={disabled}>
+                                {isEdit
+                                    ? tt('reply_editor.update_post')
+                                    : postLabel}
+                            </button>}
+                            {loading && <span>
+                                <br/>
                                 <LoadingIndicator type="circle"/>
-                            </span>
-                    }&nbsp;
-                    {!loading && this.props.onCancel &&
-                        <button type="button" className="secondary hollow button no-border" onClick={onCancel}>
-                            {tt('g.cancel')}
-                        </button>}
-                    {!loading && !this.props.onCancel && 
-                        <button className="button hollow no-border" disabled={submitting} onClick={onCancel}>
-                            {tt('g.clear')}
-                        </button>}
-
+                            </span>}
+                            {!loading && this.props.onCancel && <button
+                                type="button"
+                                className="secondary hollow button no-border"
+                                onClick={onCancel}>
+                                {tt('g.cancel')}
+                            </button>}
+                            {!loading && !this.props.onCancel && <button
+                                className="button hollow no-border"
+                                disabled={submitting}
+                                onClick={onCancel}>
+                                {tt('g.clear')}
+                            </button>}
+                        </div>
                     </div>
+
+                    {isStory && !isEdit && <div className="ReplyEditor__options float-right text-right">
+
+                        {tt('g.rewards')}:&nbsp;
+                        <select
+                            value={this.state.payoutType}
+                            onChange={this.onPayoutTypeChange}
+                            style={{
+                            color: this.state.payoutType == '0%'
+                                ? 'orange'
+                                : 'inherit'
+                        }}>
+                            <option value="100%">{tt('reply_editor.power_up_100')}</option>
+                            <option value="50%">{tt('reply_editor.default_50_50')}</option>
+                            <option value="0%">{tt('reply_editor.decline_payout')}</option>
+                        </select>
+
+                        <br/>
+                    </div>}
+
                 </form>
             </div>
         )
@@ -566,10 +644,7 @@ export default formId => connect((state, ownProps) => {
             category
         }
     }
-},
-
-// mapDispatchToProps
-dispatch => ({
+}, dispatch => ({
     clearMetaData: (id) => {
         dispatch(g.actions.clearMeta({id}))
     },

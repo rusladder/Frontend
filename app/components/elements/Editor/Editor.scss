@@ -1,5 +1,4 @@
 .GolosEditor{
-    font-size: 1.5rem;
     max-width: 60rem;
     :active, :hover, :focus {
         outline: 0;
@@ -18,33 +17,32 @@
     height: auto;
     padding-bottom: 2rem;
     padding-left: 0;
-    box-shadow: none;
-         
+    box-shadow: none;         
     &[type='text']:focus{
         border: 0;
-        transition: border-bottom .5s ease-in-out 0s;
         box-shadow: none;     
-        border-bottom: 1px solid #dbdbdb;
     }
   }
 
 .GolosEditor__body{
     font-size: 1.2rem;
     margin-top: 2rem;
-    background-color: rgba(249, 249, 249, 0.7);
 }
 
 .GolosEditor__categories{
-    border: 0;
-    box-shadow: none;  
     height: auto;
-    margin: 2rem 0rem 2rem 0rem;
-    &input:focus{
-        border: 0;
-        transition: none;
-        box-shadow: none;   
-        border-bottom: 1px solid #dbdbdb;  
-    }   
+    margin: 2rem 0rem 0rem 0rem;
+    & span & input {
+        &[type='text']{
+            box-shadow: none;  
+            border: 0px;
+        }
+        &[type='text']:focus{
+            border: 0px;
+            transition: none;
+            box-shadow: none;   
+            border-bottom: 1px solid #dbdbdb;  
+    }}   
 }
 
 .GolosEditor__feedback{
@@ -52,5 +50,11 @@
         font-size: 1.5rem;
     }
     font-size: 1rem;
-    
+}
+
+.GolosEditor__settings{
+    margin: 0rem 0rem 2rem 0rem; 
+    &input{
+        font-size: 1.2rem;        
+    }
 }

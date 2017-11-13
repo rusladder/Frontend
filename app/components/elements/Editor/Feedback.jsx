@@ -8,7 +8,7 @@ import tt from 'counterpart'
 export default class Feedback extends React.Component {
 
     render() {
-        
+
         return (
             <div className='GolosEditor__feedback'>
                 <h4>{tt('reply_editor.feedback_welcome.dear_users')}</h4>

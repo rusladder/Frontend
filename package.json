@@ -87,6 +87,8 @@
     "libsodium": "0.4.8",
     "libsodium-wrappers": "0.4.8",
     "lodash.debounce": "^4.0.7",
+    "markdown": "^0.5.0",
+    "markdown-to-html": "0.0.13",
     "medium-editor-insert-plugin": "^2.3.2",
     "medium-editor-markdown": "^2.6.0",
     "minimist": "^1.2.0",

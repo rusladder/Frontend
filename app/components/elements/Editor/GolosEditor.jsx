@@ -28,18 +28,12 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
 // load theme styles with webpack
 
-// import Feedback from './Feedback'
+import Feedback from './Feedback'
+
 import MediumEditor from './MediumEditor'
-// import MarkdownEditor from './MarkdownEditor'
-// import ReachTextEditor from './rte'
-// import QuillEditor from './Quill'
-import MarkdownIt from './MarkdownIt'
-
-
-import SimpleMDE from 'react-simplemde-editor'
 import SimpleEditor from './Simple'
 
-
+import {markdown} from 'markdown'
 import toMarkdown from 'to-markdown'
 
 class GolosEditor extends React.Component {
@@ -204,12 +198,16 @@ class GolosEditor extends React.Component {
     console.log(category)
   }
 
-  // As rte_editor is updated, keep the (invisible) 'body' field in sync.
-   onChange = (value) => {
-     const {body} = this.state
-     body.markdown = toMarkdown(value)
-     body.props.onChange(value)
-   }
+   onChange = (value) => { 
+     const {body, isVisualEditor} = this.state
+     if(isVisualEditor){
+        body.pureHTML = value
+        body.props.onChange(toMarkdown(value))
+     } else{
+        body.pureHTML = markdown.toHTML(value);
+        body.props.onChange(value)
+     }
+    }
 
 
   //OK
@@ -224,13 +222,12 @@ class GolosEditor extends React.Component {
   }
 
   toggleEditor = (e) => {
-
     e.preventDefault();
     const state = {
       isVisualEditor: !this.state.isVisualEditor
     }
     this.setState(state);
-    //localStorage.setItem('replyEditorData-rte', !this.state.rte)
+    localStorage.setItem('EditorData-isVisualEditor', this.state.isVisualEditor)
   }
 
   showDraftSaved() {
@@ -364,7 +361,7 @@ class GolosEditor extends React.Component {
     const isEdit = type === 'edit'
     const isFeedback = type === 'submit_feedback'
 
-    // const isHtml = rte || isHtmlTest(body.value) Be careful, autoVote can reset
+    // Be careful, autoVote can reset
     // curation rewards.  Never autoVote on edit.. const autoVoteValue = !isEdit &&
     // autoVote.value const replyParams = {     author, permlink, parent_author,
     // parent_permlink, type, state, originalPost, isHtml, isStory, isFeedback,
@@ -427,7 +424,6 @@ class GolosEditor extends React.Component {
       <div className='GolosEditor row'>
         {isFeedback && <div className="column small-12"><Feedback/></div>}
         <form onSubmit={handleSubmit(({data}) => {
-          console.log("Some data ???",data)
           const startLoadingIndicator = () => this.setState({loading: true, postError: undefined});
           reply({
             ...data,
@@ -470,10 +466,7 @@ class GolosEditor extends React.Component {
             <div className='column small-12'>
               {isVisualEditor ? 
               <MediumEditor body={body} onChange={this.onChange} /> :  
-              <SimpleEditor
-                label="Markdown Editor"
-                value={body.value}
-                handleEditorChange={this.onChange}
+              <SimpleEditor body ={body} onChange={this.onChange}
             />}
             </div>
             <div>

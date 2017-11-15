@@ -1,12 +1,10 @@
 import React from 'react'
-import {Link} from 'react-router'
-
-import Icon from 'app/components/elements/Icon.jsx'
-import {SUPPORT_EMAIL} from 'app/client_config'
 import tt from 'counterpart'
+import Editor from 'react-medium-editor'
+
 import 'medium-editor/dist/css/medium-editor.css'
 import 'medium-editor/dist/css/themes/beagle.css'
-import Editor from 'react-medium-editor'
+
 
 
 export default class MediumEditor extends React.Component {
@@ -26,9 +24,9 @@ export default class MediumEditor extends React.Component {
         return (<Editor
             {...body.props}
             onBlur={body.onBlur}
-            className='CodeMirror'
             onChange={onChange}
-            text={body.value}
+            className='GolosEditor__medium__body'
+            text={body.pureHTML}
             options={{
             toolbar: {
                 buttons: [

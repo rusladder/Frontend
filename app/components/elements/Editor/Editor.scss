@@ -17,9 +17,11 @@
     height: auto;
     padding-bottom: 2rem;
     padding-left: 0;
-    box-shadow: none;         
+    box-shadow: none;     
+    border-bottom: 1px solid #dbdbdb;      
     &[type='text']:focus{
         border: 0;
+        border-bottom: 2px solid #dbdbdb;      
         box-shadow: none;     
     }
   }

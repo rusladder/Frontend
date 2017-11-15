@@ -28,11 +28,16 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
 // load theme styles with webpack
 
-import Feedback from './Feedback'
+// import Feedback from './Feedback'
 import MediumEditor from './MediumEditor'
-import MarkdownEditor from './MarkdownEditor'
-import ReachTextEditor from './rte'
-import QuillEditor from './Quill'
+// import MarkdownEditor from './MarkdownEditor'
+// import ReachTextEditor from './rte'
+// import QuillEditor from './Quill'
+import MarkdownIt from './MarkdownIt'
+
+
+import SimpleMDE from 'react-simplemde-editor'
+import SimpleEditor from './Simple'
 
 
 import toMarkdown from 'to-markdown'
@@ -464,8 +469,12 @@ class GolosEditor extends React.Component {
           <div className='GolosEditor__body row'>
             <div className='column small-12'>
               {isVisualEditor ? 
-              <MediumEditor body={body} onChange={this.onChange} /> : 
-              <QuillEditor body={body} onChange={this.onChange} />}           
+              <MediumEditor body={body} onChange={this.onChange} /> :  
+              <SimpleEditor
+                label="Markdown Editor"
+                value={body.value}
+                handleEditorChange={this.onChange}
+            />}
             </div>
             <div>
               {postError && <div className="error">{postError}</div>}

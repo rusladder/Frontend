@@ -26,6 +26,7 @@ export default class MediumEditor extends React.Component {
         return (<Editor
             {...body.props}
             onBlur={body.onBlur}
+            className='CodeMirror'
             onChange={onChange}
             text={body.value}
             options={{

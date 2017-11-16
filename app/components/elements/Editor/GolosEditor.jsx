@@ -1,14 +1,12 @@
 import React from 'react'
 import {Link} from 'react-router'
 import {connect} from 'react-redux'
-
 import reactForm from 'app/utils/ReactForm'
 import transaction from 'app/redux/Transaction'
-import MarkdownViewer from 'app/components/cards/MarkdownViewer'
+
 import CategorySelector from 'app/components/cards/CategorySelector'
 import {validateCategory} from 'app/components/cards/CategorySelector'
 import LoadingIndicator from 'app/components/elements/LoadingIndicator'
-import shouldComponentUpdate from 'app/utils/shouldComponentUpdate'
 import Tooltip from 'app/components/elements/Tooltip'
 import sanitizeConfig, {allowedTags} from 'app/utils/SanitizeConfig'
 import sanitize from 'sanitize-html'
@@ -20,7 +18,7 @@ import Dropzone from 'react-dropzone'
 import {LinkWithDropdown} from 'react-foundation-components/lib/global/dropdown'
 import VerticalMenu from 'app/components/elements/VerticalMenu'
 import tt from 'counterpart'
-import {DEBT_TICKER, DEFAULT_DOMESTIC, DOMESTIC, SUPPORT_EMAIL} from 'app/client_config'
+import {DEBT_TICKER, DEFAULT_DOMESTIC, DOMESTIC} from 'app/client_config'
 import Icon from 'app/components/elements/Icon.jsx'
 import {detransliterate, capitalizeFirstLetter} from 'app/utils/ParsersAndFormatters';
 
@@ -33,8 +31,14 @@ import Feedback from './Feedback'
 import MediumEditor from './MediumEditor'
 import SimpleEditor from './Simple'
 
-import {markdown} from 'markdown'
 import toMarkdown from 'to-markdown'
+var showdown  = require('showdown'),converter = new showdown.Converter();
+converter.setOption('strikethrough', true);
+converter.setOption('tables', true);
+converter.setOption('simpleLineBreaks', true);
+
+import {convertTable} from './TableConverter'
+
 
 class GolosEditor extends React.Component {
 
@@ -175,7 +179,6 @@ class GolosEditor extends React.Component {
     if (!body.value || confirm(tt('reply_editor.are_you_sure_you_want_to_clear_this_form'))) {
       replyForm.resetForm()
       this.setAutoVote()
-      this.setState({rte_value: stateFromHtml()})
       this.setState({progress: {}})
       if (onCancel)
         onCancel(e)
@@ -185,27 +188,55 @@ class GolosEditor extends React.Component {
   //OK
   autoVoteOnChange = () => {
     const {autoVote} = this.state
-
-    const key = 'replyEditorData-autoVote-story'
+    const key = 'EditorData-autoVote-story'
     localStorage.setItem(key, !autoVote.value)
     autoVote.props.onChange(!autoVote.value)
   }
 
-  onNsfwChange = e => {
-    let checked = e.target.checked
-    let {category} = this.state;
+  // onNsfwChange = e => {
+  //   let checked = e.target.checked
+  //   let {category} = this.state;
+  //   let hits = [];
+  //   let reg = new RegExp('nsfw',"g","i");
+  //   hits = category.value.match(reg);
+  //   if (!hits) {
+  //       alert("Your name wasn't found!");
+  //   } else {
+  //       alert(hits);
+  //   }
+    
+  // }
 
-    console.log(category)
-  }
 
    onChange = (value) => { 
      const {body, isVisualEditor} = this.state
+
+    let convert =  {
+        filter: 'strike',
+        replacement: function(content) {
+          return '~~' + content + '~~';
+        }
+      }
+
+      let res = toMarkdown(value, { converters: [convert] }, {gfm: true} )
+      //console.log(" RES!!! ", convertTable(res) )
+
+
      if(isVisualEditor){
-        body.pureHTML = value
-        body.props.onChange(toMarkdown(value))
+        this.setState({
+          body: {
+            pureHTML : value,
+            value: res
+        }
+        })
+        
      } else{
-        body.pureHTML = markdown.toHTML(value);
-        body.props.onChange(value)
+        this.setState({
+          body: {
+            pureHTML : converter.makeHtml(value),
+            value: value
+        }
+        })
      }
     }
 
@@ -215,7 +246,7 @@ class GolosEditor extends React.Component {
     const {isStory} = this.props
     if (isStory) {
       const {autoVote} = this.state
-      const key = 'replyEditorData-autoVote-story'
+      const key = 'EditorData-autoVote-story'
       const autoVoteDefault = JSON.parse(localStorage.getItem(key) || true)
       autoVote.props.onChange(autoVoteDefault)
     }
@@ -465,8 +496,8 @@ class GolosEditor extends React.Component {
           <div className='GolosEditor__body row'>
             <div className='column small-12'>
               {isVisualEditor ? 
-              <MediumEditor body={body} onChange={this.onChange} /> :  
-              <SimpleEditor body ={body} onChange={this.onChange}
+              <MediumEditor body = {body} onChange={this.onChange} /> :  
+              <SimpleEditor body = {body} onChange={this.onChange}
             />}
             </div>
             <div>
@@ -483,10 +514,10 @@ class GolosEditor extends React.Component {
 
           {isStory && !isFeedback && <div className='GolosEditor__settings row'>
             <div className='column small-8 large-12'>
-              <label className='float-left' title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
+              {/* <label className='float-left' title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
                 Контент для взрослых&nbsp;
                 <input type="checkbox" onChange={onNsfwChange}/>
-              </label>
+              </label> */}
 
               <label title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
                 {tt('g.upvote_post')}&nbsp;

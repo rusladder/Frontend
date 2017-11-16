@@ -1,9 +1,5 @@
 .GolosEditor{
     max-width: 60rem;
-    :active, :hover, :focus {
-        outline: 0;
-        outline-offset: 0;
-    }
     form{
         width: 100%;
     }
@@ -42,7 +38,6 @@
         font: inherit;
         z-index: 1;
     }
-    
 }
 
 .GolosEditor__categories{

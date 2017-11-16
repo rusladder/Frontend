@@ -91,6 +91,7 @@
     "markdown-to-html": "0.0.13",
     "medium-editor-insert-plugin": "^2.3.2",
     "medium-editor-markdown": "^2.6.0",
+    "medium-editor-tables": "^0.6.1",
     "minimist": "^1.2.0",
     "mysql": "^2.10.2",
     "net": "^1.0.2",

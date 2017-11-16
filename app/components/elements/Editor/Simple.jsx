@@ -20,21 +20,22 @@ export default class SimpleEditor extends React.Component {
             spellChecker: false,
             status: false,
             showIcons: [
-                "strikethrough", "code", "table", 'horizontal-rule'
+                "strikethrough", "code", 'horizontal-rule'
             ],
             hideIcons: [
                 "guide", 'side-by-side', 'fullscreen'
             ],
             promptURLs: true,
-            initialValue: this.props.value,
+            initialValue: this.props.body.value,
             placeholder: tt('g.write_your_story')
         }
     }
 
     render() {
         const {body, onChange} = this.props
-
+        console.log(body)
         return (<SimpleMDEReact
+            {...body.props}
             onChange={onChange}
             options={this.getMarkdownOptions()}
             value={body.value}

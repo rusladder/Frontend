@@ -3,9 +3,7 @@ import tt from 'counterpart'
 import Editor from 'react-medium-editor'
 
 import 'medium-editor/dist/css/medium-editor.css'
-import 'medium-editor/dist/css/themes/beagle.css'
-
-
+import 'medium-editor/dist/css/themes/beagle.css' 
 
 export default class MediumEditor extends React.Component {
 
@@ -19,10 +17,9 @@ export default class MediumEditor extends React.Component {
     }
 
     render() {
-        const {body, onChange} = this.props
-
+        const {body, onChange} = this.props        
         return (<Editor
-            {...body.props}
+            name = 'body'
             onBlur={body.onBlur}
             onChange={onChange}
             className='GolosEditor__medium__body'
@@ -37,11 +34,15 @@ export default class MediumEditor extends React.Component {
                     'h1',
                     'h2',
                     'quote',
+                    // 'table',
                     'orderedlist',
                     'unorderedlist',
                     'image'
                 ]
             },
+            // extensions: {
+            //     table: new ReactifiedExtension()
+            // },
             placeholder: {
                 text: tt('g.write_your_story'),
                 hideOnClick: true

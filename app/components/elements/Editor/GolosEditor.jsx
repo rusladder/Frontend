@@ -211,16 +211,26 @@ class GolosEditor extends React.Component {
    onChange = (value) => { 
      const {body, isVisualEditor} = this.state
 
-    let convert =  {
+    let convertDel =  {
+        filter: 'del',
+        replacement: function(content) {
+          return '~~' + content + '~~';
+        }
+      }
+      let convertStrike =  {
         filter: 'strike',
         replacement: function(content) {
           return '~~' + content + '~~';
         }
       }
+      let convertDiv =  {
+        filter: 'div',
+        replacement: function(content) {
+          return '' + content + '';
+        }
+      }
 
-      let res = toMarkdown(value, { converters: [convert] }, {gfm: true} )
-      //console.log(" RES!!! ", convertTable(res) )
-
+      let res = toMarkdown(value, { converters: [convertDel, convertStrike] } )
 
      if(isVisualEditor){
         this.setState({

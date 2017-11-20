@@ -124,6 +124,22 @@ async function universalRender({ location, initial_state, offchain, ErrorPage, t
     // below is only executed on the server
     let server_store, onchain;
     try {
+        // proxy get state
+        try {
+          let cache = await chainproxy.call('chaindb_get', 'getStateAsync' + location);
+          if (cache && cache.length >= 1) onchain = cache[0].slice(2);
+          console.log('getStateAsync' + location, cache)
+        }
+        catch (e) {
+          console.error('-- /chainproxy/method error -->', 'getStateAsync' + location, e.message);
+        }
+        // end proxy get state
+        if (typeof onchain === 'object' && onchain.length) {console.log('get from cache')
+          onchain = onchain[0];
+        }
+        else {console.log('get from chain', onchain)
+          await chainproxy.call('chaindb_update_in_progress', 'getStateAsync' + location);
+
         let url = location === '/' ? 'trending' : location;
         // Replace /curation-rewards and /author-rewards with /transfers for UserProfile
         // to resolve data correctly
@@ -350,6 +366,17 @@ async function universalRender({ location, initial_state, offchain, ErrorPage, t
                 };
             }
         }
+
+          // proxy set state
+          try {
+            await chainproxy.call('chaindb_set', 30, 'getStateAsync' + location, onchain);
+          }
+          catch (e) {
+            console.error('-- /chainproxy/method error -->', 'getStateAsync' + location, e.message);
+          }
+          // end proxy set state
+        }
+
         // Calculate signup bonus
         const fee = parseFloat($STM_Config.registrar_fee.split(' ')[0]),
               {base, quote} = onchain.feed_price,

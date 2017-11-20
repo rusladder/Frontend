@@ -3,14 +3,13 @@ async function proxify(method, context, proxy, lifetime /*, options */) {
   const proxyKey = method + JSON.stringify(options);
   let res = [];
 
-  if (process.env.NODE_ENV === 'development') {
-    return await context[method].apply(context, options);
-  }
-
+  // if (process.env.NODE_ENV === 'development') {
+  //   return await context[method].apply(context, options);
+  // }
   try {
     const cache = await proxy.call('chaindb_get', proxyKey);
-    if (cache && cache.length >= 1)
-      res = cache[0].slice(2);
+    if (cache && cache.length >= 1) res = cache[0].slice(2);
+    console.log('cache',proxyKey,cache)
   }
   catch (e) {
     console.error('-- /api/v1/proxy/method error -->', proxyKey, e.message);
@@ -27,7 +26,9 @@ async function proxify(method, context, proxy, lifetime /*, options */) {
       res = await context[method].apply(context);
     }
     try {
+      console.log('set cache', JSON.stringify(res).length)
       await proxy.call('chaindb_set', lifetime, proxyKey, res);
+      console.log('------->', await proxy.call('chaindb_get', proxyKey))
     }
     catch (e) {
       console.error('-- /api/v1/proxy/method error -->', proxyKey, e.message);

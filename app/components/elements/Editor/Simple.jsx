@@ -27,13 +27,13 @@ export default class SimpleEditor extends React.Component {
             ],
             promptURLs: true,
             initialValue: this.props.body.value,
-            placeholder: tt('g.write_your_story')
+            placeholder: tt('g.write_your_story'),
+            autoDownloadFontAwesome: false
         }
     }
 
     render() {
         const {body, onChange} = this.props
-        console.log(body)
         return (<SimpleMDEReact
             {...body.props}
             onChange={onChange}

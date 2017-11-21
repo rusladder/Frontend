@@ -32,13 +32,12 @@ import MediumEditor from './MediumEditor'
 import SimpleEditor from './Simple'
 
 import toMarkdown from 'to-markdown'
-var showdown  = require('showdown'),converter = new showdown.Converter();
+import showdown  from 'showdown'
+
+
+const converter = new showdown.Converter();
 converter.setOption('strikethrough', true);
-converter.setOption('tables', true);
 converter.setOption('simpleLineBreaks', true);
-
-import {convertTable} from './TableConverter'
-
 
 class GolosEditor extends React.Component {
 

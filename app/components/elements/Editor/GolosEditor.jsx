@@ -32,8 +32,7 @@ import MediumEditor from './MediumEditor'
 import SimpleEditor from './Simple'
 
 import toMarkdown from 'to-markdown'
-import showdown  from 'showdown'
-
+import showdown from 'showdown'
 
 const converter = new showdown.Converter();
 converter.setOption('strikethrough', true);
@@ -44,7 +43,9 @@ class GolosEditor extends React.Component {
   static propTypes = {
 
     formId: React.PropTypes.string.isRequired, // unique form id for each editor
-    type: React.PropTypes.oneOf(['submit_feedback', 'submit_story', 'submit_comment', 'edit']),
+    type: React
+      .PropTypes
+      .oneOf(['submit_feedback', 'submit_story', 'submit_comment', 'edit']),
     successCallback: React.PropTypes.func, // indicator that the editor is done and can be hidden
     onCancel: React.PropTypes.func, // hide editor when cancel button clicked
     author: React.PropTypes.string, // empty or string for top-level post
@@ -64,7 +65,7 @@ class GolosEditor extends React.Component {
       progress: {},
       isVisualEditor: true
     }
-    this.initForm(props)  
+    this.initForm(props)
   }
 
   componentWillMount() {
@@ -84,9 +85,9 @@ class GolosEditor extends React.Component {
   //OK
   componentDidMount() {
     setTimeout(() => {
-      if (this.props.isStory)
+      if (this.props.isStory) 
         this.refs.titleRef.focus()
-      else if (this.refs.postRef)
+      else if (this.refs.postRef) 
         this.refs.postRef.focus()
     }, 300)
   }
@@ -153,13 +154,18 @@ class GolosEditor extends React.Component {
         : ''
     })
     const {title} = this.state
-    title.props.onChange(e)
+    title
+      .props
+      .onChange(e)
   }
 
   onDomesticChange = e => {
-    if (e)
+    if (e) 
       e.preventDefault();
-    const targetValue = e.target.text.trim();
+    const targetValue = e
+      .target
+      .text
+      .trim();
     let value = DEFAULT_DOMESTIC;
     for (var key in DOMESTIC) {
       if (targetValue.localeCompare(DOMESTIC[key]) == 0) {
@@ -167,11 +173,15 @@ class GolosEditor extends React.Component {
         break;
       }
     }
-    this.state.domestic.props.onChange(value)
+    this
+      .state
+      .domestic
+      .props
+      .onChange(value)
   }
 
   onCancel = e => {
-    if (e)
+    if (e) 
       e.preventDefault()
     const {onCancel} = this.props
     const {replyForm, body} = this.state
@@ -179,7 +189,7 @@ class GolosEditor extends React.Component {
       replyForm.resetForm()
       this.setAutoVote()
       this.setState({progress: {}})
-      if (onCancel)
+      if (onCancel) 
         onCancel(e)
     }
   }
@@ -189,66 +199,59 @@ class GolosEditor extends React.Component {
     const {autoVote} = this.state
     const key = 'EditorData-autoVote-story'
     localStorage.setItem(key, !autoVote.value)
-    autoVote.props.onChange(!autoVote.value)
+    autoVote
+      .props
+      .onChange(!autoVote.value)
   }
 
-  // onNsfwChange = e => {
-  //   let checked = e.target.checked
-  //   let {category} = this.state;
-  //   let hits = [];
-  //   let reg = new RegExp('nsfw',"g","i");
-  //   hits = category.value.match(reg);
-  //   if (!hits) {
-  //       alert("Your name wasn't found!");
-  //   } else {
-  //       alert(hits);
-  //   }
-    
-  // }
+  // onNsfwChange = e => {   let checked = e.target.checked   let {category} =
+  // this.state;   let hits = [];   let reg = new RegExp('nsfw',"g","i");   hits =
+  // category.value.match(reg);   if (!hits) {       alert("Your name wasn't
+  // found!");   } else {       alert(hits);   } }
 
+  onChange = (value) => {
+    const {body, isVisualEditor} = this.state
 
-   onChange = (value) => { 
-     const {body, isVisualEditor} = this.state
-
-    let convertDel =  {
-        filter: 'del',
-        replacement: function(content) {
-          return '~~' + content + '~~';
-        }
+    let convertDel = {
+      filter: 'del',
+      replacement: function (content) {
+        return '~~' + content + '~~';
       }
-      let convertStrike =  {
-        filter: 'strike',
-        replacement: function(content) {
-          return '~~' + content + '~~';
-        }
+    }
+    let convertStrike = {
+      filter: 'strike',
+      replacement: function (content) {
+        return '~~' + content + '~~';
       }
-      let convertDiv =  {
-        filter: 'div',
-        replacement: function(content) {
-          return '' + content + '';
-        }
+    }
+    let convertDiv = {
+      filter: 'div',
+      replacement: function (content) {
+        return '' + content + '';
       }
-
-      let res = toMarkdown(value, { converters: [convertDel, convertStrike] } )
-
-     if(isVisualEditor){
-        this.setState({
-          body: {
-            pureHTML : value,
-            value: res
-        }
-        })
-        
-     } else{
-        this.setState({
-          body: {
-            pureHTML : converter.makeHtml(value),
-            value: value
-        }
-        })
-     }
     }
 
+    let res = toMarkdown(value, {
+      converters: [convertDel, convertStrike]
+    })
+
+    if (isVisualEditor) {
+      this.setState({
+        body: {
+          pureHTML: value,
+          value: res
+        }
+      })
+
+    } else {
+      this.setState({
+        body: {
+          pureHTML: converter.makeHtml(value),
+          value: value
+        }
+      })
+    }
+  }
 
   //OK
   setAutoVote() {
@@ -257,10 +260,13 @@ class GolosEditor extends React.Component {
       const {autoVote} = this.state
       const key = 'EditorData-autoVote-story'
       const autoVoteDefault = JSON.parse(localStorage.getItem(key) || true)
-      autoVote.props.onChange(autoVoteDefault)
+      autoVote
+        .props
+        .onChange(autoVoteDefault)
     }
   }
 
+  //Ok
   toggleEditor = (e) => {
     e.preventDefault();
     const state = {
@@ -280,7 +286,7 @@ class GolosEditor extends React.Component {
   onPayoutTypeChange = (e) => {
     const payoutType = e.currentTarget.value
     this.setState({payoutType})
-    if (payoutType !== '0%')
+    if (payoutType !== '0%') 
       localStorage.setItem('defaultPayoutType', payoutType)
   }
 
@@ -301,7 +307,9 @@ class GolosEditor extends React.Component {
   }
 
   onOpenClick = () => {
-    this.dropzone.open();
+    this
+      .dropzone
+      .open();
   }
 
   onPasteCapture = e => {
@@ -329,7 +337,6 @@ class GolosEditor extends React.Component {
       }
     })
 
-
     uploadImage(file, progress => {
       if (progress.url) {
         this.setState({progress: {}})
@@ -337,7 +344,9 @@ class GolosEditor extends React.Component {
         const image_md = `![${name}](${url})`
         const {body} = this.state
         const {selectionStart, selectionEnd} = this.refs.postRef
-        body.props.onChange(body.value.substring(0, selectionStart) + image_md + body.value.substring(selectionEnd, body.value.length))
+        body
+          .props
+          .onChange(body.value.substring(0, selectionStart) + image_md + body.value.substring(selectionEnd, body.value.length))
       } else {
         this.setState({progress})
       }
@@ -395,18 +404,17 @@ class GolosEditor extends React.Component {
     }
     const successCallbackWrapper = (...args) => {
       this.setState({loading: false})
-      if (successCallback)
+      if (successCallback) 
         successCallback(args)
     }
     const isEdit = type === 'edit'
     const isFeedback = type === 'submit_feedback'
 
-    // Be careful, autoVote can reset
-    // curation rewards.  Never autoVote on edit.. const autoVoteValue = !isEdit &&
-    // autoVote.value const replyParams = {     author, permlink, parent_author,
-    // parent_permlink, type, state, originalPost, isHtml, isStory, isFeedback,
-    // jsonMetadata, autoVote: autoVoteValue, payoutType,     successCallback:
-    // successCallbackWrapper, errorCallback }
+    // Be careful, autoVote can reset curation rewards.  Never autoVote on edit..
+    // const autoVoteValue = !isEdit && autoVote.value const replyParams = {
+    // author, permlink, parent_author, parent_permlink, type, state, originalPost,
+    // isHtml, isStory, isFeedback, jsonMetadata, autoVote: autoVoteValue,
+    // payoutType,     successCallback: successCallbackWrapper, errorCallback }
 
     const replyParams = {
       author,
@@ -452,7 +460,7 @@ class GolosEditor extends React.Component {
       if (domestic && domestic.value === key) {
         currentDomesticKey = key;
         currentDomesticTitle = DOMESTIC[currentDomesticKey];
-      } else
+      } else 
         domestic_menu.push({
           link: '#' + key,
           onClick: this.onDomesticChange,
@@ -463,14 +471,16 @@ class GolosEditor extends React.Component {
     return (
       <div className='GolosEditor row'>
         {isFeedback && <div className="column small-12"><Feedback/></div>}
-        <form onSubmit={handleSubmit(({data}) => {
+        <form
+          onSubmit={handleSubmit(({data}) => {
           const startLoadingIndicator = () => this.setState({loading: true, postError: undefined});
           reply({
             ...data,
             ...replyParams,
             startLoadingIndicator
           })
-        })} onChange={() => {
+        })}
+          onChange={() => {
           this.setState({postError: null})
         }}>
 
@@ -485,8 +495,16 @@ class GolosEditor extends React.Component {
               } </a>}
               <div className="GolosEditor__settings float-right secondary">
                 <input type="hidden" {...domestic.props}/> {tt('settings_jsx.choose_domestic')}: &nbsp;
-                <LinkWithDropdown closeOnClickOutside dropdownPosition="bottom" dropdownAlignment="left" dropdownContent= { <VerticalMenu items = { domestic_menu } title = { tt('settings_jsx.choose_domestic') } /> }>
-                  <a className="ReplyEditor__domestic" title={tt('settings_jsx.choose_domestic')} onClick={e => e.preventDefault()}>
+                <LinkWithDropdown
+                  closeOnClickOutside
+                  dropdownPosition="bottom"
+                  dropdownAlignment="left"
+                  dropdownContent=
+                  { <VerticalMenu items = { domestic_menu } title = { tt('settings_jsx.choose_domestic') } /> }>
+                  <a
+                    className="ReplyEditor__domestic"
+                    title={tt('settings_jsx.choose_domestic')}
+                    onClick={e => e.preventDefault()}>
                     {currentDomesticTitle}
                     <Icon name="caret-down"/>
                   </a>
@@ -497,17 +515,49 @@ class GolosEditor extends React.Component {
 
           <div className='row'>
             <div className='column small-12'>
-              <input {...title.props} type="text" onChange={onTitleChange} className='GolosEditor__title column small-12' placeholder={tt('reply_editor.placeholder')} autoComplete="off" ref="titleRef"/> {/* Title */}
+              <input
+                {...title.props}
+                type="text"
+                onChange={onTitleChange}
+                className='GolosEditor__title column small-12'
+                placeholder={tt('reply_editor.placeholder')}
+                autoComplete="off"
+                ref="titleRef"/> {/* Title */}
               {titleError}
             </div>
           </div>
 
           <div className='GolosEditor__body row'>
             <div className='column small-12'>
-              {isVisualEditor ? 
-              <MediumEditor body = {body} onChange={this.onChange} /> :  
-              <SimpleEditor body = {body} onChange={this.onChange}
-            />}
+              <span>
+                <Dropzone
+                  onDrop={this.onDrop}
+                  className={type === 'submit_story'
+                  ? 'dropzone'
+                  : 'none'}
+                  disableClick
+                  multiple={false}
+                  accept="image/*"
+                  ref={(node) => {
+                  this.dropzone = node;
+                }}>
+                  {isVisualEditor
+                ? <MediumEditor body={body} onChange={this.onChange}/>
+                : <SimpleEditor body={body} onChange={this.onChange}/>}
+                </Dropzone>
+                {type === 'submit_story' && <p className="drag-and-drop">
+                  {tt('reply_editor.insert_images_by_dragging_dropping')}
+                  <a onClick={this.onOpenClick}>{tt('reply_editor.selecting_them')}</a>
+                  {noClipboardData
+                    ? ''
+                    : tt('reply_editor.pasting_from_the_clipboard')}
+                </p>}
+                {progress.message && <div className="info">{progress
+                    .message
+                    .replace('Uploading', tt('reply_editor.uploading'))}</div>}
+                {progress.error && <div className="error">{tt('reply_editor.image_upload')}
+                  : {progress.error}</div>}
+              </span>
             </div>
             <div>
               {postError && <div className="error">{postError}</div>}
@@ -527,7 +577,6 @@ class GolosEditor extends React.Component {
                 Контент для взрослых&nbsp;
                 <input type="checkbox" onChange={onNsfwChange}/>
               </label> */}
-
               <label title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
                 {tt('g.upvote_post')}&nbsp;
                 <input type="checkbox" checked={autoVote.value} onChange={autoVoteOnChange}/>
@@ -546,10 +595,16 @@ class GolosEditor extends React.Component {
                 <br/>
                 <LoadingIndicator type="circle"/>
               </span>}
-              {!loading && this.props.onCancel && <button type="button" className="secondary hollow button no-border" onClick={onCancel}>
+              {!loading && this.props.onCancel && <button
+                type="button"
+                className="secondary hollow button no-border"
+                onClick={onCancel}>
                 {tt('g.cancel')}
               </button>}
-              {!loading && !this.props.onCancel && <button className="button hollow no-border" disabled={submitting} onClick={onCancel}>
+              {!loading && !this.props.onCancel && <button
+                className="button hollow no-border"
+                disabled={submitting}
+                onClick={onCancel}>
                 {tt('g.clear')}
               </button>}
             </div>
@@ -558,7 +613,10 @@ class GolosEditor extends React.Component {
           {isStory && !isEdit && <div className="ReplyEditor__options float-right text-right">
 
             {tt('g.rewards')}:&nbsp;
-            <select value={this.state.payoutType} onChange={this.onPayoutTypeChange} style={{
+            <select
+              value={this.state.payoutType}
+              onChange={this.onPayoutTypeChange}
+              style={{
               color: this.state.payoutType == '0%'
                 ? 'orange'
                 : 'inherit'
@@ -578,7 +636,9 @@ class GolosEditor extends React.Component {
 }
 
 export default formId => connect((state, ownProps) => {
-  const username = state.user.getIn(['current', 'username'])
+  const username = state
+    .user
+    .getIn(['current', 'username'])
   const fields = ['body', 'autoVote:checked']
   const {type, jsonMetadata} = ownProps
 
@@ -594,7 +654,7 @@ export default formId => connect((state, ownProps) => {
 
   let {category, title, body, domestic} = ownProps
 
-  if (/submit_/.test(type))
+  if (/submit_/.test(type)) 
     title = body = ''
 
   return {
@@ -657,19 +717,25 @@ export default formId => connect((state, ownProps) => {
     startLoadingIndicator
   }) => {
     // const post = state.global.getIn(['content', author + '/' + permlink])
-    const username = state.user.getIn(['current', 'username'])
+    const username = state
+      .user
+      .getIn(['current', 'username'])
 
     // Parse categories: if category string starts with russian symbol, add 'ru-'
     // prefix to it when transletirate it This is needed to be able to
     // detransletirate it back to russian in future (to show russian categories to
     // user) (all of this is needed because blockchain does not allow russian
     // symbols in category)
-    if (isFeedback)
+    if (isFeedback) 
       category = 'обратная-связь'
     if (category) {
-      category = category.split(' ').map(item => /^[а-яё]/.test(item)
-        ? 'ru--' + detransliterate(item, true)
-        : item).join(' ').trim()
+      category = category
+        .split(' ')
+        .map(item => /^[а-яё]/.test(item)
+          ? 'ru--' + detransliterate(item, true)
+          : item)
+        .join(' ')
+        .trim()
     }
 
     const isEdit = type === 'edit'
@@ -695,7 +761,7 @@ export default formId => connect((state, ownProps) => {
         }
         : null
 
-    if (!linkProps)
+    if (!linkProps) 
       throw new Error('Unknown type: ' + type)
 
       // If this is an HTML post, it MUST begin and end with the tag
@@ -713,9 +779,11 @@ export default formId => connect((state, ownProps) => {
     }
 
     allowedTags.forEach(tag => {
-      rtags.htmltags.delete(tag)
+      rtags
+        .htmltags
+        .delete(tag)
     })
-    if (isHtml)
+    if (isHtml) 
       rtags.htmltags.delete('html') // html tag allowed only in HTML mode
     if (rtags.htmltags.size) {
       errorCallback('Please remove the following HTML elements from your post: ' + Array(...rtags.htmltags).map(tag => `<${tag}>`).join(', '))
@@ -732,32 +800,32 @@ export default formId => connect((state, ownProps) => {
       ...formCategories.toJS(),
       ...rtags.hashtags
     ])
-    if (/^[-a-z\d]+$/.test(rootCategory))
+    if (/^[-a-z\d]+$/.test(rootCategory)) 
       allCategories = allCategories.add(rootCategory)
 
       // merge
     const meta = isEdit
       ? jsonMetadata
       : {}
-    if (allCategories.size)
+    if (allCategories.size) 
       meta.tags = allCategories.toJS();
-    else
+    else 
       delete meta.tags
-    if (rtags.usertags.size)
+    if (rtags.usertags.size) 
       meta.users = rtags.usertags;
-    else
+    else 
       delete meta.users
-    if (rtags.images.size)
+    if (rtags.images.size) 
       meta.image = rtags.images;
-    else
+    else 
       delete meta.image
-    if (rtags.links.size)
+    if (rtags.links.size) 
       meta.links = rtags.links;
-    else
+    else 
       delete meta.links
-    if (domestic && Object.keys(DOMESTIC).indexOf(domestic) !== -1)
+    if (domestic && Object.keys(DOMESTIC).indexOf(domestic) !== -1) 
       meta.language = domestic;
-    else
+    else 
       delete meta.language
 
     meta.app = "golos.io/0.1"
@@ -828,20 +896,23 @@ export default formId => connect((state, ownProps) => {
           Accept: 'application/json',
           'Content-type': 'application/json'
         },
-        body: JSON.stringify({text: body})
-      }).then(r => r.json()).then(res => {
-        if (res.error || res.status !== 'ok') {
-          console.error('Determine language server error', res.error);
-        } else {
-          if (res.iso6391code) {
-            data.operation.json_metadata.language = res.iso6391code
+          body: JSON.stringify({text: body})
+        })
+        .then(r => r.json())
+        .then(res => {
+          if (res.error || res.status !== 'ok') {
+            console.error('Determine language server error', res.error);
+          } else {
+            if (res.iso6391code) {
+              data.operation.json_metadata.language = res.iso6391code
+            }
+            dispatch(transaction.actions.broadcastOperation(data))
           }
+        })
+        .catch(error => {
+          console.error('Caught determine language code server error', error);
           dispatch(transaction.actions.broadcastOperation(data))
-        }
-      }).catch(error => {
-        console.error('Caught determine language code server error', error);
-        dispatch(transaction.actions.broadcastOperation(data))
-      });
+        });
     }
     dispatch(transaction.actions.broadcastOperation({type: 'comment', operation, errorCallback, successCallback}))
   }

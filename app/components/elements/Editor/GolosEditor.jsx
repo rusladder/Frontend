@@ -345,12 +345,18 @@ class GolosEditor extends React.Component {
         const {url} = progress
         const image_md = `![${name}](${url})`
         const {body} = this.state
+        let _cursorPosition = getCursorPosition();
+        body
+          .props
+          .onChange(
+            body.value.slice(0, index) + image_md + body.value.slice(index + 1)
+        )
+
         //const {selectionStart, selectionEnd} = this.refs.postRef
         //body
         //  .props
         //  .onChange(body.value.substring(0, selectionStart) + image_md + body.value.substring(selectionEnd, body.value.length))
       } else {
-        console.log("SOME INFO FROM UPLOAD IMAGE, IF PROGRESS", progress)        
         this.setState({progress})
       }
       setTimeout(() => {

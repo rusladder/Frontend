@@ -349,7 +349,7 @@ class GolosEditor extends React.Component {
         body
           .props
           .onChange(
-            body.value.slice(0, index) + image_md + body.value.slice(index + 1)
+            body.value.slice(0, _cursorPosition) + image_md + body.value.slice(_cursorPosition + 1)
         )
 
         //const {selectionStart, selectionEnd} = this.refs.postRef

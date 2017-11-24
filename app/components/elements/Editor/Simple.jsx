@@ -36,6 +36,7 @@ export default class SimpleEditor extends React.Component {
         const {body, onChange} = this.props
         return (<SimpleMDEReact
             {...body.props}
+            ref="postRef"
             onChange={onChange}
             options={this.getMarkdownOptions()}
             value={body.value}

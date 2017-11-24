@@ -46,7 +46,8 @@ export default class MediumEditor extends React.Component {
             placeholder: {
                 text: tt('g.write_your_story'),
                 hideOnClick: true
-            }
+            },
+            imageDragging: false
         }}/>)
     }
 }

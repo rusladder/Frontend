@@ -39,7 +39,8 @@ export default class SimpleEditor extends React.Component {
             onChange={onChange}
             options={this.getMarkdownOptions()}
             value={body.value}
-            extraKeys={this.props.extraKeys}/>);
+            extraKeys={this.props.extraKeys}/>
+        );
     }
 
 }

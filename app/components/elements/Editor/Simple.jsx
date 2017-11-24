@@ -7,7 +7,8 @@ export default class SimpleEditor extends React.Component {
 
     static propTypes = {
         body: React.PropTypes.object,
-        onChange: React.PropTypes.func
+        onChange: React.PropTypes.func,
+        ref: React.PropTypes.string
     }
 
     constructor(props) {
@@ -36,7 +37,6 @@ export default class SimpleEditor extends React.Component {
         const {body, onChange} = this.props
         return (<SimpleMDEReact
             {...body.props}
-            ref="postRef"
             onChange={onChange}
             options={this.getMarkdownOptions()}
             value={body.value}

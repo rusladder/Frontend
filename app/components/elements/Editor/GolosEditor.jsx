@@ -84,7 +84,6 @@ class GolosEditor extends React.Component {
 
   //OK
   componentDidMount() {
-    console.log(this.refs)
     setTimeout(() => {
       if (this.props.isStory) 
         this.refs.titleRef.focus()
@@ -232,7 +231,7 @@ class GolosEditor extends React.Component {
       }
     }
 
-    let res = toMarkdown(value, {
+    let markdownValue = toMarkdown(value, {
       converters: [convertDel, convertStrike]
     })
 
@@ -248,7 +247,7 @@ class GolosEditor extends React.Component {
       this.setState({
         body: {
           pureHTML: converter.makeHtml(value),
-          value: value
+          value: markdownValue
         }
       })
     }
@@ -331,6 +330,7 @@ class GolosEditor extends React.Component {
   }
 
   upload = (file, name = '') => {
+    console.log("PROPS FROM UPLOAD",this.props)
     const {uploadImage} = this.props
     this.setState({
       progress: {
@@ -340,6 +340,7 @@ class GolosEditor extends React.Component {
 
     uploadImage(file, progress => {
       if (progress.url) {
+        console.log("SOME INFO FROM UPLOAD IMAGE, IF URL", progress)
         this.setState({progress: {}})
         const {url} = progress
         const image_md = `![${name}](${url})`
@@ -349,6 +350,7 @@ class GolosEditor extends React.Component {
         //  .props
         //  .onChange(body.value.substring(0, selectionStart) + image_md + body.value.substring(selectionEnd, body.value.length))
       } else {
+        console.log("SOME INFO FROM UPLOAD IMAGE, IF PROGRESS", progress)        
         this.setState({progress})
       }
       setTimeout(() => {

@@ -84,6 +84,7 @@ class GolosEditor extends React.Component {
 
   //OK
   componentDidMount() {
+    console.log(this.refs)
     setTimeout(() => {
       if (this.props.isStory) 
         this.refs.titleRef.focus()
@@ -343,10 +344,10 @@ class GolosEditor extends React.Component {
         const {url} = progress
         const image_md = `![${name}](${url})`
         const {body} = this.state
-        const {selectionStart, selectionEnd} = this.refs.postRef
-        body
-          .props
-          .onChange(body.value.substring(0, selectionStart) + image_md + body.value.substring(selectionEnd, body.value.length))
+        //const {selectionStart, selectionEnd} = this.refs.postRef
+        //body
+        //  .props
+        //  .onChange(body.value.substring(0, selectionStart) + image_md + body.value.substring(selectionEnd, body.value.length))
       } else {
         this.setState({progress})
       }
@@ -543,7 +544,7 @@ class GolosEditor extends React.Component {
                 }}>
                   {isVisualEditor
                 ? <MediumEditor body={body} onChange={this.onChange}/>
-                : <SimpleEditor body={body} onChange={this.onChange}/>}
+                : <SimpleEditor ref="postRef" body={body} onChange={this.onChange}/>}
                 </Dropzone>
                 {type === 'submit_story' && <p className="drag-and-drop">
                   {tt('reply_editor.insert_images_by_dragging_dropping')}

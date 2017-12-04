@@ -1,7 +1,6 @@
 import React, { PropTypes } from "react";
 import {connect} from 'react-redux';
 import { browserHistory } from 'react-router';
-import big from "bignumber.js";
 import tt from 'counterpart';
 import {Tabs, Tab} from 'app/components/elements/Tabs'
 import AmountSelector from 'app/components/elements/AmountSelector'
@@ -11,8 +10,6 @@ import utils from 'app/utils/Assets/utils';
 import {validate_asset_symbol} from 'app/utils/ChainValidation';
 import { formatAmount } from 'app/utils/ParsersAndFormatters'
 import {api} from 'golos-js'
-
-let MAX_SAFE_INT = new big("9007199254740991");
 
 export class BitAssetOptions extends React.Component {
 
@@ -238,7 +235,7 @@ class AssetCreate extends React.Component {
                 break;
 
             case "max_market_fee":
-                if ((new big(e.target.value)).times(precision).gt(MAX_SAFE_INT)) {
+                if (assetUtils.isMaxShareSupply(e.target.value, precision)) {
                     updateState = false;
                     return this.setState({errors: {max_market_fee: "The number you tried to enter is too large"}});
                 }
@@ -252,7 +249,7 @@ class AssetCreate extends React.Component {
                 break;
 
             case "max_supply":
-                if ((new big(e.target.value)).times(precision).gt(MAX_SAFE_INT)) {
+                if (assetUtils.isMaxShareSupply(e.target.value, precision)) {
                     updateState = false;
                     return this.setState({errors: {max_supply: "The number you tried to enter is too large"}});
                 }
@@ -359,15 +356,23 @@ class AssetCreate extends React.Component {
 
     onCoreRateChange(type, e) {
         let amount, asset;
-        if (type === "quote") {
-            amount = e.amount == "" ? "0" :utils.limitByPrecision(e.amount, this.state.update.precision);
+        let precision
+        if (type === 'quote') {
+            precision = this.state.update.precision
+            amount = e.amount == '' ? '0' : utils.limitByPrecision(e.amount, precision);
             asset = this.state.update.symbol;
         } else {
-            amount = e.amount == "" ? "0" : utils.limitByPrecision(e.amount, this.props.core.get('precision'));
+            precision = this.props.core.get('precision')
+            amount = e.amount == '' ? '0' : utils.limitByPrecision(e.amount, precision);
             asset = 'GOLOS';
         }
 
         const {core_exchange_rate} = this.state;
+
+        if (assetUtils.isMaxShareSupply(amount, utils.get_asset_precision(precision))) {
+            return
+        }
+
         core_exchange_rate[type] = [amount, asset].join(' ');
         this.setState(core_exchange_rate);
     }

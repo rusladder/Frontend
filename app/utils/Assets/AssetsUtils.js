@@ -1,5 +1,7 @@
 import assetConstants from "app/utils/Assets/Constants";
+import big from "bignumber.js";
 
+let MAX_SAFE_INT = new big("9007199254740991");
 export default class AssetUtils {
 
     static splitAmount(amount) {
@@ -8,6 +10,12 @@ export default class AssetUtils {
             res[0], //amount
             res[1] //asset_name
         ];
+    }
+
+    static isMaxShareSupply(amount, precision) {
+        const decimalPos = amount.indexOf('.')
+        const amnt = decimalPos !== -1 ? amount.substring(0, decimalPos) : amount
+        return (new big(amnt)).times(precision).gt(MAX_SAFE_INT)
     }
 
     static getFlagBooleans(mask, isBitAsset = false) {

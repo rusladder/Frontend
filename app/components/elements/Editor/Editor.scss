@@ -1,0 +1,56 @@
+.GolosEditor{
+    font-size: 1.5rem;
+    max-width: 60rem;
+    :active, :hover, :focus {
+        outline: 0;
+        outline-offset: 0;
+    }
+    form{
+        width: 100%;
+    }
+}
+
+.GolosEditor__title {
+    font-size: 2rem;
+    border: 0;
+    font-weight: bold;
+    padding: 0.5rem;
+    height: auto;
+    padding-bottom: 2rem;
+    padding-left: 0;
+    box-shadow: none;
+         
+    &[type='text']:focus{
+        border: 0;
+        transition: border-bottom .5s ease-in-out 0s;
+        box-shadow: none;     
+        border-bottom: 1px solid #dbdbdb;
+    }
+  }
+
+.GolosEditor__body{
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    background-color: rgba(249, 249, 249, 0.7);
+}
+
+.GolosEditor__categories{
+    border: 0;
+    box-shadow: none;  
+    height: auto;
+    margin: 2rem 0rem 2rem 0rem;
+    &input:focus{
+        border: 0;
+        transition: none;
+        box-shadow: none;   
+        border-bottom: 1px solid #dbdbdb;  
+    }   
+}
+
+.GolosEditor__feedback{
+    h4{
+        font-size: 1.5rem;
+    }
+    font-size: 1rem;
+    
+}

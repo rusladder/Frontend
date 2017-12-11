@@ -13,11 +13,10 @@ class Hardfork extends React.Component {
                             </h1>
                         </div>
                         <div className="indent column large-12 medium-12 small-12">
-                            <p><b>Хардфорк блокчейна «Голос»</b> — это серьезный апгрейд блокчейна, разрабатываемый
-                                для вывода Голоса на конкурентные позиции в мире.</p>
+                            <p><b>Хардфорк</b> блокчейна «Голос» — это <b>серьезный апгрейд блокчейна</b>, разрабатываемый для вывода Голоса на <b>конкурентные позиции в мире</b>.</p>
                         </div>
                         <div className="text-block-main column large-8 medium-8 small-12">
-                            <p><b>Блог-платформа <Link className="link" to="/@golosio" >Golos.io</Link> является клиентом блокчейна «Голос»</b>, то есть работает
+                            <p>Блог-платформа <Link className="link" to="/@golosio" >Golos.io</Link> является клиентом блокчейна «Голос», то есть работает
                                 на его «движке».
                             </p>
                             <p>Хардфорк блокчейна приведет <br></br>
@@ -59,7 +58,7 @@ class Hardfork extends React.Component {
                             <Icon name='hf/hf3' size='5x'/>
                             <p className='icon-block-text'>
                                 Владельцы веб-приложений могут устанавливать процент, который они будут получать
-                                от каждого вознаграждения, пользователей
+                                от каждого вознаграждения пользователей
                             </p>
                         </div>
                         <div className='icon-block column large-3 medium-6 small-12'>
@@ -107,7 +106,7 @@ class Hardfork extends React.Component {
                         <div className='icon-block column large-3 medium-6 small-12'>
                             <Icon name='hf/hf10' size='5x'/>
                             <p className='icon-block-text'>
-                                Улучшен плагин статистики, теперь любой желающий, может получать развернутую
+                                Улучшен плагин статистики, теперь любой желающий может получать развернутую
                                 информацию по транзакциям в блокчейне
                             </p>
                         </div>
@@ -181,7 +180,7 @@ class Hardfork extends React.Component {
                     </div>
                     <div className="row">
                             <div className='column large-12 medium-12 small-12'>
-                                <p className='text-block-bottom'><b>Таблицу с голосованием делегатов по каждому нововведению можно увидеть <a href='https://docs.google.com/spreadsheets/d/1wNUfdGRCtnosNamtD159Qwsik3_DZ8fv8jbguu1zSg4/edit'>здесь</a></b></p>
+                                <p className='text-block-bottom'><b>Таблицу с голосованием делегатов по каждому нововведению можно увидеть <a href='https://docs.google.com/spreadsheets/d/1BF5XiPG-PDemntuyVVAbfbaoEfa9N0IXFl6z0HjrsOY/edit#gid=0'>здесь</a></b></p>
                             </div>
                         </div>
                 </div>
@@ -192,7 +191,7 @@ class Hardfork extends React.Component {
                             <hr/>
                         </div>
                         <div className="column large-12 medium-12 small-12">
-                            <p className='text-block-left'><Link className="link" to="/golosio/@golosio/otvety-golos-io-kak-stat-delegatom">Принятие хардфорка произойдет после согласования 17 из 21 делегата</Link> всех нововведений. Сам программный код хардфорка полностью готов к запуску.</p>
+                            <p className='text-block-left'>Принятие хардфорка произойдет после согласования 17 из 21 <a href="/golosio/@golosio/otvety-golos-io-kak-stat-delegatom">делегата</a> всех нововведений. Сам программный код хардфорка полностью готов к запуску.</p>
                         </div>
                     </div>
                 </div>
@@ -211,7 +210,7 @@ class Hardfork extends React.Component {
                                 </div>
                                 <div className='paragraph-text column large-10 medium-10 small-10'>
                                     <h3>
-                                        <b>Расскажите делегатам, за которых вы голосовали</b>, что вы хотите хардфорк.
+                                        <b>Расскажите делегатам</b>, за которых вы голосовали, <b>что вы хотите хардфорк</b>.
                                     </h3>
                                 </div>
                             </div>
@@ -223,7 +222,7 @@ class Hardfork extends React.Component {
                                 </div>
                                 <div className='paragraph-text column large-10 medium-10 small-10'>
                                     <h3>
-                                    <b><Link className="link" to="/~witnesses">Снимите свой голос</Link> с кандидатов</b>, которые не хотят его принятия.
+                                    <Link className="link" to="/~witnesses">Снимите свой голос</Link> с кандидатов, которые не хотят его принятия.
                                     </h3>
                                 </div>
                             </div>
@@ -235,7 +234,7 @@ class Hardfork extends React.Component {
                                 </div>
                                 <div className='paragraph-text column large-10 medium-10 small-10'>
                                     <h3>
-                                    <b><Link className="link" to="/~witnesses">Выберите тех делегатов</Link>, которые, как и вы</b>, жаждут скорейшего принятия хардфорка.
+                                    <b><Link className="link" to="/~witnesses">Выберите тех делегатов</Link>, которые, как и вы, жаждут скорейшего принятия хардфорка.</b>
                                     </h3>
                                 </div>
                             </div>

@@ -213,7 +213,7 @@ class PostFull extends React.Component {
     showTransfer = () => {
       const post_content = this.props.cont.get(this.props.post);
       const content = post_content.toJS();
-      const {author, url} = content;
+      const { author, url } = content;
       const asset = LIQUID_TICKER;
       const transferType = 'Transfer to Account';
       const memo = url;
@@ -221,7 +221,8 @@ class PostFull extends React.Component {
         to: author,
         asset,
         transferType,
-        memo
+        memo,
+        disableMemo: true
       });
     };
 

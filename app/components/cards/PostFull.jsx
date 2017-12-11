@@ -221,7 +221,8 @@ class PostFull extends React.Component {
         to: author,
         asset,
         transferType,
-        memo
+        memo,
+        disableMemo: true
       });
     };
 

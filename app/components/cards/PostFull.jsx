@@ -213,13 +213,10 @@ class PostFull extends React.Component {
     showTransfer = () => {
       const post_content = this.props.cont.get(this.props.post);
       const content = post_content.toJS();
-      const {author, url} = content;
+      const { author, url } = content;
       const asset = LIQUID_TICKER;
       const transferType = 'Transfer to Account';
-      const app_url_parts = window.location.href.split(("/"));
-      const protocol_domain = `${app_url_parts[0]}//${app_url_parts[2]}`
-      const post_url = `${protocol_domain}${url}` // not processed as a link by Memo.linkify() if no protocol://domain
-      const memo = post_url;
+      const memo = url;
       this.props.showTransfer({
         to: author,
         asset,

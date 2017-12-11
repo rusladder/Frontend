@@ -3,8 +3,12 @@ import React from 'react';
 import { browserHistory } from 'react-router';
 import ReplyEditor from 'app/components/elements/ReplyEditor'
 
+import Editor from 'app/components/elements/Editor/GolosEditor'
+
 const formId = 'submitStory'
 const SubmitReplyEditor = ReplyEditor(formId)
+
+const GolosEditor = Editor(formId)
 
 class SubmitPost extends React.Component {
     // static propTypes = {
@@ -23,7 +27,8 @@ class SubmitPost extends React.Component {
         const {query} = this.props.location
         return (
             <div className="SubmitPost">
-               <SubmitReplyEditor type={query.type || 'submit_story'} successCallback={success} />
+               {/* <SubmitReplyEditor type={query.type || 'submit_story'} successCallback={success} /> */}
+               <GolosEditor type={query.type || 'submit_story'} successCallback={success}/>
             </div>
         );
     }

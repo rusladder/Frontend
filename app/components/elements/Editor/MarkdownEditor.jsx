@@ -12,19 +12,29 @@ export default class MarkdownEditor extends React.Component {
 
     static defaultProps = {
         id: 0,
+        onChange: function() {},
     }
 
     constructor(props) {
         super(props)
-        this.state = {keyChange: false};
+        this.state = {keyChange: false}
+        this.createEditor = this.createEditor.bind(this)
+        this.eventWrapper = this.eventWrapper.bind(this)
+        this.removeEvents = this.removeEvents.bind(this)
+        this.addEvents = this.addEvents.bind(this)
     }
 
     componentWillMount() {
-        this.setState({id : this.props.id + 1});
+        this.setState({id : this.props.id + 1})
     }
 
     componentDidMount() {
         this.createEditor()
+        this.addEvents()
+    }
+
+    componentWillUnmount() {
+        this.removeEvents()
     }
 
     componentWillReceiveProps(nextProps) {
@@ -34,16 +44,35 @@ export default class MarkdownEditor extends React.Component {
     
         this.setState({
           keyChange: false
-        });
+        })
     }
 
     createEditor() {
         const initialOptions = {
-          element: document.getElementById(this.state.id+"-markdown-textarea"),
+          element: document.getElementById(this.state.id+"-markdown-textarea")
         }
-        const allOptions = Object.assign({}, initialOptions, this.getMarkdownOptions());
+        const allOptions = Object.assign({}, initialOptions, this.getMarkdownOptions())
         this.setState({simplemde : new SimpleMDE(allOptions)})
     }
+
+    eventWrapper() {
+        this.setState({keyChange: true})
+        this.props.onChange(this.state.simplemde.value())
+    }
+     
+    removeEvents() {
+         this.editorEl.removeEventListener('keyup', this.eventWrapper)
+         this.editorToolbarEl && this.editorToolbarEl.removeEventListener('click', this.eventWrapper)
+    }
+
+    addEvents() {
+         const wrapperId = `${this.state.id}-markdown-editor-wrapper`
+         const wrapperEl = document.getElementById(`${wrapperId}`)
+         this.editorEl = wrapperEl.getElementsByClassName('CodeMirror')[0]
+         this.editorToolbarEl = wrapperEl.getElementsByClassName('editor-toolbar')[0]
+         this.editorEl.addEventListener('keyup', this.eventWrapper)
+         this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventWrapper)
+     }
 
     getMarkdownOptions() {
         return {
@@ -57,6 +86,8 @@ export default class MarkdownEditor extends React.Component {
                 "guide", 'side-by-side', 'fullscreen'
             ],
             promptURLs: true,
+            value: this.props.body.value,
+            onChange: this.props.onChange,
             initialValue: this.props.body.value,
             placeholder: tt('g.write_your_story'),
             autoDownloadFontAwesome: true
@@ -64,8 +95,6 @@ export default class MarkdownEditor extends React.Component {
     }
 
     render() {
-        const {body, onChange} = this.props
-        
         const textarea = <textarea key={this.state.id} id={`${this.state.id}-markdown-textarea`} />
 
         return (

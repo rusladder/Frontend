@@ -239,7 +239,7 @@ class GolosEditor extends React.Component {
       this.setState({
         body: {
           pureHTML: value,
-          value: res
+          value: markdownValue
         }
       })
 

@@ -37,7 +37,7 @@ class Memo extends React.Component {
             if (section.trim().length === 0) continue
             const matchUserName = section.match(/(^|\s)(@[a-z][-\.a-z\d]+[a-z\d])/i)
             const matchLink = section.match(links.local)
-            const matchPostLink = (section.includes(`/pst/@`)) && (section.split(`/`).length === 4);
+            const matchPostLink = (section.includes(`pst/@`)) && (section.split(`/`).length === 4);
 
             if (matchUserName) {
                 const user2 = matchUserName[0].trim().substring(1)

@@ -502,7 +502,7 @@ class AssetCreate extends React.Component {
             {precision: update.precision},
             baseAmount[0] * utils.get_asset_precision(core),
             core);
-        const formattedPrice = price.toFixed(2 + (parseInt(update.precision, 10) || 8));
+        const formattedPrice = price.toFixed((parseInt(update.precision, 10) || 8));
 
         let tabs = <div className="AssetCreate_tabs">
             <h4>{tt('asset_create_jsx.header')}</h4>

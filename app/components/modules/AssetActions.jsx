@@ -47,8 +47,9 @@ class AssetActions extends Component {
 
         const insufficientFunds = (amount) => {
 			if (isIssue) {
-				const currentSupply = assets.getIn([assetName, 'dynamic_data', 'current_supply']) / utils.get_asset_precision(3)
-				const maxSupply = assets.getIn([assetName, 'options', 'max_supply']) / utils.get_asset_precision(3)
+                const precision = assets.getIn([assetName, 'precision'])
+				const currentSupply = assets.getIn([assetName, 'dynamic_data', 'current_supply']) / utils.get_asset_precision(precision)
+				const maxSupply = assets.getIn([assetName, 'options', 'max_supply']) / utils.get_asset_precision(precision)
 				return parseFloat(amount) > parseFloat(maxSupply - currentSupply)
 			}
 
@@ -81,9 +82,10 @@ class AssetActions extends Component {
 	balanceValue() {
 		if (this.state.isIssue ) {
 			const { assets, assetName } = this.props
-			const maxSupply = assets.getIn([assetName, 'options', 'max_supply']) / utils.get_asset_precision(3)
-			const currentSupply = assets.getIn([assetName, 'dynamic_data', 'current_supply']) / utils.get_asset_precision(3)
-			return [ parseFloat(maxSupply - currentSupply).toFixed(3), assetName ].join(' ')
+            const precision = assets.getIn([assetName, 'precision'])
+			const maxSupply = assets.getIn([assetName, 'options', 'max_supply']) / utils.get_asset_precision(precision)
+			const currentSupply = assets.getIn([assetName, 'dynamic_data', 'current_supply']) / utils.get_asset_precision(precision)
+			return [ parseFloat(maxSupply - currentSupply).toFixed(precision), assetName ].join(' ')
 		}
 
 		const { assetsBalance, assetName } = this.props
@@ -108,7 +110,8 @@ class AssetActions extends Component {
         const { to, amount, memo } = this.state;
         const { loading, trxError, isIssue, isReserve, isTransfer } = this.state;
         const { submitting, valid, handleSubmit } = this.state.transfer;
-        const { issuer, assetName, type, dispatchSubmit } = this.props;
+        const { assets, issuer, assetName, type, dispatchSubmit } = this.props;
+        const precision = assets.getIn([assetName, 'precision'])
 
         const isMemoPrivate = memo && /^#/.test(memo.value);
         const isMemoPrivateText = isMemoPrivate ? tt('transfer_jsx.private'): tt('transfer_jsx.public');
@@ -120,7 +123,7 @@ class AssetActions extends Component {
                     if(this.props.onClose) this.props.onClose()
                     this.setState({loading: false})
                 }
-                dispatchSubmit({...data, assetName, errorCallback: this.errorCallback, issuer, type, success })
+                dispatchSubmit({...data, assetName, errorCallback: this.errorCallback, issuer, type, success, precision })
             })}
                   onChange={this.clearError}
             >
@@ -255,8 +258,8 @@ export default connect(
 
     dispatch => ({
 
-        dispatchSubmit: ({ to, amount, assetName, memo, issuer, errorCallback, type, success}) => {
-            const _amount = [parseFloat(amount).toFixed(3), assetName].join(' ');
+        dispatchSubmit: ({ to, amount, assetName, memo, issuer, errorCallback, type, success, precision}) => {
+            const _amount = [parseFloat(amount).toFixed(precision), assetName].join(' ');
 			const username = issuer.get('username')
 
             const action =

@@ -61,10 +61,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     constructor(props) {
       super()
-      this.state = {
-        progress: {},
-        isVisualEditor: true
-      }
+      this.state = {progress: {}}
       this.initForm(props)
     }
 
@@ -74,6 +71,16 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
       if (process.env.BROWSER) {
         this.setAutoVote()
+
+        let savedEditor = localStorage.getItem('EditorData-isVisualEditor')
+
+        console.log(savedEditor, "savedEditor")
+
+        if(savedEditor == null)
+          this.setState({isVisualEditor: true})
+        else
+          this.setState({isVisualEditor: savedEditor})
+
         this.setState({
           payoutType: this.props.isStory
             ? (localStorage.getItem('defaultPayoutType') || '50%')
@@ -269,11 +276,11 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     //Ok
     toggleEditor = (e) => {
       e.preventDefault();
-      const state = {
-        isVisualEditor: !this.state.isVisualEditor
-      }
-      this.setState(state);
-      localStorage.setItem('EditorData-isVisualEditor', this.state.isVisualEditor)
+      console.log("now editor is", this.state.isVisualEditor)
+      this.setState({isVisualEditor: !this.state.isVisualEditor});
+      console.log("was set to", this.state.isVisualEditor)
+      if (process.env.BROWSER)
+          localStorage.setItem('EditorData-isVisualEditor', this.state.isVisualEditor)
     }
 
     showDraftSaved() {
@@ -336,17 +343,16 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
           message: tt('reply_editor.uploading') + '...'
         }
       })
-      uploadImage(file, progress => {
-        if (progress.url) {
-          const {url} = progress
-          this.setState({progress: {}})
-          const image_md = `![${name}](${url})`
-          insertImage(image_md)
-        } else {
-          this.setState({progress})
-        }
-
-      })
+       uploadImage(file, progress => {
+         if (progress.url) {
+           const {url} = progress
+           this.setState({progress: {}})
+           const image_md = `![${name}](${url})`
+           insertImage(image_md)
+         } else {
+           this.setState({progress})
+         }
+       })
     }
 
     render() {
@@ -537,7 +543,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                   }}> 
                     {isVisualEditor
                       ? <MediumEditor body={body} onChange={this.onChange}/>
-                      : <MarkdownEditor body={body} onChange={this.onChange} uploadImage={this.upload}/>}
+                      : <MarkdownEditor body={body} onChange={this.onChange} uploadImage={this.props.uploadImage}/>}
                   </Dropzone>
                   {type === 'submit_story' && <p className="drag-and-drop">
                     {tt('reply_editor.insert_images_by_dragging_dropping')}

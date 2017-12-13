@@ -38,6 +38,8 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
   converter.setOption('strikethrough', true);
   converter.setOption('simpleLineBreaks', true);
 
+  let saveEditorTimeout
+
   class GolosEditor extends React.Component {
 
     static propTypes = {
@@ -90,21 +92,69 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     }
 
     componentWillUpdate(nextProps, nextState) {
-      if (process.env.BROWSER) {
-        const ts = this.state
-        const ns = nextState
+      this.saveEditorDraft(nextProps, nextState)
+    }
 
-        // Save curent draft to localStorage if(ts.body.value !== ns.body.value ||
-        // (ns.category && ts.category.value !== ns.category.value) ||     (ns.title &&
-        // ts.title.value !== ns.title.value) ) { // also prevents saving after parent
-        // deletes this information     const {formId} = nextProps     const {category,
-        // title, body} = ns     const data = {         formId,         title: title ?
-        // title.value : undefined,         category: category ? category.value :
-        // undefined,         body: body.value,     } clearTimeout(saveEditorTimeout)
-        // saveEditorTimeout = setTimeout(() => {      // console.log('save formId',
-        // formId, body.value) localStorage.setItem('replyEditorData-' + formId,
-        // JSON.stringify(data, null, 0))         this.showDraftSaved()     }, 500) }
+    saveEditorDraft(nextProps, nextState){
+      if(process.env.BROWSER) {
+        const currentState = this.state
+        const newState = nextState
+
+        if(currentState.body.value !== newState.body.value ||
+            (newState.category && currentState.category.value !== newState.category.value) ||
+            (newState.title && currentState.title.value !== newState.title.value)
+        ) { // also prevents saving after parent deletes this information
+            const {formId} = nextProps
+            const {category, title, body} = newState
+            const data = {
+                formId,
+                title: title ? title.value : undefined,
+                category: category ? category.value : undefined,
+                body: body.value,
+            }
+            clearTimeout(saveEditorTimeout)
+            saveEditorTimeout = setTimeout(() => {
+                // console.log('save formId', formId, body.value)
+                localStorage.setItem('EditorData-' + formId, JSON.stringify(data, null, 0))
+                this.showDraftSaved()
+            }, 500)
+        }
       }
+    }
+
+    loadEditorDraft(){
+      if(process.env.BROWSER) {
+        let raw = null;
+        // Process initial body value (if this is an edit)
+        const {body} = this.state
+        if (body.value) {
+            raw = body.value
+        }
+
+        // Check for draft data
+        let draft = localStorage.getItem('EditorData-' + formId)
+        if(draft) {
+            draft = JSON.parse(draft)
+            const {category, title} = this.state
+            if(category) category.props.onChange(draft.category)
+            if(title) title.props.onChange(draft.title)
+            raw = draft.body
+        }
+
+        // If we have an initial body, check if it's html or markdown
+        if(raw) {
+            rte = isHtmlTest(raw)
+        }
+
+        // console.log("initial reply body:", raw || '(empty)')
+        body.props.onChange(raw)
+        this.setState({
+            rte,
+            rte_value: rte ? stateFromHtml(raw) : null
+        })
+        this.setAutoVote()
+        this.setState({payoutType: this.props.isStory ? (localStorage.getItem('defaultPayoutType') || '50%') : '50%'})
+    }
     }
 
     componentWillUnmount() {
@@ -444,6 +494,11 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       return (
         <div className='GolosEditor row'>
           {isFeedback && <div className="column small-12"><Feedback/></div>}
+          {/* DRAFT TOOLTIP BODY */}
+          <div ref="draft" className="GolosEditor__draft GolosEditor__draft-hide">
+            {tt('reply_editor.draft_saved')}
+          </div>
+          {/* END DRAFT TOOLTIP BODY */}
           <form
             onSubmit={handleSubmit(({data}) => {
             const startLoadingIndicator = () => this.setState({loading: true, postError: undefined});

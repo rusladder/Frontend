@@ -72,3 +72,27 @@
     }
 }
 
+.GolosEditor__draft {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: rgba(255,255,255,0.9);
+    border-radius: 5px;
+    color: #2d2d2d;
+    font-size: 1.2em;
+    text-align: center;
+    z-index: 1;
+    padding: 0.5rem 1rem;
+  }
+  .GolosEditor__draft-hide {
+    opacity: 0;
+  }
+  .GolosEditor__draft-saved {
+    -webkit-transition: opacity 3s ease-in-out;
+    -moz-transition: opacity 3s ease-in-out;
+    -ms-transition: opacity 3s ease-in-out;
+    -o-transition: opacity 3s ease-in-out;
+    transition: opacity 3s ease-in-out;
+    opacity: 0;
+  }
+

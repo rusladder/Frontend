@@ -7,7 +7,6 @@ export default class MarkdownEditor extends React.Component {
     static propTypes = {
         body: React.PropTypes.object,
         onChange: React.PropTypes.func,
-        uploadImage: React.PropTypes.func
     }
 
     static defaultProps = {
@@ -39,13 +38,6 @@ export default class MarkdownEditor extends React.Component {
 
     componentWillUnmount() {
         this.removeEvents()
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.simplemde && !this.state.keyChange && (nextProps.body.value !== this.simplemde.value())) {
-            this.simplemde.value(nextProps.body.value)
-        }
-        this.setState({keyChange: false})
     }
 
     createEditor() {
@@ -114,7 +106,15 @@ export default class MarkdownEditor extends React.Component {
         let {dropCoords} = this.state
 
         insertImage = (imageUrl) => {
-            this.simplemde.codemirror.replaceRange(imageUrl, dropCoords)
+            if(dropCoords){
+                this.simplemde.codemirror.replaceRange(imageUrl, dropCoords)
+                this.setState({dropCoords: false})
+            }
+            else{
+                let pos = this.simplemde.codemirror.getCursor()
+                this.simplemde.codemirror.setSelection(pos, pos)
+                this.simplemde.codemirror.replaceSelection(imageUrl)
+            }
         }
 
         const textarea = <textarea key={this.state.id} id={`${this.state.id}-markdown-textarea`}/>

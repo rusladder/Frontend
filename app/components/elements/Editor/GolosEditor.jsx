@@ -196,15 +196,8 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       const {autoVote} = this.state
       const key = 'EditorData-autoVote-story'
       localStorage.setItem(key, !autoVote.value)
-      autoVote
-        .props
-        .onChange(!autoVote.value)
+      autoVote.props.onChange(!autoVote.value)
     }
-
-    // onNsfwChange = e => {   let checked = e.target.checked   let {category} =
-    // this.state;   let hits = [];   let reg = new RegExp('nsfw',"g","i");   hits =
-    // category.value.match(reg);   if (!hits) {       alert("Your name wasn't
-    // found!");   } else {       alert(hits);   } }
 
     onChange = (value) => {
       const {body, isVisualEditor} = this.state
@@ -257,9 +250,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
         const {autoVote} = this.state
         const key = 'EditorData-autoVote-story'
         const autoVoteDefault = JSON.parse(localStorage.getItem(key) || true)
-        autoVote
-          .props
-          .onChange(autoVoteDefault)
+        autoVote.props.onChange(autoVoteDefault)
       }
     }
 
@@ -274,13 +265,11 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       }
     }
     
+    //Ok
     setSavedEditor(){
       if (process.env.BROWSER) {
-        let savedEditor = JSON.parse(localStorage.getItem('EditorData-isVisualEditor'))
-          if(savedEditor == null)
-            this.setState({isVisualEditor: true})             
-          else
-            this.setState({isVisualEditor: savedEditor})             
+        let savedEditor = JSON.parse(localStorage.getItem('EditorData-isVisualEditor') || true)  
+        this.setState({isVisualEditor: savedEditor})             
       }
     }
 
@@ -318,23 +307,6 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       this
         .dropzone
         .open();
-    }
-
-    onPasteCapture = e => {
-      try {
-        if (e.clipboardData) {
-          for (const item of e.clipboardData.items) {
-            if (item.kind === 'file' && /^image\//.test(item.type)) {
-              const blob = item.getAsFile()
-              this.upload(blob)
-            }
-          }
-        } else {
-          this.setState({noClipboardData: true})
-        }
-      } catch (error) {
-        console.error('Error analyzing clipboard event', error);
-      }
     }
 
     upload = (file, name = '') => {
@@ -513,7 +485,8 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                 </div>
               </div>
             </div>}
-
+            {/* ////////////////////// */}
+            {/* TITLE BODY */}
             <div className='row'>
               <div className='column small-12'>
                 <input
@@ -527,7 +500,9 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                 {titleError}
               </div>
             </div>
-
+            {/* END TITLE BODY */}
+            {/* ////////////////////// */}
+            {/* EDITOR BODY  */}
             <div className='GolosEditor__body row'>
               <div className='column small-12'>
                 <span>
@@ -544,7 +519,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                   }}> 
                     {isVisualEditor
                       ? <MediumEditor body={body} onChange={this.onChange}/>
-                      : <MarkdownEditor body={body} onChange={this.onChange} uploadImage={this.props.uploadImage}/>}
+                      : <MarkdownEditor body={body} onChange={this.onChange}/>}
                   </Dropzone>
                   {type === 'submit_story' && <p className="drag-and-drop">
                     {tt('reply_editor.insert_images_by_dragging_dropping')}
@@ -564,27 +539,48 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                 {postError && <div className="error">{postError}</div>}
               </div>
             </div>
-
+            {/* END EDITOR BODY */}
+            {/* ////////////////////// */}
+            {/* TAGS BODY */}
             {isStory && !isFeedback && <div className='row'>
               <div className='column small-12 GolosEditor__categories'>
                 <CategorySelector {...category.props} disabled={loading} isEdit={isEdit}/>
                 <div className="error">{(category.touched || category.value) && category.error}&nbsp;</div>
               </div>
             </div>}
-
+            {/* END TAGS BODY */}
+            {/* ////////////////////// */}
+            {/* SETTINGS BODY */}
             {isStory && !isFeedback && <div className='GolosEditor__settings row'>
-              <div className='column small-8 large-12'>
-                {/* <label className='float-left' title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
-                Контент для взрослых&nbsp;
-                <input type="checkbox" onChange={onNsfwChange}/>
-              </label> */}
+              <div className='column small-12 large-6'>               
                 <label title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
                   {tt('g.upvote_post')}&nbsp;
                   <input type="checkbox" checked={autoVote.value} onChange={autoVoteOnChange}/>
                 </label>
               </div>
-            </div>}
+              {isStory && !isEdit && <div className='column small-12 large-6'>              
+              <div className="ReplyEditor__options float-right text-right">
+              {tt('g.rewards')}:&nbsp;
+              <select
+                value={this.state.payoutType}
+                onChange={this.onPayoutTypeChange}
+                style={{
+                color: this.state.payoutType == '0%'
+                  ? 'orange'
+                  : 'inherit'
+              }}>
+                <option value="100%">{tt('reply_editor.power_up_100')}</option>
+                <option value="50%">{tt('reply_editor.default_50_50')}</option>
+                <option value="0%">{tt('reply_editor.decline_payout')}</option>
+              </select>
 
+              <br/>
+              </div>
+            </div>}
+            </div>}
+            {/* END SETTINGS BODY */}
+            {/* ////////////////////// */}
+            {/* SUBMIT BODY */}
             <div className='GolosEditor__submit row'>
               <div className='column small-6 large-12'>
                 {!loading && <button type="submit" className="button" disabled={disabled}>
@@ -610,26 +606,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                 </button>}
               </div>
             </div>
-
-            {isStory && !isEdit && <div className="ReplyEditor__options float-right text-right">
-
-              {tt('g.rewards')}:&nbsp;
-              <select
-                value={this.state.payoutType}
-                onChange={this.onPayoutTypeChange}
-                style={{
-                color: this.state.payoutType == '0%'
-                  ? 'orange'
-                  : 'inherit'
-              }}>
-                <option value="100%">{tt('reply_editor.power_up_100')}</option>
-                <option value="50%">{tt('reply_editor.default_50_50')}</option>
-                <option value="0%">{tt('reply_editor.decline_payout')}</option>
-              </select>
-
-              <br/>
-            </div>}
-
+            {/*END SUBMIT BODY */}
           </form>
         </div>
       )

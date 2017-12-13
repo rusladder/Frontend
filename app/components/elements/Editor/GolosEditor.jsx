@@ -67,20 +67,9 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     componentWillMount() {
       const {setMetaData, formId, jsonMetadata} = this.props
-      setMetaData(formId, jsonMetadata)
-
+      setMetaData(formId, jsonMetadata)      
       if (process.env.BROWSER) {
-        this.setAutoVote()
-
-        let savedEditor = localStorage.getItem('EditorData-isVisualEditor')
-
-        console.log(savedEditor, "savedEditor")
-
-        if(savedEditor == null)
-          this.setState({isVisualEditor: true})
-        else
-          this.setState({isVisualEditor: savedEditor})
-
+        this.setAutoVote()        
         this.setState({
           payoutType: this.props.isStory
             ? (localStorage.getItem('defaultPayoutType') || '50%')
@@ -91,6 +80,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     //OK
     componentDidMount() {
+      this.setSavedEditor()
       setTimeout(() => {
         if (this.props.isStory) 
           this.refs.titleRef.focus()
@@ -275,12 +265,23 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     //Ok
     toggleEditor = (e) => {
-      e.preventDefault();
-      console.log("now editor is", this.state.isVisualEditor)
-      this.setState({isVisualEditor: !this.state.isVisualEditor});
-      console.log("was set to", this.state.isVisualEditor)
-      if (process.env.BROWSER)
-          localStorage.setItem('EditorData-isVisualEditor', this.state.isVisualEditor)
+      e.preventDefault()
+      let isVisualEditor = this.state.isVisualEditor      
+      isVisualEditor = !isVisualEditor
+      this.setState({isVisualEditor: isVisualEditor});
+      if (process.env.BROWSER){
+        localStorage.setItem('EditorData-isVisualEditor', isVisualEditor)        
+      }
+    }
+    
+    setSavedEditor(){
+      if (process.env.BROWSER) {
+        let savedEditor = JSON.parse(localStorage.getItem('EditorData-isVisualEditor'))
+          if(savedEditor == null)
+            this.setState({isVisualEditor: true})             
+          else
+            this.setState({isVisualEditor: savedEditor})             
+      }
     }
 
     showDraftSaved() {

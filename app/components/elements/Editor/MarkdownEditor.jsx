@@ -42,13 +42,9 @@ export default class MarkdownEditor extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!this.state.keyChange && (nextProps.value !== this.state.simplemde.value())) {
-            this
-                .state
-                .simplemde
-                .value(nextProps.value)
+        if (this.simplemde && !this.state.keyChange && (nextProps.body.value !== this.simplemde.value())) {
+            this.simplemde.value(nextProps.body.value)
         }
-
         this.setState({keyChange: false})
     }
 
@@ -57,12 +53,12 @@ export default class MarkdownEditor extends React.Component {
             element: document.getElementById(this.state.id + "-markdown-textarea")
         }
         const allOptions = Object.assign({}, initialOptions, this.getMarkdownOptions())
-        this.setState({simplemde: new SimpleMDE(allOptions)})
+        this.simplemde = new SimpleMDE(allOptions)
     }
 
     eventWrapper() {
         this.setState({keyChange: true})
-        this.props.onChange(this.state.simplemde.value())
+        this.props.onChange(this.simplemde.value())
     }
 
     removeEvents() {
@@ -107,7 +103,7 @@ export default class MarkdownEditor extends React.Component {
     }
 
     onDropEvent = (event) => {
-        let coords = this.state.simplemde.codemirror.coordsChar({
+        let coords = this.simplemde.codemirror.coordsChar({
             left: event.pageX,
             top: event.pageY
         })
@@ -118,7 +114,7 @@ export default class MarkdownEditor extends React.Component {
         let {dropCoords} = this.state
 
         insertImage = (imageUrl) => {
-            this.state.simplemde.codemirror.replaceRange(imageUrl, dropCoords);
+            this.simplemde.codemirror.replaceRange(imageUrl, dropCoords)
         }
 
         const textarea = <textarea key={this.state.id} id={`${this.state.id}-markdown-textarea`}/>

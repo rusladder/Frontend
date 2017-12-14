@@ -1,8 +1,6 @@
-import React, { PropTypes, Component } from "react"
-import OrderbookRow from "./OrderbookRow";
-import tt from 'counterpart';
-import { DEBT_TOKEN_SHORT } from 'app/client_config';
-import {Order} from "app/utils/MarketClasses";
+import React, { PropTypes, Component } from 'react'
+import OrderbookRow from './OrderbookRow'
+import tt from 'counterpart'
 
 export default class Orderbook extends Component {
 
@@ -82,43 +80,13 @@ export default class Orderbook extends Component {
 
     }
 
-	// Take raw orders from API and put them into a format that's clean & useful
-	normalizeOrders(orders) {
-		if(typeof orders == 'undefined') return {'bids': [], 'asks': []}
-		return ['bids', 'asks'].reduce( (out, side) => {
-			out[side] = orders[side].map( o => {
-				return new Order(o, side)
-			});
-			return out
-		}, {})
-	}
-
-	 aggOrders(orders) {
-		return ['bids', 'asks'].reduce( (out, side) => {
-
-			var buff = [], last = null
-			orders[side].map( o => {
-				if(last !== null && o.getStringPrice() === last.getStringPrice()) {
-					buff[buff.length-1] = buff[buff.length-1].add(o);
-				} else {
-					buff.push(o)
-				}
-				last = o
-			});
-
-			out[side] = buff
-			return out
-		}, {})
-	}
-
     render() {
-        const { base, quote, side } = this.props
+        const { base, quote, side, orderbook } = this.props
         const { buyIndex, sellIndex } = this.state
+
         const buy = side === "bids"
+        const currentIndex = buy ? buyIndex : sellIndex
 
-		let orderbook = this.aggOrders(this.normalizeOrders(this.props.orderbook));
-
-        const currentIndex = buy ? buyIndex : sellIndex;
         return (
             <div style={{marginRight: "1rem"}}>
                 <table className="Market__orderbook">
@@ -131,18 +99,22 @@ export default class Orderbook extends Component {
 					</tr>
 					</thead>
                     <tbody>
-                            {this.renderOrdersRows(orderbook, side)}
+                        {this.renderOrdersRows(orderbook, side)}
                     </tbody>
                 </table>
                 <nav style={{paddingBottom: "1rem"}}>
                   <ul className="pager">
                     <li>
-                        <div className={"button tiny hollow " + (buy ? "float-left" : "float-left") + (currentIndex === 0 ? " disabled" : "")} onClick={this._setBuySellPage.bind(this, false)} aria-label="Previous">
+                        <div className={"button tiny hollow " + (buy ? "float-left" : "float-left") + (currentIndex === 0 ? " disabled" : "")}
+                            onClick={this._setBuySellPage.bind(this, false)} aria-label="Previous"
+                        >
                             <span aria-hidden="true">&larr; {tt(buy ? 'market_jsx.higher' : 'market_jsx.lower')}</span>
                         </div>
                     </li>
                     <li>
-                        <div className={"button tiny hollow " + (buy ? "float-right" : "float-right") + (currentIndex >= 10 ? " disabled" : "")} onClick={this._setBuySellPage.bind(this, true)} aria-label="Next">
+                        <div className={"button tiny hollow " + (buy ? "float-right" : "float-right") + (currentIndex >= 10 ? " disabled" : "")}
+                            onClick={this._setBuySellPage.bind(this, true)} aria-label="Next"
+                        >
                             <span aria-hidden="true">{tt(buy ? 'market_jsx.lower' : 'market_jsx.higher')} &rarr;</span>
                         </div>
                     </li>

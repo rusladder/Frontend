@@ -1,20 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {connect} from 'react-redux';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { connect } from 'react-redux'
 import g from 'app/redux/GlobalReducer'
 import transaction from 'app/redux/Transaction'
 import TransactionError from 'app/components/elements/TransactionError'
-import DepthChart from 'app/components/elements/DepthChart';
-import Orderbook from "app/components/elements/Orderbook";
-import OrderHistory from "app/components/elements/OrderHistory";
-import {Order, TradeHistory} from "app/utils/MarketClasses";
-import {roundUp, roundDown} from "app/utils/MarketUtils";
-import {Tabs, Tab} from 'app/components/elements/Tabs'
+import DepthChart from 'app/components/elements/DepthChart'
+import Orderbook from 'app/components/elements/Orderbook'
+import OrderHistory from 'app/components/elements/OrderHistory'
+import { TradeHistory } from 'app/utils/MarketClasses'
+import { roundUp, roundDown } from 'app/utils/MarketUtils'
+import { normalizeOrders, aggOrders } from 'app/utils/OrdersUtils'
+import { Tabs, Tab } from 'app/components/elements/Tabs'
 import BuySell from 'app/components/elements/BuySell'
 import OpenOrdersTable from 'app/components/elements/OpenOrdersTable'
 import TickerPriceStat from 'app/components/elements/TickerPriceStat'
-import tt from 'counterpart';
-import { LIQUID_TICKER, DEBT_TICKER } from 'app/client_config';
+import tt from 'counterpart'
+import { LIQUID_TICKER, DEBT_TICKER } from 'app/client_config'
 
 class Market1 extends React.Component {
 
@@ -101,6 +102,7 @@ class Market1 extends React.Component {
 		this.setState({price})
     }
 
+	// move to BuySell
 	showBorrowDialog = () => {
 		this.props.borrowBitasset()
 	}
@@ -110,52 +112,44 @@ class Market1 extends React.Component {
         const { cancelOrderClick, setFormPrice } = this
         const { base_quote, price } = this.state
 
-		const { isMarketAsset } = this.props
-
+		const { isMarketAsset, quoteAsset } = this.props
+		let orderbook = aggOrders(normalizeOrders(this.props.orderbook));
+		
 		const [ base, quote ] = base_quote.split('_')
-
-        let ticker = {
-            latest:         0,
-            lowest_ask:     0,
-            highest_bid:    0,
-            percent_change: 0,
-			base_volume:    0,
-			quote_volume:    0
-        };
-
-        if(typeof this.props.ticker != 'undefined') {
-            let { latest, lowest_ask, highest_bid, percent_change, base_volume, quote_volume } = this.props.ticker;
-            let { base, quote } = this.props.feed
-            ticker = {
-                latest:         parseFloat(latest),
-                lowest_ask:     roundUp(parseFloat(lowest_ask), 6),
-                highest_bid:    roundDown(parseFloat(highest_bid), 6),
-                percent_change: parseFloat(percent_change),
-				quote_volume:     (parseFloat(quote_volume)),
-                // feed_price:     parseFloat(base.split(' ')[0]) / parseFloat(quote.split(' ')[0])
-				base_volume: (parseFloat(base_volume)),
-            }
-        }
 
         function trade_history_table(trades) {
             if (!trades || !trades.length) {
                 return [];
             }
             return <OrderHistory history={trades} base={base} quote={quote} />
-        }
+		}
+		
+		let ticker = {
+            latest:         0,
+            lowest_ask:     0,
+            highest_bid:    0,
+            percent_change: 0,
+			base_volume:    0,
+			quote_volume:   0
+        };
 
         return (
             <div>
                 <div className="row">
                     <div className="column small-8">
-                       {/* <Tabs>
-                            <Tab title="Trading Chart">
-                            </Tab>
-
+                       <Tabs>
+						
                             <Tab title="Depth Chart">
-								{<DepthChart orderbook={this.props.orderbook} />}
+								<DepthChart
+									base={base}
+									quote={quote}
+									bids={orderbook.bids}
+									asks={orderbook.asks}
+									precision={quoteAsset.get('precision')}
+								/>
                           </Tab>
-                        </Tabs>*/}
+
+                        </Tabs>
                     </div>
                     <div className="column small-4">
                         <TickerPriceStat ticker={ticker} assetName={quote} />
@@ -180,7 +174,7 @@ class Market1 extends React.Component {
 											type="ask"
 											ticker={ticker}
 											account={account}
-											user={this.props.user}
+											owner={this.props.user}
 											placeOrder={this.props.placeOrder.bind(this)}
 											reload={this.props.reload.bind(this)}
 											notify={this.props.notify.bind(this)}
@@ -195,7 +189,7 @@ class Market1 extends React.Component {
 											type="bid"
 											ticker={ticker}
 											account={account}
-											user={this.props.user}
+											owner={this.props.user}
 											placeOrder={this.props.placeOrder.bind(this)}
 											reload={this.props.reload.bind(this)}
 											notify={this.props.notify.bind(this)}
@@ -224,7 +218,7 @@ class Market1 extends React.Component {
                         <div className="block-body">
 							<Orderbook
 								side={"asks"}
-								orderbook={this.props.orderbook}
+								orderbook={orderbook}
 								base={base}
 								quote={quote}
 								onClick={(price) => {
@@ -241,7 +235,7 @@ class Market1 extends React.Component {
 						<div className="block-body">
 							<Orderbook
 								side={"bids"}
-								orderbook={this.props.orderbook}
+								orderbook={orderbook}
 								base={base}
 								quote={quote}
 								onClick={(price) => {
@@ -298,6 +292,7 @@ module.exports = {
 			const orderbook = state.market.get('orderbook')
 			const open_orders = process.env.BROWSER ? state.market.get('open_orders') : []
 			const ticker = state.market.get('ticker')
+			const quoteAsset = state.market.get('quote_asset')
 			const account = state.global.getIn(['accounts', user])
 			const history = state.market.get('history')
 			const feed = state.global.get('feed_price').toJS()
@@ -307,6 +302,7 @@ module.exports = {
 				orderbook,
 				open_orders,
 				ticker,
+				quoteAsset,
 				account,
 				history,
 				user,
@@ -337,43 +333,36 @@ module.exports = {
 				    type: 'limit_order_cancel',
 					operation: {
 				    	owner,
-						order_id
+						order_id // orderid for 0.16
 						//, __config: {successMessage}
 				    },
 					confirm,
-					successCallback: () => {successCallback(successMessage);}
+					successCallback: () => { successCallback(successMessage) }
 				}))
 			},
 
 			placeOrder: (isSell, owner, amount_to_sell, min_to_receive, effectivePrice, priceWarning,
-						 marketPrice, successCallback, fill_or_kill = false, expiration = DEFAULT_EXPIRE) => {
-
-				// Padd amounts to 3 decimal places
-				amount_to_sell = amount_to_sell.replace(amount_to_sell.split(' ')[0],
-					String(parseFloat(amount_to_sell).toFixed(3)))
-				min_to_receive = min_to_receive.replace(min_to_receive.split(' ')[0],
-					String(parseFloat(min_to_receive).toFixed(3)))
-
+				marketPrice, successCallback, fill_or_kill = false, expiration = DEFAULT_EXPIRE) => {
+		
 				const order_id = Math.floor(Date.now() / 1000)
 				const confirmStr = tt(isSell
 									? 'market_jsx.sell_amount_for_atleast'
 									: 'market_jsx.buy_atleast_amount_for',
-									{amount_to_sell, min_to_receive, effectivePrice})
+									{ amount_to_sell, min_to_receive, effectivePrice })
 				const successMessage = tt('g.order_placed') + ': ' + confirmStr
-
-
+	
 				dispatch(transaction.actions.broadcastOperation({
 					type: 'limit_order_create',
 					operation: {
 						owner,
-						order_id,
+						order_id, //for 0.16 use orderid
 						amount_to_sell,
 						min_to_receive,
 						fill_or_kill,
 						expiration
 					},
 					confirm: confirmStr + '?',
-					successCallback: () => {successCallback(successMessage);}
+					successCallback: () => { successCallback(successMessage) }
 				}))
 			},
 

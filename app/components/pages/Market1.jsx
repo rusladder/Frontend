@@ -113,6 +113,7 @@ class Market1 extends React.Component {
         const { base_quote, price } = this.state
 
 		const { isMarketAsset, quoteAsset } = this.props
+
 		let orderbook = aggOrders(normalizeOrders(this.props.orderbook));
 		
 		const [ base, quote ] = base_quote.split('_')
@@ -145,7 +146,7 @@ class Market1 extends React.Component {
 									quote={quote}
 									bids={orderbook.bids}
 									asks={orderbook.asks}
-									precision={quoteAsset.get('precision')}
+									precision={3}
 								/>
                           </Tab>
 
@@ -179,6 +180,7 @@ class Market1 extends React.Component {
 											reload={this.props.reload.bind(this)}
 											notify={this.props.notify.bind(this)}
 											price={price}
+											quoteAsset={quoteAsset}
 										/>
 									</div>
 
@@ -194,6 +196,7 @@ class Market1 extends React.Component {
 											reload={this.props.reload.bind(this)}
 											notify={this.props.notify.bind(this)}
 											price={price}
+											quoteAsset={quoteAsset}
 											isMarketAsset={isMarketAsset}
 											showBorrowDialog={this.showBorrowDialog.bind(this)}
 										/>

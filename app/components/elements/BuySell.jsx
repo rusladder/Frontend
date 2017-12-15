@@ -12,7 +12,7 @@ export default class BuySell extends Component {
 		ticker: PropTypes.object,
 		account: PropTypes.object,
 		owner: PropTypes.string,
-		quoteAsset: PropTypes.object.isRequired,
+		quoteAsset: PropTypes.object,
 		placeOrder: PropTypes.func.isRequired,
 		reload: PropTypes.func.isRequired,
 		notify: PropTypes.func.isRequired,

@@ -112,7 +112,7 @@ export function* createAsset({payload: {
     bitassetOpts, description,
     confirmTitle, confirmText, successCallback, errorCallback}}) {
 
-    const precision = utils.get_asset_precision(3);
+    const precision = utils.get_asset_precision(createObject.precision);
     big.config({DECIMAL_PLACES: createObject.precision});
     let max_supply = (new big(createObject.max_supply)).times(precision).toString();
     let max_market_fee = (new big(createObject.max_market_fee || 0)).times(precision).toString();
@@ -129,7 +129,7 @@ export function* createAsset({payload: {
             flags: flags,
             core_exchange_rate: {
                 base:  utils.formatCer(coreExchangeRate.base, 3),
-                quote: utils.formatCer(coreExchangeRate.quote, 3)
+                quote: utils.formatCer(coreExchangeRate.quote, createObject.precision)
             },
             whitelist_authorities: [],
             blacklist_authorities: [],
@@ -161,9 +161,9 @@ export function* updateAsset({payload: {issuer, new_issuer, update, coreExchange
     isBitAsset, bitassetOpts, originalBitassetOpts, description,
     confirmTitle, confirmText, successCallback, errorCallback}}) {
 
-    const quotePrecision = utils.get_asset_precision(3);
+    const quotePrecision = utils.get_asset_precision(asset.get("precision"));
 
-    big.config({DECIMAL_PLACES: asset.get("precision")});
+    big.config({DECIMAL_PLACES: quotePrecision});
     const maxSupply = (new big(update.max_supply)).times(quotePrecision).toString();
     const maxMarketFee = (new big(update.max_market_fee || 0)).times(quotePrecision).toString();
 

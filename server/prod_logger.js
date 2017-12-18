@@ -11,8 +11,10 @@ function prod_logger() {
         var asset = this.originalUrl.indexOf('/assets/') === 0
             || this.originalUrl.indexOf('/images/') === 0
             || this.originalUrl.indexOf('/favicon.ico') === 0;
-        if (!asset)
-            console.log('  <-- [reqid ' + this.response.header['x-request-id'] + '] ' + this.method + ' ' + this.originalUrl + ' ' + (this.session.uid || ''));
+        if (!asset) {
+            var uid = this.session.uid ? this.session.uid + ' ' : '' 
+            console.log(`[reqid ${this.request.header['x-request-id']}] ${uid}${this.method} ${this.originalUrl}`);
+        }
         try {
             yield next;
         } catch (err) {
@@ -38,24 +40,18 @@ function log(ctx, start, len, err, asset) {
         length = bytes(len);
     }
 
-    var upstream = err ? 'xxx' : '-->';
+    var upstream = err ? 'xxx ' : '';
 
-    if (!asset || err || ctx.status > 400) console.log('  ' + upstream + ' [reqid %s] %s %s %s %s %s %s',
-        ctx.response.header['x-request-id'],
-        ctx.method,
-        ctx.originalUrl,
-        status,
-        time(start),
-        length,
-        ctx.session.uid || '');
-
+    if (!asset || err || ctx.status > 400) {
+        console.log(`${upstream}[reqid ${ctx.request.header['x-request-id']}] ${(ctx.session.uid || '')} ${ctx.method} ${ctx.originalUrl} ${status} ${time(start)} ${length}`);
+    }
     if (metrics) metrics.increment('_http_code_' + status);
 }
 
 function time(start) {
     var delta = new Date - start;
-    delta = delta < 10000
-        ? delta + 'ms'
-        : Math.round(delta / 1000) + 's';
-    return humanize(delta);
+    // delta = delta < 10000
+    //     ? delta + 'ms'
+    //     : Math.round(delta / 1000) + 's';
+    return delta + 'ms';
 }

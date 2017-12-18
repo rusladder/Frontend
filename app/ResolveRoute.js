@@ -28,6 +28,12 @@ export default function resolveRoute(path)
     if (path === '/welcome') {
         return {page: 'Welcome'};
     }
+    if (path === '/start'){
+        return {page: 'Start'}
+    }
+    if (path === '/hardfork'){
+        return {page: 'Hardfork'}
+    }
     if (path === '/about') {
         return {page: 'Landing'};
     }

@@ -18,7 +18,7 @@
     "terms_of_service_section": ", section 5.5.7"
   },
   "g": {
-    "golos_fest" : "#годГОЛОСу",
+    "golos_fest" : "#МыЖдемХардфорк",
     "APP_NAME" : "Golos",
     "APP_NAME_account": "%(APP_NAME)s account",
     "24_hour": "24 hour",
@@ -27,6 +27,9 @@
     "all_langs": "All languages",
     "amount": "Amount",
     "and": "and",
+    "announcement_text": "Golos.io: Грантовая программа поддержки молодых авторов и уникального контента",
+    "read_only_mode": "Из-за технического обслуживания серверов мы работаем в режиме чтения. Извините за неудобство.",
+    "read_only_mode_notify": "Ведутся технические работы",
     "are_you_sure": "Are you sure?",
     "ask": "Ask",
     "auto": "auto",
@@ -121,7 +124,7 @@
     "settings": "Settings",
     "share_this_post": "Share this post",
     "show": "Show",
-    "show_rules": "Show rules",
+    "show_rules": "Show security rules",
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
     "since": "since",
@@ -236,7 +239,6 @@
       "value_posts": "low value posts"
     },
 
-    "read_only_mode": "Due to server maintenance we are running in read only mode. We are sorry for the inconvenience.",
     "membership_invitation_only": "Membership to %(APP_DOMAIN)s is now under invitation only because of unexpectedly high sign up rate.",
     "submit_email_to_get_on_waiting_list": "Submit your email to get on the waiting list",
     "show_less_low_value_posts": "Show fewer low value posts",
@@ -303,7 +305,8 @@
     "feedback": "Feedback",
     "wiki": "Wiki",
     "faq": "FAQ",
-    "sale_agreement": "Sale Agreement"
+    "sale_agreement": "Sale Agreement",
+    "telegram_support": "%(APP_NAME_UP)s Support"
   },
   "main_menu": {
     "hot": "hot",
@@ -545,6 +548,8 @@
     "comments_were_hidden_due_to_low_ratings": "Comments were hidden due to low ratings"
   },
   "createaccount_jsx": {
+    "get_code": "Get confirmation code",
+    "will_be_send_to_phone_number": "Message will be send to: +",
     "our_records_indicate_you_already_have_account": "Our records indicate that you already have %(APP_NAME)s account",
     "in_order_to_prevent_abuse_APP_NAME_can_only_register_one_account_per_user": "In order to prevent abuse %(APP_NAME)s can only register one account per verified user.",
     "next_3_blocks": {
@@ -882,6 +887,14 @@
     "free_money": "FREE MONEY!",
     "returning_users": "Returning Users: ",
     "join_our": "Join our"
+  },
+  "mobilevalidation_js": {
+    "not_be_empty": "not be empty",
+    "be_longer": "be longer",
+    "have_only_digits": "have only digits",
+    "you_can_change_your_number": "You can select another one phone number.",
+    "select_another_number": "Select another phone",
+    "waiting_from_you": "Waiting SMS message with confirmation code %(code)s from your number to our verification number %(phone)s."
   },
   "chainvalidation_js": {
     "account_name_should": "Account name should ",

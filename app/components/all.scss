@@ -35,7 +35,7 @@
 @import "./elements/QrKeyView";
 @import "./elements/AssetName";
 @import "./elements/Editor/Editor";
-
+@import "./elements/CTA/ctablock";
 
 // modules
 @import "./modules/Header";
@@ -63,6 +63,8 @@
 @import "./pages/Market";
 @import "./pages/TagsIndex";
 @import "./pages/Landing";
+@import "./pages/Landings/Start";
+@import "./pages/Landings/Hardfork";
 @import "./pages/Asset";
 
 // themes

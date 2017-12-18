@@ -54,6 +54,14 @@
     "must_start_with_a_letter":"Mora početi sa slovom",
     "must_end_with_a_letter_or_number":"Mora da se završi sa slovom ili brojem"
   },
+  "mobilevalidation_js": {
+    "not_be_empty": "not be empty",
+    "be_longer": "be longer",
+    "have_only_digits": "have only digits",
+    "you_can_change_your_number": "You can select another one phone number.",
+    "select_another_number": "Select another phone",
+    "waiting_from_you": "Waiting SMS message with confirmation code %(code)s from your number to our verification number %(phone)s."
+  },
   "chainvalidation_js":{
     "account_name_should":"Korisničko ime ",
     "not_be_empty":"nije prazna.",
@@ -77,6 +85,8 @@
     "DEBT_TOKEN_will_be_unavailable":"Ova akcija će se održati 3,5 dana od sada i ne može biti poništena. Ovi %(DEBT_TOKEN)s će odmah postati nedostupni."
   },
   "createaccount_jsx":{
+    "get_code": "Get confirmation code",
+    "will_be_send_to_phone_number": "Message will be send to: +",
     "our_records_indicate_you_already_have_account":"Naši podaci pokazuju da već imate %(APP_NAME)s nalog",
     "in_order_to_prevent_abuse_APP_NAME_can_only_register_one_account_per_user":"Чтобы предотвратить злоупотребление %(APP_NAME)s может зарегистрировать только один аккаунт для каждого подтвержденного пользователя.",
     "next_3_blocks":{
@@ -156,7 +166,7 @@
     "terms_of_service_section": ", пункт 5.5.7"
   },
   "g":{
-    "golos_fest" : "#годГОЛОСу",
+    "golos_fest" : "#МыЖдемХардфорк",
     "APP_NAME":"Голос",
     "24_hour":"24 časa",
     "30_day":"30 dana",
@@ -266,7 +276,7 @@
     "settings":"Podešavanja",
     "share_this_post":"Поделиться этим постом",
     "show":"Prikaži",
-    "show_rules": "Show rules",
+    "show_rules": "Show security rules",
     "sign_in":"Войти",
     "sign_up":"Registruj se",
     "since":"начиная с",
@@ -374,7 +384,6 @@
       "show_less":"Prikaži manje",
       "value_posts":"postovi sa niskim rejtingom"
     },
-    "read_only_mode":"Zbog održavanja servera, server radi u režimu Read-only. Žao nam je zbog neprijatnosti.",
     "membership_invitation_only":"Ćlanarina za %(APP_URL)s je sada pod opcijom pozivnice samo zbog neočekivano visoke stope registracije novih korisnika.",
     "submit_email_to_get_on_waiting_list":"Pošaljite svoj email da se upišete na listu čekanja",
     "show_less_low_value_posts":"Prikaži manje postova sa niskim rejtingom",
@@ -529,7 +538,8 @@
     "feedback":"Feedback",
     "wiki":"Wiki",
     "faq":"FAQ",
-    "sale_agreement": "Sale Agreement"
+    "sale_agreement": "Sale Agreement",
+    "telegram_support": "%(APP_NAME_UP)s Support"
   },
   "oauth":{
     "we_couldnt_verify_your_account_contact_us_at_SUPPORT_EMAIL":"Nismo mogli da potvrdimo vašu e-email adresu, kontaktirajte nas na %(SUPPORT_EMAIL)s za više informacija.",

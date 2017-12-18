@@ -14,10 +14,9 @@ import useRedirects from './redirects';
 import useGeneralApi from './api/general';
 import useAccountRecoveryApi from './api/account_recovery';
 import useNotificationsApi from './api/notifications';
+import useRegistrationApi from './api/registration';
 import {proxyRoutes as useProxyRoutes} from './api/proxy';
 import {ratesRoutes as useRatesRoutes} from './api/rates';
-import useEnterAndConfirmEmailPages from './server_pages/enter_confirm_email';
-import useEnterAndConfirmMobilePages from './server_pages/enter_confirm_mobile';
 import useUserJson from './json/user_json';
 import usePostJson from './json/post_json';
 import isBot from 'koa-isbot';
@@ -106,11 +105,11 @@ app.use(function*(next) {
         }
     }
     // start registration process if user get to create_account page and has no id in session yet
-    if (this.url === '/create_account' && !this.session.user) {
-        this.status = 302;
-        this.redirect('/enter_email');
-        return;
-    }
+    // if (this.url === '/create_account' && !this.session.user) {
+    //     this.status = 302;
+    //     this.redirect('/enter_email');
+    //     return;
+    // }
     // remember ch, cn, r url params in the session and remove them from url
     if (this.method === 'GET' && /\?[^\w]*(ch=|cn=|r=)/.test(this.url)) {
         let redir = this.url.replace(/((ch|cn|r)=[^&]+)/gi, r => {
@@ -139,7 +138,7 @@ if (env === 'production') {
 if (env === 'production') {
     app.use(prod_logger());
 } else {
-    app.use(koa_logger());
+     app.use(koa_logger());
 }
 
 app.use(helmet());
@@ -187,8 +186,7 @@ app.use(function*(next) {
 });
 
 useRedirects(app);
-useEnterAndConfirmEmailPages(app);
-useEnterAndConfirmMobilePages(app);
+useRegistrationApi(app);
 useUserJson(app);
 usePostJson(app);
 
@@ -243,9 +241,7 @@ if (env !== 'test') {
         // if (app_router.dbStatus.ok) recordWebEvent(this, 'page_load');
         const bot = this.state.isBot;
         if (bot) {
-            console.log(
-                `  --> ${this.method} ${this.originalUrl} ${this.status} (BOT '${bot}')`
-            );
+            console.log(`[reqid ${this.request.header['x-request-id']}] ${this.method} ${this.originalUrl} ${this.status} (BOT '${bot}')`);
         }
     });
 

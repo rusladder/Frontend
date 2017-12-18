@@ -105,13 +105,13 @@ export default function useGeneralApi(app) {
             }
 
             // check email
-            const eid = yield models.Identity.findOne(
-                {attributes: ['id'], where: {user_id, provider: 'email', verified: true}, order: 'id DESC'}
-            );
-            if (!eid) {
-                console.log(`api /accounts: not confirmed email for user ${this.session.uid} #${user_id}`);
-                throw new Error('Email address is not confirmed');
-            }
+            // const eid = yield models.Identity.findOne(
+            //     {attributes: ['id'], where: {user_id, provider: 'email', verified: true}, order: 'id DESC'}
+            // );
+            // if (!eid) {
+            //     console.log(`api /accounts: not confirmed email for user ${this.session.uid} #${user_id}`);
+            //     throw new Error('Email address is not confirmed');
+            // }
 
             // // check phone
             const mid = yield models.Identity.findOne(
@@ -247,7 +247,9 @@ export default function useGeneralApi(app) {
                         }
                         const {posting: {key_auths: [[posting_pubkey, weight]], weight_threshold}} = chainAccount
                         verify('posting', signatures.posting, posting_pubkey, weight, weight_threshold)
-                        if (auth.posting) this.session.a = account;
+                        if (auth.posting) {
+                          this.session.a = account;
+                        }
                     }
                 }
             }
@@ -273,7 +275,7 @@ export default function useGeneralApi(app) {
         if (!checkCSRF(this, csrf)) return;
         console.log('-- /logout_account -->', this.session.uid);
         try {
-            this.session.a = null;
+          this.session.a = this.session.user = this.session.uid = null;
             this.body = JSON.stringify({status: 'ok'});
         } catch (error) {
             console.error('Error in /logout_account api call', this.session.uid, error);
@@ -319,7 +321,7 @@ export default function useGeneralApi(app) {
             this.body = JSON.stringify({views: 0});
             return;
         }
-        console.log('-- /page_view -->', this.session.uid, page);
+        
         recordWebEvent(this, 'PageView', JSON.stringify(posts));
         const remote_ip = getRemoteIp(this.req);
         try {

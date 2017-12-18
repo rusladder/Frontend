@@ -10,7 +10,7 @@ import VerticalMenu from 'app/components/elements/VerticalMenu';
 import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 import NotifiCounter from 'app/components/elements/NotifiCounter';
 import tt from 'counterpart';
-import { DEFAULT_LANGUAGE, LANGUAGES, LOCALE_COOKIE_KEY, LIQUID_TICKER, DEBT_TICKER } from 'app/client_config';
+import { DEFAULT_LANGUAGE, LANGUAGES, LOCALE_COOKIE_KEY, LIQUID_TICKER, DEBT_TICKER, APP_NAME_UP } from 'app/client_config';
 import LocalizedCurrency from 'app/components/elements/LocalizedCurrency';
 import {vestingSteem} from 'app/utils/StateFunctions';
 import cookie from "react-cookie";
@@ -65,20 +65,20 @@ const calculateEstimateOutput = ({a, p, sw, g}) => {
   return Number( ( (total_steem * p) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, toggleOffCanvasMenu, probablyLoggedIn, showSignUp, location, changeLanguage}) {
+function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, toggleOffCanvasMenu, probablyLoggedIn, location, changeLanguage}) {
     const APP_NAME = tt('g.APP_NAME');
 
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
     const mcl = vertical ? '' : ' sub-menu';
     const lcn = vertical ? '' : 'show-for-medium';
     const nav = navigate || defaultNavigate;
-    const submitStory = $STM_Config.read_only_mode ? null : <li className={lcn + ' submit-story'}>
+    const submitStory = <li className={lcn + ' submit-story'}>
       <a href="/submit.html" onClick={nav}>{tt('g.submit_a_story')}</a>
     </li>;
-    const submitStoryPencil = $STM_Config.read_only_mode ? null : <li className="show-for-small-only">
+    const submitStoryPencil = <li className="show-for-small-only">
       <Link to="/submit.html"><Icon name="pencil" /></Link>
     </li>;
-    // const golosFest = <li className={lcn + ' buttons'}><Link to="/created/ru--godgolosu" className="button alert fest">{tt('g.golos_fest')}</Link></li>;
+    const golosFest = <li className={lcn + ' buttons'}><Link to="/hardfork" className="button alert fest">{tt('g.golos_fest')}</Link></li>;
     const feedLink = `/@${username}/feed`;
     const repliesLink = `/@${username}/recent-replies`;
     const walletLink = `/@${username}/transfers`;
@@ -143,7 +143,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
       : null
     ;
     const telegramItem = !vertical ? <li className={lcn + ' wrap-telegram'}>
-    <a href="https://t.me/golos_support" target="_blank">
+    <a href="https://t.me/golos_support" title={tt("navigation.telegram_support", {APP_NAME_UP})} target="_blank">
       <Icon name="telegram" />
     </a>
   </li>
@@ -166,7 +166,7 @@ const estimateOutput = <LocalizedCurrency amount={calculateEstimateOutput({a:acc
         ];
         return (
             <ul className={mcn + mcl}>
-                {/*!inIco && golosFest*/}
+                {!inIco && golosFest}
                 {inIco && ico_menu.map((o,i) => {return <li key={i} className={lcn}><a href={o.link}>{o.value}</a></li>})}
                 {!inIco && aboutItem}
                 {!inIco && !vertical && submitFeedback}
@@ -197,7 +197,7 @@ const estimateOutput = <LocalizedCurrency amount={calculateEstimateOutput({a:acc
     }
     return (
         <ul className={mcn + mcl}>
-            {/*!inIco && golosFest*/}
+            {!inIco && golosFest}
             {inIco && ico_menu.map((o,i) => {return <li key={i} className={lcn}><a href={o.link}>{o.value}</a></li>})}
             {!inIco && aboutItem}
             {!inIco && !vertical && <li>
@@ -209,7 +209,7 @@ const estimateOutput = <LocalizedCurrency amount={calculateEstimateOutput({a:acc
             {!inIco && telegramItem}
             {!inIco && rocketchatItem}
             {!inIco && !probablyLoggedIn && <li className={lcn}>
-              <a href="#" onClick={showSignUp}>{tt('g.sign_up')}</a>
+              <a href="/create_account">{tt('g.sign_up')}</a>
             </li>}
             {!inIco && !probablyLoggedIn && <li className={lcn}>
               <a href="/login.html" onClick={showLogin}>{tt('g.login')}</a>
@@ -236,8 +236,7 @@ TopRightMenu.propTypes = {
     logout: React.PropTypes.func.isRequired,
     vertical: React.PropTypes.bool,
     navigate: React.PropTypes.func,
-    toggleOffCanvasMenu: React.PropTypes.func,
-    showSignUp: React.PropTypes.func.isRequired
+    toggleOffCanvasMenu: React.PropTypes.func
 };
 
 export default connect(
@@ -289,10 +288,6 @@ export default connect(
         showLogin: e => {
             if (e) e.preventDefault();
             dispatch(user.actions.showLogin())
-        },
-        showSignUp: e => {
-            if (e) e.preventDefault();
-            dispatch(user.actions.showSignUp())
         },
         logout: e => {
             if (e) e.preventDefault();

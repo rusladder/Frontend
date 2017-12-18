@@ -116,7 +116,7 @@ export default class MarkdownEditor extends React.Component {
                 this.simplemde.codemirror.replaceSelection(imageUrl)
             }
         }
-
+        
         const textarea = <textarea key={this.state.id} id={`${this.state.id}-markdown-textarea`}/>
 
         return (

@@ -32,10 +32,11 @@ class TransferForm extends Component {
         const { props: {onChange}, value} = this.state.amount;
         //force validation programmatically
         //done by the second argument - not working otherwise for now
+        const {initialValues: {disableTo}} = this.props
         onChange(value, true)
         setTimeout(() => {
             const {advanced} = this.state
-            if (advanced)
+            if (advanced && !disableTo)
                 ReactDOM.findDOMNode(this.refs.to).focus()
             else
                 ReactDOM.findDOMNode(this.refs.amount).focus()
@@ -239,7 +240,7 @@ class TransferForm extends Component {
                     </div>
                 </div>
 
-                {memo && <div className="row">
+                {(memo && !disableMemo) && <div className="row">
                     <div className="column small-2" style={{paddingTop: 33}}>{tt('transfer_jsx.memo')}</div>
                     <div className="column small-10">
                         <small>{tt('transfer_jsx.this_memo_is') + isMemoPrivate ? tt('transfer_jsx.public') : tt('transfer_jsx.private')}</small>

@@ -30,29 +30,57 @@ class Memo extends React.Component {
     }
 
     linkify(text) {
-    	const sections = []
-		let idx = 0
-		if (!text) return
-		for (let section of text.split(' ')) {
-    		if (section.trim().length === 0) continue
-    		const matchUserName = section.match(/(^|\s)(@[a-z][-\.a-z\d]+[a-z\d])/i)
-    		const matchLink = section.match(links.local)
-			if (matchUserName) {
-				const user2 = matchUserName[0].trim().substring(1)
-				const userLower = user2.toLowerCase()
-				const valid = validate_account_name(userLower) == null
-				valid
-					? sections.push(<Link key={idx++} to={`/@${userLower}`}>{`@${user2}`}&nbsp;</Link>)
-					: sections.push(<span key={idx++}>{`@${user2}`}</span>)
+        const sections = []
+        let idx = 0
+        if (!text) return
+        for (let section of text.split(' ')) {
+            if (section.trim().length === 0) continue
+            const matchUserName = section.match(/(^|\s)(@[a-z][-\.a-z\d]+[a-z\d])/i)
+            const matchLink = section.match(links.local)
+            const getDonateLink = () => {
+              let result = false;
+              try {
+                const obj = JSON.parse(section)
+                const {donate: {post}} = obj;
+                result = post
+              }
+              catch(e) {
+                return result
+              }
+              return result
+            }
 
-			} else if (matchLink) {
-				sections.push(<Link key={idx++} to={section}>{section}&nbsp;</Link>)
-			} else {
-				sections.push(<span key={idx++}>{section}&nbsp;</span>)
-			}
-		}
-		return sections
-	}
+            const dLink = getDonateLink()
+
+            if (matchUserName) {
+                const user2 = matchUserName[0].trim().substring(1)
+                const userLower = user2.toLowerCase()
+                const valid = validate_account_name(userLower) == null
+                valid
+                    ? sections.push(<Link key={idx++} to={`/@${userLower}`}>{`@${user2}`}&nbsp;</Link>)
+                    : sections.push(<span key={idx++}>{`@${user2}`}</span>)
+            }
+            else if (matchLink) {
+                sections.push(<Link key={idx++} to={section}>{section}&nbsp;</Link>)
+            }
+            else if (dLink) {
+              // donate for post
+              const pLink = dLink;
+              const txt = `${pLink.split(`/`)[3]}`
+              sections.push(
+                // todo use locale constant for Donate for
+                //<span>Donate for &nbsp;
+                  <Link key={idx++} to={pLink}>{txt}&nbsp;
+                  </Link>
+                // </span>
+            )
+            }
+            else {
+                sections.push(<span key={idx++}>{section}&nbsp;</span>)
+            }
+      }
+        return sections
+    }
 
     render() {
         const {decodeMemo, linkify} = this

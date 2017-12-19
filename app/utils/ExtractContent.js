@@ -87,15 +87,15 @@ export default function extractContent(get, content) {
         // Grab only the first line (not working as expected. does rendering/sanitizing strip newlines?)
         desc = desc.trim().split("\n")[0];
 
-        if(desc.length > 140) {
-          desc = desc.substring(0, 140).trim();
+        if(desc.length > 240) {
+          desc = desc.substring(0, 240).trim();
 
           const dotSpace = desc.lastIndexOf('. ')
           if(dotSpace > 80 && !get(content, 'depth') > 1) {
               desc = desc.substring(0, dotSpace + 1)
           } else {
             // Truncate, remove the last (likely partial) word (along with random punctuation), and add ellipses
-            desc = desc.substring(0, 120).trim().replace(/[,!\?]?\s+[^\s]+$/, "…");
+            desc = desc.substring(0, 220).trim().replace(/[,!\?]?\s+[^\s]+$/, "…");
           }
         }
         desc_complete = body2 === desc // is the entire body in desc?

@@ -1,0 +1,98 @@
+@import './mde';
+
+.GolosEditor{
+    max-width: 60rem;
+    form{
+        width: 100%;
+    }
+}
+
+.GolosEditor__title {
+    font-size: 2rem;
+    border: 0;
+    font-weight: bold;
+    padding: 0.5rem;
+    height: auto;
+    padding-bottom: 2rem;
+    padding-left: 0;
+    box-shadow: none;     
+    border-bottom: 1px solid #dbdbdb;      
+    &[type='text']:focus{
+        border: 0;
+        border-bottom: 2px solid #dbdbdb;      
+        box-shadow: none;     
+    }
+  }
+
+.GolosEditor__body{
+    font-size: 1.2rem;
+    margin-top: 2rem;
+}
+
+.GolosEditor__medium__body{
+    &[name = 'body'] {
+        height: auto;
+        min-height: 300px;
+        border: 1px solid #ddd;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        padding: 10px;
+        font: inherit;
+        z-index: 1;
+    }
+}
+
+.GolosEditor__categories{
+    height: auto;
+    margin: 2rem 0rem 0rem 0rem;
+    & span & input {
+        &[type='text']{
+            box-shadow: none;  
+            border: 0px;
+        }
+        &[type='text']:focus{
+            border: 0px;
+            transition: none;
+            box-shadow: none;   
+            border-bottom: 1px solid #dbdbdb;  
+    }}   
+}
+
+.GolosEditor__feedback{
+    h4{
+        font-size: 1.5rem;
+    }
+    font-size: 1rem;
+}
+
+.GolosEditor__settings{
+    margin: 0rem 0rem 2rem 0rem; 
+    &input{
+        font-size: 1.2rem;        
+    }
+}
+
+.GolosEditor__draft {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: rgba(255,255,255,0.9);
+    border-radius: 5px;
+    color: #2d2d2d;
+    font-size: 1.2em;
+    text-align: center;
+    z-index: 1;
+    padding: 0.5rem 1rem;
+  }
+  .GolosEditor__draft-hide {
+    opacity: 0;
+  }
+  .GolosEditor__draft-saved {
+    -webkit-transition: opacity 3s ease-in-out;
+    -moz-transition: opacity 3s ease-in-out;
+    -ms-transition: opacity 3s ease-in-out;
+    -o-transition: opacity 3s ease-in-out;
+    transition: opacity 3s ease-in-out;
+    opacity: 0;
+  }
+

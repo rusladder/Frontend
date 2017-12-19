@@ -318,6 +318,7 @@ class ReplyEditor extends React.Component {
         if (e.ctrlKey && e.metaKey) return
         const submitRequested = e.ctrlKey || e.metaKey;
         if (submitRequested) {
+          e.stopPropagation()
           const { submitting, valid } = this.state.replyForm;
           const canSubmit = !(submitting || !valid);
           if (canSubmit) {

@@ -223,7 +223,8 @@ class PostFull extends React.Component {
         asset,
         transferType,
         memo,
-        disableMemo: true
+        disableMemo: true,
+        disableTo: true
       });
     };
 

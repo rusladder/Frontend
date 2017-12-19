@@ -32,10 +32,11 @@ class TransferForm extends Component {
         const { props: {onChange}, value} = this.state.amount;
         //force validation programmatically
         //done by the second argument - not working otherwise for now
+        const {initialValues: {disableTo}} = this.props
         onChange(value, true)
         setTimeout(() => {
             const {advanced} = this.state
-            if (advanced)
+            if (advanced && !disableTo)
                 ReactDOM.findDOMNode(this.refs.to).focus()
             else
                 ReactDOM.findDOMNode(this.refs.amount).focus()

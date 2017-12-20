@@ -67,7 +67,7 @@ ul.PostsList__summaries {
 
 .PostSummary.with-image .PostSummary__reblogged_by,
 .PostSummary.with-image .PostSummary__content {
-  margin-left: 12rem;
+  margin-left: 8.5rem;
 }
 
 .PostSummary__header {
@@ -120,7 +120,7 @@ ul.PostsList__summaries {
   color: #3f3f3f;
   overflow: hidden;
   line-height: 1.4;
-  white-space: normal;
+  white-space: nowrap;
   text-overflow: ellipsis;
 
   a {

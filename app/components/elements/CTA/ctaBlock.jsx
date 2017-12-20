@@ -20,118 +20,151 @@ class CTABlock extends Component {
         super(props);
     }
 
-    componentWillMount(){
-        this.setState({loading: true} )
+    componentWillMount() {
+        this.setState({loading: true})
     }
 
     componentDidMount() {
         var self = this;
         setTimeout(() => {
-          self.setState({loading: false}); }, 1000);
-      }
+            self.setState({loading: false});
+        }, 1000);
+    }
 
     render() {
-        let {user, post, payout, visible, special, currency} = this.props
+        let {
+            user,
+            post,
+            payout,
+            visible,
+            special,
+            potsOfMoney,
+            defaultText,
+            currency
+        } = this.props
+
         let textBlock;
 
-        if(special){
-            textBlock = <p className='left cta-block-text-special'>
-            {ctainfo.specialStartText} <b>{user}</b> {special.text}
-           <a href={'/start'}> {ctainfo.specialEndText}</a>
-           </p>
-        }  else{
-            textBlock = 
-            <div>
-            <p className='left cta-block-text-regular'> Сообщество <b>Golos.io</b> {ctainfo.regularStartText} <b>{user}</b> заработал более &nbsp; </p> 
-                <div className='cta-block-text-regular'>
-                    <LocalizedCurrency amount={payout} rounding={true} noSymbol={true}/>
-                </div> 
-            <p className='left cta-block-text-regular'>
-                &nbsp;{currency}.<a href={'/start'}> {ctainfo.regularEndText}</a>
+        if (special) {
+            textBlock = <div className='column large-8 medium-8 small-8'>
+            <p className='left cta-block-text-special'>
+                {ctainfo.specialStartText} <b>{user}</b> {special.text} <a href={'/start'}>
+                    {ctainfo.specialEndText}</a>
             </p>
             </div>
-        }            
+        } else if (potsOfMoney) {
+            textBlock = <div className='column large-8 medium-8 small-8'>
+                <p className='left cta-block-text-regular'>
+                    Сообщество <b>Golos.io</b> {ctainfo.regularStartText} <b>{user}</b> заработал более
+                </p>
+                    <LocalizedCurrency amount={payout} rounding={true} noSymbol={true}/>
+                <p className='left cta-block-text-regular'>&nbsp;{currency}.&nbsp;</p>
+                <a href={'/start'}>{ctainfo.regularEndText}</a>
+            </div>
+        } else {
+            textBlock = <div className='column large-9 medium-9 small-9'>
+                <p className='left cta-block-text-default'>
+                    <b>{ctainfo.defaultText.signup}</b>{ctainfo.defaultText.body}
+                    <b>{ctainfo.defaultText.receive}</b>
+                    {ctainfo.defaultText.for}
+                    <b>{ctainfo.defaultText.rewards}</b> <a href={'/start'}>{ctainfo.defaultText.more}</a>.
+                </p>
+            </div>
+        }
 
         let ctablock = <div className='ctablock'>
             <div className='row'>
-                <div className=' column large-1 medium-1 small-1'>
-                    <Userpic account={user}/>
-                </div>
-                <div className='column large-8 medium-8 small-8'>
-                        {textBlock}
-                </div>
+                {defaultText
+                    ? null
+                    : <div className='hide-for-small-only column large-1 medium-1 small-1'>
+                        <Userpic account={user}/>
+                    </div>}
+                {textBlock}
                 <div className='column large-3 medium-3 small-3'>
                     <a href="/create_account" className="button">Создать аккаунт</a>
                 </div>
             </div>
         </div>
 
-        if (this.state.loading)
+        if (this.state.loading) 
             return null
-        else
+        else 
             return (visible
                 ? ctablock
                 : null)
-    }
+        }
 }
 
 export default connect((state, ownProps) => {
 
     const post = state
-        .global
-        .getIn(['content', ownProps.post])
-    if (!post) 
-        return ownProps
+            .global
+            .getIn(['content', ownProps.post])
+        if (!post) 
+            return ownProps
 
-    let current_account = state
-        .user
-        .get('current')
-    let user = post.get('author')
+        let current_account = state
+                .user
+                .get('current')
+            let user = post.get('author')
 
-    let link = post.get('category') + '/@' + user + '/' + post.get('permlink')
+                let link = post.get('category') + '/@' + user + '/' + post.get('permlink')
 
-    function compareLinks(specialLink, incomingLink) {
-        return specialLink === incomingLink;
-    }
+                    function compareLinks(specialLink, incomingLink) {
+                        return specialLink === incomingLink;
+                    }
 
-    function isSpecialPost(array, link) {
-        for (let i = 0; i < array.length; i++) {
-            if (compareLinks(array[i].link, link)) {
-                return array[i]
-            }
-        }
-    }
-    
-    let showMinCurrency, currency, currentCurrency;
-    
+                    function isSpecialPost(array, link) {
+                        for (let i = 0; i < array.length; i++) {
+                            if (compareLinks(array[i].link, link)) {
+                                return array[i]
+                            }
+                        }
+                    }
 
-    if(process.env.BROWSER)
-        currentCurrency = localStorage.getItem('xchange.picked')
+                    let showMinCurrency,
+                        currency,
+                        currentCurrency;
 
-    
-    if (currentCurrency)
-        if(currentCurrency == 'RUB'){
-            showMinCurrency = ctainfo.minRubValueToShow
-            currency = ctainfo.rub
-        }else if(currentCurrency == 'USD'){
-            showMinCurrency = ctainfo.minUsdValueToShow 
-            currency = ctainfo.usd
-        }else {
-            showMinCurrency = ctainfo.minRubValueToShow 
-            currency = currentCurrency
-        }
+                    if (process.env.BROWSER) 
+                        currentCurrency = localStorage.getItem('xchange.picked')
 
-        
-    let special = isSpecialPost(ctainfo.specialLinks, link)
+                    if (currentCurrency) 
+                        if (currentCurrency == 'RUB') {
+                            showMinCurrency = ctainfo.minRubValueToShow
+                            currency = ctainfo.rub
+                        }
+                    else if (currentCurrency == 'USD') {
+                        showMinCurrency = ctainfo.minUsdValueToShow
+                        currency = ctainfo.usd
+                    } else {
+                        showMinCurrency = ctainfo.minRubValueToShow
+                        currency = currentCurrency
+                    }
 
-    let pending_payout = parsePayoutAmount(post.get('pending_payout_value'))
-    let total_author_payout = parsePayoutAmount(post.get('total_payout_value'))
-    let total_curator_payout = parsePayoutAmount(post.get('curator_payout_value'))
+                    let visible = current_account == null
 
-    let payout = (pending_payout + total_author_payout + total_curator_payout)
-    let localizedPayoutValue = localizedCurrency(payout, {noSymbol: true, rounding: true})
+                    let pending_payout = parsePayoutAmount(post.get('pending_payout_value'))
+                    let total_author_payout = parsePayoutAmount(post.get('total_payout_value'))
+                    let total_curator_payout = parsePayoutAmount(post.get('curator_payout_value'))
+                    let payout = (pending_payout + total_author_payout + total_curator_payout)
+                    let localizedPayoutValue = localizedCurrency(payout, {
+                        noSymbol: true,
+                        rounding: true
+                    })
 
-    let visible = (current_account == null) && (localizedPayoutValue >= showMinCurrency || special != null)
+                    let special = isSpecialPost(ctainfo.specialLinks, link)
+                    let potsOfMoney = localizedPayoutValue >= showMinCurrency
+                    let defaultText = !potsOfMoney && !special
 
-    return {post: ownProps.post, user, payout, visible, special, currency}
-})(CTABlock)
+                    return {
+                        post: ownProps.post,
+                        user,
+                        payout,
+                        visible,
+                        potsOfMoney,
+                        defaultText,
+                        special,
+                        currency
+                    }
+                })(CTABlock)

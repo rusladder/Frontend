@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from "react";
 import {connect} from 'react-redux';
 import Userpic from 'app/components/elements/Userpic';
+import Icon from 'app/components/elements/Icon'
 import {parsePayoutAmount} from 'app/utils/ParsersAndFormatters';
 import LocalizedCurrency, {localizedCurrency} from 'app/components/elements/LocalizedCurrency';
 import ctainfo from './ctainfo'
@@ -62,7 +63,7 @@ class CTABlock extends Component {
                 <a href={'/start'}>{ctainfo.regularEndText}</a>
             </div>
         } else {
-            textBlock = <div className='column large-9 medium-9 small-9'>
+            textBlock = <div className='column large-8 medium-8 small-8'>
                 <p className='left cta-block-text-default'>
                     <b>{ctainfo.defaultText.signup}</b>{ctainfo.defaultText.body}
                     <b>{ctainfo.defaultText.receive}</b>
@@ -75,7 +76,9 @@ class CTABlock extends Component {
         let ctablock = <div className='ctablock'>
             <div className='row'>
                 {defaultText
-                    ? null
+                    ? <div className='hide-for-small-only column large-1 medium-1 small-1'>
+                        <Icon name='golos' size='3x'/>
+                        </div>
                     : <div className='hide-for-small-only column large-1 medium-1 small-1'>
                         <Userpic account={user}/>
                     </div>}

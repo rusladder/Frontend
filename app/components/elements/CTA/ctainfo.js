@@ -9,6 +9,15 @@ export default {
     regularStartText : "высоко оценило этот пост.",
     regularEndText : "Делитесь своими мыслями и получайте вознаграждение!",
 
+    defaultText:{
+        signup: "Зарегистрируйтесь",
+        body: ", чтобы публиковать свои истории и комментарии и ",
+        receive: "получать",
+        for: " за это ",
+        rewards: "вознаграждения!",
+        more: "Узнать подробнее"
+    },
+    
     specialLinks : [
         {
             link: "ru--golos/@aleco/prosto-i-dostupno-o-blockchain-chto-eto-i-kak-rabotaet",

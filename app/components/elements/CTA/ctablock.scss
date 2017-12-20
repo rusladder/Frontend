@@ -36,8 +36,23 @@
     .cta-block-text-regular{
         font-size: 0.8rem;
         display: inline-block;
+        *display: inline;
         margin-bottom: 0rem;
-    } 
+        span {
+            display: inline-block;
+            *display: inline;
+            font-size: 0.8rem;
+        }
+    }
+
+    .cta-block-text-default{
+        font-size: 0.8rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+        a{
+            text-decoration: underline;
+        }
+    }
 }
 .urerpic{        
     border-radius: 100px; 

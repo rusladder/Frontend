@@ -70,21 +70,14 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     componentWillMount() {
       const {setMetaData, formId, jsonMetadata} = this.props
       setMetaData(formId, jsonMetadata)
-      if (process.env.BROWSER) {
-        this.setAutoVote()
-        this.setState({
-          payoutType: this.props.isStory
-            ? (localStorage.getItem('defaultPayoutType') || '50%')
-            : '50%'
-        })
-      }
+      this.loadEditorDraft()
     }
 
     //OK
     componentDidMount() {
       this.setSavedEditor()
-      setTimeout(() => {
-        if (this.props.isStory)
+            setTimeout(() => {
+        if (this.props.isStory) 
           this.refs.titleRef.focus()
         else if (this.refs.postRef)
           this.refs.postRef.focus()
@@ -114,7 +107,6 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
             }
             clearTimeout(saveEditorTimeout)
             saveEditorTimeout = setTimeout(() => {
-                // console.log('save formId', formId, body.value)
                 localStorage.setItem('EditorData-' + formId, JSON.stringify(data, null, 0))
                 this.showDraftSaved()
             }, 500)
@@ -124,34 +116,17 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     loadEditorDraft(){
       if(process.env.BROWSER) {
-        let raw = null;
-        // Process initial body value (if this is an edit)
-        const {body} = this.state
-        if (body.value) {
-            raw = body.value
-        }
-
-        // Check for draft data
+        const {formId} = this.props
+        const {title, body, category} = this.state
+        
         let draft = localStorage.getItem('EditorData-' + formId)
         if(draft) {
-            draft = JSON.parse(draft)
-            const {category, title} = this.state
-            if(category) category.props.onChange(draft.category)
-            if(title) title.props.onChange(draft.title)
-            raw = draft.body
+            draft = JSON.parse(draft)                        
+            if(draft.title) title.props.onChange(draft.title)            
+            if(draft.body) body.props.onChange(draft.body)          
+            if(draft.category) category.props.onChange(draft.category)
         }
-
-        // If we have an initial body, check if it's html or markdown
-        if(raw) {
-            rte = isHtmlTest(raw)
-        }
-
-        // console.log("initial reply body:", raw || '(empty)')
-        body.props.onChange(raw)
-        this.setState({
-            rte,
-            rte_value: rte ? stateFromHtml(raw) : null
-        })
+        
         this.setAutoVote()
         this.setState({payoutType: this.props.isStory ? (localStorage.getItem('defaultPayoutType') || '50%') : '50%'})
     }
@@ -325,9 +300,9 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     showDraftSaved() {
       const {draft} = this.refs
-      draft.className = 'ReplyEditor__draft'
-      void draft.offsetWidth; // reset animation
-      draft.className = 'ReplyEditor__draft ReplyEditor__draft-saved'
+      draft.className = 'GolosEditor__draft'
+      void draft.offsetWidth
+      draft.className = 'GolosEditor__draft GolosEditor__draft-saved'
     }
 
     onPayoutTypeChange = (e) => {

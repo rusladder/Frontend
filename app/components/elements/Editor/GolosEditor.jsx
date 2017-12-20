@@ -117,19 +117,14 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     loadEditorDraft(){
       if(process.env.BROWSER) {
         const {formId} = this.props
-        const {body, title} = this.state
-
+        const {title, body, category} = this.state
+        
         let draft = localStorage.getItem('EditorData-' + formId)
         if(draft) {
-          console.log("Draft is" , draft)
-            draft = JSON.parse(draft)            
-            this.setState({
-              body: {
-                value: draft.body
-              }
-            })
+            draft = JSON.parse(draft)                        
+            if(draft.title) title.props.onChange(draft.title)            
+            if(draft.body) body.props.onChange(draft.body)          
             if(draft.category) category.props.onChange(draft.category)
-            if(draft.title) title.props.onChange(draft.title)
         }
         
         this.setAutoVote()

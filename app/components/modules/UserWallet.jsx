@@ -345,7 +345,7 @@ class UserWallet extends React.Component {
       });
     }
       const { transferDetails: { immediate, to, amount, token, memo } } = this.props;
-      if (immediate) callTransfer({ to, amount, token, memo})
+      // if (immediate) callTransfer({ to, amount, token, memo})
     }
 }
 

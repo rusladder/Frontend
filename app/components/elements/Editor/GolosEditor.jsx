@@ -69,24 +69,17 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     componentWillMount() {
       const {setMetaData, formId, jsonMetadata} = this.props
-      setMetaData(formId, jsonMetadata)      
-      if (process.env.BROWSER) {
-        this.setAutoVote()        
-        this.setState({
-          payoutType: this.props.isStory
-            ? (localStorage.getItem('defaultPayoutType') || '50%')
-            : '50%'
-        })
-      }
+      setMetaData(formId, jsonMetadata)
+      this.loadEditorDraft()
     }
 
     //OK
     componentDidMount() {
       this.setSavedEditor()
-      setTimeout(() => {
+            setTimeout(() => {
         if (this.props.isStory) 
           this.refs.titleRef.focus()
-        else if (this.refs.postRef) 
+        else if (this.refs.postRef)
           this.refs.postRef.focus()
       }, 300)
     }
@@ -114,7 +107,6 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
             }
             clearTimeout(saveEditorTimeout)
             saveEditorTimeout = setTimeout(() => {
-                // console.log('save formId', formId, body.value)
                 localStorage.setItem('EditorData-' + formId, JSON.stringify(data, null, 0))
                 this.showDraftSaved()
             }, 500)
@@ -124,34 +116,17 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     loadEditorDraft(){
       if(process.env.BROWSER) {
-        let raw = null;
-        // Process initial body value (if this is an edit)
-        const {body} = this.state
-        if (body.value) {
-            raw = body.value
-        }
-
-        // Check for draft data
+        const {formId} = this.props
+        const {title, body, category} = this.state
+        
         let draft = localStorage.getItem('EditorData-' + formId)
         if(draft) {
-            draft = JSON.parse(draft)
-            const {category, title} = this.state
-            if(category) category.props.onChange(draft.category)
-            if(title) title.props.onChange(draft.title)
-            raw = draft.body
+            draft = JSON.parse(draft)                        
+            if(draft.title) title.props.onChange(draft.title)            
+            if(draft.body) body.props.onChange(draft.body)          
+            if(draft.category) category.props.onChange(draft.category)
         }
-
-        // If we have an initial body, check if it's html or markdown
-        if(raw) {
-            rte = isHtmlTest(raw)
-        }
-
-        // console.log("initial reply body:", raw || '(empty)')
-        body.props.onChange(raw)
-        this.setState({
-            rte,
-            rte_value: rte ? stateFromHtml(raw) : null
-        })
+        
         this.setAutoVote()
         this.setState({payoutType: this.props.isStory ? (localStorage.getItem('defaultPayoutType') || '50%') : '50%'})
     }
@@ -207,7 +182,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     }
 
     onDomesticChange = e => {
-      if (e) 
+      if (e)
         e.preventDefault();
       const targetValue = e
         .target
@@ -228,7 +203,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     }
 
     onCancel = e => {
-      if (e) 
+      if (e)
         e.preventDefault()
       const {onCancel} = this.props
       const {replyForm, body} = this.state
@@ -236,7 +211,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
         replyForm.resetForm()
         this.setAutoVote()
         this.setState({progress: {}})
-        if (onCancel) 
+        if (onCancel)
           onCancel(e)
       }
     }
@@ -307,33 +282,33 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     //Ok
     toggleEditor = (e) => {
       e.preventDefault()
-      let isVisualEditor = this.state.isVisualEditor      
+      let isVisualEditor = this.state.isVisualEditor
       isVisualEditor = !isVisualEditor
       this.setState({isVisualEditor: isVisualEditor});
       if (process.env.BROWSER){
-        localStorage.setItem('EditorData-isVisualEditor', isVisualEditor)        
+        localStorage.setItem('EditorData-isVisualEditor', isVisualEditor)
       }
     }
-    
+
     //Ok
     setSavedEditor(){
       if (process.env.BROWSER) {
-        let savedEditor = JSON.parse(localStorage.getItem('EditorData-isVisualEditor') || true)  
-        this.setState({isVisualEditor: savedEditor})             
+        let savedEditor = JSON.parse(localStorage.getItem('EditorData-isVisualEditor') || true)
+        this.setState({isVisualEditor: savedEditor})
       }
     }
 
     showDraftSaved() {
       const {draft} = this.refs
-      draft.className = 'ReplyEditor__draft'
-      void draft.offsetWidth; // reset animation
-      draft.className = 'ReplyEditor__draft ReplyEditor__draft-saved'
+      draft.className = 'GolosEditor__draft'
+      void draft.offsetWidth
+      draft.className = 'GolosEditor__draft GolosEditor__draft-saved'
     }
 
     onPayoutTypeChange = (e) => {
       const payoutType = e.currentTarget.value
       this.setState({payoutType})
-      if (payoutType !== '0%') 
+      if (payoutType !== '0%')
         localStorage.setItem('defaultPayoutType', payoutType)
     }
 
@@ -376,6 +351,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
            this.setState({progress})
          }
        })
+       setTimeout(() => { this.setState({ progress: {} }) }, 10000) // clear message
     }
 
     render() {
@@ -427,7 +403,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       }
       const successCallbackWrapper = (...args) => {
         this.setState({loading: false})
-        if (successCallback) 
+        if (successCallback)
           successCallback(args)
       }
       const isEdit = type === 'edit'
@@ -483,7 +459,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
         if (domestic && domestic.value === key) {
           currentDomesticKey = key;
           currentDomesticTitle = DOMESTIC[currentDomesticKey];
-        } else 
+        } else
           domestic_menu.push({
             link: '#' + key,
             onClick: this.onDomesticChange,
@@ -571,7 +547,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                     accept="image/*"
                     ref={(node) => {
                     this.dropzone = node;
-                  }}> 
+                  }}>
                     {isVisualEditor
                       ? <MediumEditor body={body} onChange={this.onChange}/>
                       : <MarkdownEditor body={body} onChange={this.onChange}/>}
@@ -607,13 +583,13 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
             {/* ////////////////////// */}
             {/* SETTINGS BODY */}
             {isStory && !isFeedback && <div className='GolosEditor__settings row'>
-              <div className='column small-12 large-6'>               
+              <div className='column small-12 large-6'>
                 <label title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
                   {tt('g.upvote_post')}&nbsp;
                   <input type="checkbox" checked={autoVote.value} onChange={autoVoteOnChange}/>
                 </label>
               </div>
-              {isStory && !isEdit && <div className='column small-12 large-6'>              
+              {isStory && !isEdit && <div className='column small-12 large-6'>
               <div className="ReplyEditor__options float-right text-right">
               {tt('g.rewards')}:&nbsp;
               <select
@@ -687,7 +663,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     let {category, title, body, domestic} = ownProps
 
-    if (/submit_/.test(type)) 
+    if (/submit_/.test(type))
       title = body = ''
 
     return {
@@ -759,7 +735,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       // detransletirate it back to russian in future (to show russian categories to
       // user) (all of this is needed because blockchain does not allow russian
       // symbols in category)
-      if (isFeedback) 
+      if (isFeedback)
         category = 'обратная-связь'
       if (category) {
         category = category
@@ -794,7 +770,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
           }
           : null
 
-      if (!linkProps) 
+      if (!linkProps)
         throw new Error('Unknown type: ' + type)
 
         // If this is an HTML post, it MUST begin and end with the tag
@@ -816,7 +792,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
           .htmltags
           .delete(tag)
       })
-      if (isHtml) 
+      if (isHtml)
         rtags.htmltags.delete('html') // html tag allowed only in HTML mode
       if (rtags.htmltags.size) {
         errorCallback('Please remove the following HTML elements from your post: ' + Array(...rtags.htmltags).map(tag => `<${tag}>`).join(', '))
@@ -833,32 +809,32 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
         ...formCategories.toJS(),
         ...rtags.hashtags
       ])
-      if (/^[-a-z\d]+$/.test(rootCategory)) 
+      if (/^[-a-z\d]+$/.test(rootCategory))
         allCategories = allCategories.add(rootCategory)
 
         // merge
       const meta = isEdit
         ? jsonMetadata
         : {}
-      if (allCategories.size) 
+      if (allCategories.size)
         meta.tags = allCategories.toJS();
-      else 
+      else
         delete meta.tags
-      if (rtags.usertags.size) 
+      if (rtags.usertags.size)
         meta.users = rtags.usertags;
-      else 
+      else
         delete meta.users
-      if (rtags.images.size) 
+      if (rtags.images.size)
         meta.image = rtags.images;
-      else 
+      else
         delete meta.image
-      if (rtags.links.size) 
+      if (rtags.links.size)
         meta.links = rtags.links;
-      else 
+      else
         delete meta.links
-      if (domestic && Object.keys(DOMESTIC).indexOf(domestic) !== -1) 
+      if (domestic && Object.keys(DOMESTIC).indexOf(domestic) !== -1)
         meta.language = domestic;
-      else 
+      else
         delete meta.language
 
       meta.app = "golos.io/0.1"

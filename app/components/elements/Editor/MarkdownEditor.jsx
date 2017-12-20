@@ -6,7 +6,7 @@ export default class MarkdownEditor extends React.Component {
 
     static propTypes = {
         body: React.PropTypes.object,
-        onChange: React.PropTypes.func,
+        onChange: React.PropTypes.func
     }
 
     static defaultProps = {
@@ -18,11 +18,21 @@ export default class MarkdownEditor extends React.Component {
         this.state = {
             keyChange: false
         }
-        this.createEditor = this.createEditor.bind(this)
-        this.eventWrapper = this.eventWrapper.bind(this)
-        this.removeEvents = this.removeEvents.bind(this)
-        this.addEvents = this.addEvents.bind(this)
-        this.onDropEvent = this.onDropEvent.bind(this)
+        this.createEditor = this
+            .createEditor
+            .bind(this)
+        this.eventWrapper = this
+            .eventWrapper
+            .bind(this)
+        this.removeEvents = this
+            .removeEvents
+            .bind(this)
+        this.addEvents = this
+            .addEvents
+            .bind(this)
+        this.onDropEvent = this
+            .onDropEvent
+            .bind(this)
     }
 
     componentWillMount() {
@@ -50,13 +60,21 @@ export default class MarkdownEditor extends React.Component {
 
     eventWrapper() {
         this.setState({keyChange: true})
-        this.props.onChange(this.simplemde.value())
+        this
+            .props
+            .onChange(this.simplemde.value())
     }
 
     removeEvents() {
-        this.editorEl.removeEventListener('keyup', this.eventWrapper)
-        this.editorToolbarEl && this.editorToolbarEl.removeEventListener('click', this.eventWrapper)
-        this.editorEl.removeEventListener('drop', this.onDropEvent)
+        this
+            .editorEl
+            .removeEventListener('keyup', this.eventWrapper)
+        this.editorToolbarEl && this
+            .editorToolbarEl
+            .removeEventListener('click', this.eventWrapper)
+        this
+            .editorEl
+            .removeEventListener('drop', this.onDropEvent)
     }
 
     addEvents() {
@@ -65,21 +83,51 @@ export default class MarkdownEditor extends React.Component {
         this.editorEl = wrapperEl.getElementsByClassName('CodeMirror')[0]
         this.editorToolbarEl = wrapperEl.getElementsByClassName('editor-toolbar')[0]
 
-        this.editorEl.addEventListener('keyup', this.eventWrapper)
-        this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventWrapper)
-        this.editorEl.addEventListener('drop', this.onDropEvent)
+        this
+            .editorEl
+            .addEventListener('keyup', this.eventWrapper)
+        this.editorToolbarEl && this
+            .editorToolbarEl
+            .addEventListener('click', this.eventWrapper)
+        this
+            .editorEl
+            .addEventListener('drop', this.onDropEvent)
     }
 
     getMarkdownOptions() {
         return {
             autofocus: false,
+            toolbar: [
+                "heading",
+                "bold",
+                "italic",
+                "strikethrough",
+                "|",
+                "code",
+                "quote",
+                "unordered-list",
+                "ordered-list",
+                "|",
+                "link",
+                "image",
+                "horizontal-rule",
+                "|",
+                "preview",
+                {
+                    name: "guide",
+                    action: "https://golos.io/ru--golos/@on0tole/osnovy-oformleniya-postov-na-golose-polnyi-kurs-po-rabote-s-markdown",
+                    className: "fa fa-question-circle",
+                    title: "Руководство по Markdown",
+                    default: true
+                }
+            ],
             spellChecker: false,
             status: false,
             showIcons: [
                 "strikethrough", "code", 'horizontal-rule'
             ],
             hideIcons: [
-                "guide", 'side-by-side', 'fullscreen'
+                'side-by-side', 'fullscreen'
             ],
             blockStyles: {
                 italic: "_"
@@ -95,10 +143,10 @@ export default class MarkdownEditor extends React.Component {
     }
 
     onDropEvent = (event) => {
-        let coords = this.simplemde.codemirror.coordsChar({
-            left: event.pageX,
-            top: event.pageY
-        })
+        let coords = this
+            .simplemde
+            .codemirror
+            .coordsChar({left: event.pageX, top: event.pageY})
         this.setState({dropCoords: coords})
     }
 
@@ -106,14 +154,25 @@ export default class MarkdownEditor extends React.Component {
         let {dropCoords} = this.state
 
         insertImage = (imageUrl) => {
-            if(dropCoords){
-                this.simplemde.codemirror.replaceRange(imageUrl, dropCoords)
+            if (dropCoords) {
+                this
+                    .simplemde
+                    .codemirror
+                    .replaceRange(imageUrl, dropCoords)
                 this.setState({dropCoords: false})
-            }
-            else{
-                let pos = this.simplemde.codemirror.getCursor()
-                this.simplemde.codemirror.setSelection(pos, pos)
-                this.simplemde.codemirror.replaceSelection(imageUrl)
+            } else {
+                let pos = this
+                    .simplemde
+                    .codemirror
+                    .getCursor()
+                this
+                    .simplemde
+                    .codemirror
+                    .setSelection(pos, pos)
+                this
+                    .simplemde
+                    .codemirror
+                    .replaceSelection(imageUrl)
             }
         }
 

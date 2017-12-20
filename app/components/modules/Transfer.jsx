@@ -150,7 +150,6 @@ class TransferForm extends Component {
                 disableMemo = false,
                 disableTo = false,
                 disableAmount = false} = this.props.initialValues
-        console.log({disableMemo, disableTo, disableAmount})
         const {submitting, valid, handleSubmit} = this.state.transfer
         const isMemoPrivate = memo && /^#/.test(memo.value)
         const form = (
@@ -240,7 +239,7 @@ class TransferForm extends Component {
                     </div>
                 </div>
 
-                {(memo && !disableMemo) && <div className="row">
+                {memo && <div className="row">
                     <div className="column small-2" style={{paddingTop: 33}}>{tt('transfer_jsx.memo')}</div>
                     <div className="column small-10">
                         <small>{tt('transfer_jsx.this_memo_is') + isMemoPrivate ? tt('transfer_jsx.public') : tt('transfer_jsx.private')}</small>
@@ -249,6 +248,7 @@ class TransferForm extends Component {
                         <div className="error">{memo.touched && memo.error && memo.error}&nbsp;</div>
                     </div>
                 </div>}
+
                 {loading && <span><LoadingIndicator type="circle" /><br /></span>}
                 {!loading && <span>
                     {trxError && <div className="error">{trxError}</div>}

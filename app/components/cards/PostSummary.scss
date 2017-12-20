@@ -38,13 +38,12 @@ ul.PostsList__summaries {
 
 .PostSummary__image {
   float: left;
-  width: 11rem;
-  height: 7.5rem;
-  background-color: #EEE;
-  background-size: 110%;
-  background-repeat: no-repeat;
-  background-position: 50% 20%;
-  border: 1px solid #EEE;
+  width: 130px;
+  height: 4.5rem;
+  }
+
+.PostSummary__image_nsfw {
+  filter: blur(5px);
 }
 
 .PostSummary__post-visited {
@@ -68,7 +67,7 @@ ul.PostsList__summaries {
 
 .PostSummary.with-image .PostSummary__reblogged_by,
 .PostSummary.with-image .PostSummary__content {
-  margin-left: 12rem;
+  margin-left: 8.5rem;
 }
 
 .PostSummary__header {
@@ -121,7 +120,7 @@ ul.PostsList__summaries {
   color: #3f3f3f;
   overflow: hidden;
   line-height: 1.4;
-  white-space: normal;
+  white-space: nowrap;
   text-overflow: ellipsis;
 
   a {

@@ -18,7 +18,7 @@ import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 import PostsList from 'app/components/cards/PostsList';
 import {isFetchingOrRecentlyUpdated} from 'app/utils/StateFunctions';
 import {repLog10} from 'app/utils/ParsersAndFormatters';
-import { blockedUsers } from 'app/utils/IllegalContent';
+import { blockedUsers, blockedUsersContent } from 'app/utils/IllegalContent';
 import IllegalContentMessage from 'app/components/elements/IllegalContentMessage';
 import Tooltip from 'app/components/elements/Tooltip';
 import { LinkWithDropdown } from 'react-foundation-components/lib/global/dropdown';
@@ -31,8 +31,6 @@ import WalletSubMenu from 'app/components/elements/WalletSubMenu';
 import Userpic from 'app/components/elements/Userpic';
 import Callout from 'app/components/elements/Callout';
 import normalizeProfile from 'app/utils/NormalizeProfile';
-import AssetCreate from 'app/components/modules/AssetCreate';
-import AccountAssets from 'app/components/modules/AccountAssets';
 import UserInvites from 'app/components/elements/UserInvites';
 
 export default class UserProfile extends React.Component {
@@ -301,23 +299,6 @@ export default class UserProfile extends React.Component {
                     <br />
                     <PasswordReset account={accountImm} />
                 </div>
-        } else if (section === 'assets' && isMyAccount) {
-            walletClass = 'active'
-            tab_content = <div>
-                <WalletSubMenu account_name={account.name} />
-
-                <br />
-                <AccountAssets
-                    account={account}
-                    account_name={accountname}/>
-            </div>
-        } else if (section === 'create-asset' && isMyAccount) {
-            walletClass = 'active'
-            tab_content = <div>
-                <WalletSubMenu account_name={account.name} />
-
-                <AssetCreate account={account}/>
-            </div>
         } else if( section === 'invites' ) {
             walletClass = 'active'
             tab_content = <div>
@@ -330,6 +311,10 @@ export default class UserProfile extends React.Component {
 
 		if (blockedUsers.includes(accountname)) {
 			tab_content = <IllegalContentMessage />;
+        }
+        
+        if (blockedUsersContent.includes(accountname)) {
+			tab_content = <div>{tt('g.blocked_user_content')}</div>;
 		}
 
         if (!(section === 'transfers' ||

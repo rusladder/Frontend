@@ -47,6 +47,8 @@ class CategorySelector extends React.Component {
         }
     }
     render() {
+
+
         const {trending, tabIndex, disabled} = this.props
         const categories = trending.slice(0, 11).filterNot(c => validateCategory(c))
         const {createCategory} = this.state

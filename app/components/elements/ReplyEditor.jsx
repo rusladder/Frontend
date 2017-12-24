@@ -313,7 +313,7 @@ class ReplyEditor extends React.Component {
     }
 
     render() {
-        const originalPost = {
+      const originalPost = {
             category: this.props.category,
             body: this.props.body,
         }
@@ -577,6 +577,7 @@ export default formId => connect(
             const detags = jsonMetadata.tags.map(tag => detransliterate(tag))
             category = Set([detransliterate(category), ...detags]).join(' ')
         }
+
         const ret = {
             ...ownProps,
             fields, isStory, username,

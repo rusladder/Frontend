@@ -10,6 +10,7 @@ import {serverApiRecordEvent} from 'app/utils/ServerApiClient';
 import {loadFollows} from 'app/redux/FollowSaga'
 import {PrivateKey, Signature, hash} from 'golos-js/lib/auth/ecc'
 import {api} from 'golos-js'
+import tt from 'counterpart';
 
 export const userWatches = [
     watchRemoveHighSecurityKeys, // keep first to remove keys early when a page change happens
@@ -90,7 +91,29 @@ function* removeHighSecurityKeys({payload: {pathname}}) {
         key_types: active, owner, posting keys.
 */
 function* usernamePasswordLogin(action) {
-    // Sets 'loading' while the login is taking place.  The key generation can take a while on slow computers.
+  // todo transform this into middleware?
+  // consider the special situation (external transfer)
+  // get current path from router
+  // const pathname = yield select(state => state.global.get('pathname'))
+  const currentLocation = yield select(state => state.routing)//.get(`locationBeforeTransitions`));
+  const { locationBeforeTransitions: { pathname,  query } } = currentLocation;
+  const sender = pathname.split(`/`)[1].substring(1);
+  const {to, amount, token, memo} = query;
+  const externalTransferRequested = (!!to && !!amount && !!token && !!memo);
+  const offchain_account = yield select(state => state.offchain.get('account'))
+  let preventLogin = false;
+  if (externalTransferRequested) {
+    if (offchain_account) {
+      if (offchain_account !== sender)
+        preventLogin = true
+    }
+  }
+
+  if (preventLogin) {
+    return
+  }
+
+  // Sets 'loading' while the login is taking place.  The key generation can take a while on slow computers.
     yield call(usernamePasswordLogin2, action)
     const current = yield select(state => state.user.get('current'))
     if(current) {
@@ -386,11 +409,13 @@ function* uploadImage({payload: {file, dataUrl, filename = 'image.txt', progress
     const username = stateUser.getIn(['current', 'username'])
     const d = stateUser.getIn(['current', 'private_keys', 'posting_private'])
     if(!username) {
-        progress({error: 'Please logged in first.'})
+        // progress({error: 'Please logged in first.'})
+        progress({error: tt('user_saga_js.imageUpload.error_login_first')})
         return
     }
     if(!d) {
-        progress({error: 'Login with your posting key'})
+        // progress({error: 'Login with your posting key'})
+        progress({error: tt('user_saga_js.imageUpload.error_login_with_posting_key')})
         return
     }
 
@@ -435,26 +460,52 @@ function* uploadImage({payload: {file, dataUrl, filename = 'image.txt', progress
     const postUrl = `${$STM_Config.upload_image}/${username}/${sig.toHex()}`
 
     const xhr = new XMLHttpRequest()
+
     xhr.open('POST', postUrl)
     xhr.onload = function () {
         console.log(xhr.status, xhr.responseText)
         const res = JSON.parse(xhr.responseText)
         const {error} = res
         if(error) {
-            progress({error: 'Error: ' + error})
+          let tError;
+            if (typeof error === `string`) {
+              if (error.includes(`is not found on the blockchain`)) {
+                tError = `Пользователь не найден в сети блокчейн.`
+              }
+              if (error.includes(`unsupported posting key configuration`)) {
+                tError = `Ошибка постинг-ключа.`
+              }
+              if (error.includes(`Upload failed`)) {
+                tError = `Ошибка загрузки изображения.`
+              }
+              if (error.includes(`upload only images`)) {
+                tError = `Вы можете загружать только изображения.`
+              }
+              if (error.includes(`Signature did not verify`)) {
+                tError = `Ошибка цифровой подписи`
+              }
+              if (error.includes(`Error uploading`)) {
+                tError = `Ошибка загрузки`
+              }
+            }
+            progress({error: tError || error})
             return
         }
         const {url} = res
         progress({url})
     }
     xhr.onerror = function (error) {
+
         console.error(filename, error)
-        progress({error: 'Unable to contact the server.'})
+
+        // progress({error: 'Unable to contact the server.'})
+        progress({error: tt(`user_saga_js.imageUpload.error_server_unavailable`)})
     }
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percent = Math.round((event.loaded / event.total) * 100)
-            progress({message: `Uploading ${percent}%`})
+            // progress({message: `Uploading ${percent}%`})
+            progress({message: `${tt('user_saga_js.imageUpload.uploading')} ${percent}%`})
             // console.log('Upload', percent)
         }
     }

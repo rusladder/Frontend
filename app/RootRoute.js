@@ -15,8 +15,6 @@ export default {
             cb(null, [require('app/components/pages/Welcome')]);
         } else if (route.page === 'Start') {
             cb(null, [require('app/components/pages/Landings/Start')]);
-        } else if (route.page === 'Hardfork') {
-                cb(null, [require('app/components/pages/Landings/Hardfork')]);
         } else if (route.page === 'Faq') {
             cb(null, [require('app/components/pages/Faq')]);
         } else if (route.page === 'Login') {
@@ -39,8 +37,6 @@ export default {
             cb(null, [require('app/components/pages/RecoverAccountStep1')]);
         } else if (route.page === 'RecoverAccountStep2') {
             cb(null, [require('app/components/pages/RecoverAccountStep2')]);
-        } else if (route.page === 'WaitingList') {
-            cb(null, [require('app/components/pages/WaitingList')]);
         } else if (route.page === 'Witnesses') {
             cb(null, [require('app/components/pages/Witnesses')]);
         } else if (route.page === 'SubmitPost') {
@@ -52,8 +48,6 @@ export default {
             cb(null, [require('app/components/pages/UserProfile')]);
         } else if (route.page === 'Market') {
             cb(null, [require('app/components/pages/Market')]);
-        } else if (route.page === 'Asset') {
-            cb(null, [require('app/components/pages/Asset')]);
         } else if (route.page === 'Post') {
             cb(null, [require('app/components/pages/PostPage')]);
         } else if (route.page === 'PostNoCategory') {

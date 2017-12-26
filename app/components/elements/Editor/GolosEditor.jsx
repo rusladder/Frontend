@@ -489,13 +489,13 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
             {isStory && <div className='row'>
               <div className="column small-12">
-                {< a href = "#" onClick = {
+                {/* {< a href = "#" onClick = {
                   this.toggleEditor
                 } > {
                   !isVisualEditor
                     ? `Визуальный ${tt('reply_editor.editor')}`
                     : `Markdown ${tt('reply_editor.editor')}`
-                } </a>}
+                } </a>} */}
                 <div className="GolosEditor__settings float-right secondary">
                   <input type="hidden" {...domestic.props}/> {tt('settings_jsx.choose_domestic')}: &nbsp;
                   <LinkWithDropdown
@@ -547,9 +547,10 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                     ref={(node) => {
                     this.dropzone = node;
                   }}> 
-                    {isVisualEditor
+                    {/* {isVisualEditor
                       ? <MediumEditor body={body} onChange={this.onChange}/>
-                      : <MarkdownEditor body={body} onChange={this.onChange}/>}
+                      : <MarkdownEditor body={body} onChange={this.onChange}/>} */}                     
+                    <MarkdownEditor body={body} onChange={this.onChange}/>
                   </Dropzone>
                   {type === 'submit_story' && <p className="drag-and-drop">
                     {tt('reply_editor.insert_images_by_dragging_dropping')}

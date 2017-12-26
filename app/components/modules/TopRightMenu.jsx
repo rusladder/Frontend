@@ -72,9 +72,23 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
     const mcl = vertical ? '' : ' sub-menu';
     const lcn = vertical ? '' : 'show-for-medium';
     const nav = navigate || defaultNavigate;
-    const submitStory = <li className={lcn + ' submit-story'}>
-      <a href="/submit.html" onClick={nav}>{tt('g.submit_a_story')}</a>
-    </li>;
+
+    const editors = [];
+    editors.push({link: '/submit.html', onClick: nav, value: "Стандартный редактор"})
+    editors.push({link: '/submit.html?type=newEditor', onClick: nav, value: "Новый Markdown редактор"})
+
+
+    const submitStory = <LinkWithDropdown
+        closeOnClickOutside
+        dropdownPosition="bottom"
+        dropdownAlignment="right"
+        dropdownContent={<VerticalMenu items={editors} title={tt('g.submit_a_story')} />}>
+            <li>
+                <a href="#" onClick={e => e.preventDefault()}>{tt('g.submit_a_story')}</a>
+            </li>
+        </LinkWithDropdown>
+
+
     const submitStoryPencil = <li className="show-for-small-only">
       <Link to="/submit.html"><Icon name="pencil" /></Link>
     </li>;

@@ -24,11 +24,16 @@ class SubmitPost extends React.Component {
     }
     render() {
         const {success} = this
-        const {query} = this.props.location
+        const {query} = this.props.location    
+        let editorToUse
+        if (query.type == 'newEditor')
+            editorToUse = <GolosEditor type={'submit_story'} successCallback={success}/>
+        else
+            editorToUse = <SubmitReplyEditor type={query.type || 'submit_story'} successCallback={success} />
+
         return (
             <div className="SubmitPost">
-               {/* <SubmitReplyEditor type={query.type || 'submit_story'} successCallback={success} /> */}
-               <GolosEditor type={query.type || 'submit_story'} successCallback={success}/>
+                {editorToUse}
             </div>
         );
     }

@@ -80,8 +80,8 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
 
     const submitStory = <LinkWithDropdown
         closeOnClickOutside
-        dropdownPosition="bottom"
-        dropdownAlignment="right"
+        // dropdownPosition="bottom"
+        // dropdownAlignment="right"
         dropdownContent={<VerticalMenu items={editors} title={tt('g.submit_a_story')} />}>
             <li>
                 <a href="#" onClick={e => e.preventDefault()}>{tt('g.submit_a_story')}</a>

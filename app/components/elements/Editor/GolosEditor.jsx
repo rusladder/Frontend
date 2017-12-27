@@ -552,12 +552,10 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                       : <MarkdownEditor body={body} onChange={this.onChange}/>} */}                     
                     <MarkdownEditor body={body} onChange={this.onChange}/>
                   </Dropzone>
-                  {type === 'submit_story' && <p className="drag-and-drop">
-                    {tt('reply_editor.insert_images_by_dragging_dropping')}
-                    <a onClick={this.onOpenClick}>{tt('reply_editor.selecting_them')}</a>
-                    {noClipboardData
-                      ? ''
-                      : tt('reply_editor.pasting_from_the_clipboard')}
+                  {type === 'submit_story' && 
+                  <p className="drag-and-drop">
+                    <a onClick={this.onOpenClick}>{tt('reply_editor.select')}</a>
+                    {tt('reply_editor.upload_from_device')}
                   </p>}
                   {progress.message && <div className="info">{progress
                       .message

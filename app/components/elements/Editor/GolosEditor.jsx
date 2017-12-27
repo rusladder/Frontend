@@ -350,6 +350,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
          } else {
            this.setState({progress})
          }
+         setTimeout(() => { this.setState({ progress: {} }) }, 10000) // clear message
        })
     }
 

@@ -12,7 +12,7 @@ module.exports = {
 		</a>`,
 		embed: (videoId)=>`
 		<iframe class="youtube embed-responsive-item" frameborder="0" allowfullscreen
-			src="https://www.youtube.com/embed/${videoId}?rel=0"></iframe>`
+			src="https://www.youtube.com/embed/${videoId}?rel=0" width="800" height="600"></iframe>`
 	},
 	vimeo: {
 		ratio: "16by9",
@@ -23,7 +23,7 @@ module.exports = {
 		</a>`,
 		embed: (videoId)=>`
 		<iframe class="embed-responsive-item" frameborder="0" allowfullscreen
-			src="https://player.vimeo.com/video/${videoId}"></iframe>`
+			src="https://player.vimeo.com/video/${videoId}" width="800" height="600"></iframe>`
 	},
 	whyd: {
 		ratio: "4by3",

@@ -9,6 +9,9 @@ import sanitize from 'sanitize-html'
 import HtmlReady from 'shared/HtmlReady'
 import tt from 'counterpart';
 
+import markdown from '../elements/Editor/Plugins/extraMarkdown'
+
+
 const remarkable = new Remarkable({
     html: true, // remarkable renders first then sanitize runs...
     breaks: true,
@@ -59,12 +62,16 @@ class MarkdownViewer extends Component {
         const {noImage} = this.props
         const {allowNoImage} = this.state
         let {text} = this.props
+        console.log("TEXT:", text)
         if (!text) text = '' // text can be empty, still view the link meta data
         const {large, /*formId, canEdit, jsonMetadata,*/ highQualityPost} = this.props
 
         let html = false;
         // See also ReplyEditor isHtmlTest
         const m = text.match(/^<html>([\S\s]*)<\/html>$/);
+
+        console.log("!!!!!!!!!M!!!!!!!!!", m)
+
         if (m && m.length === 2) {
             html = true;
             text = m[1];
@@ -75,8 +82,10 @@ class MarkdownViewer extends Component {
 
         // Strip out HTML comments. "JS-DOS" bug.
         text = text.replace(/<!--([\s\S]+?)(-->|$)/g, '(html comment removed: $1)')
+        console.log("html = ", html)
+        let renderedText = html ? text : markdown(text)
 
-        let renderedText = html ? text : remarkable.render(text)
+        console.log("renderedText ",renderedText)
 
         // Embed videos, link mentions and hashtags, etc...
         if(renderedText) renderedText = HtmlReady(renderedText).html
@@ -107,6 +116,7 @@ class MarkdownViewer extends Component {
 
         // HtmlReady inserts ~~~ embed:${id} type ~~~
         for(let section of cleanText.split('~~~ embed:')) {
+            console.log("SECTION",section)
             const match = section.match(/^([A-Za-z0-9\_\-]+) (youtube|vimeo) ~~~/)
             if(match && match.length >= 3) {
                 const id = match[1]

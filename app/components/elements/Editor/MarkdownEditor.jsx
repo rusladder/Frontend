@@ -1,6 +1,7 @@
 import React from 'react'
 import tt from 'counterpart'
 import SimpleMDE from 'simplemde'
+import markdown from './Plugins/extraMarkdown'
 
 export default class MarkdownEditor extends React.Component {
 
@@ -94,7 +95,14 @@ export default class MarkdownEditor extends React.Component {
             .addEventListener('drop', this.onDropEvent)
     }
 
+    
+
     getMarkdownOptions() {
+
+        function extraRender(text){
+            return markdown(text)
+        }
+
         return {
             autofocus: false,
             toolbar: [
@@ -110,7 +118,71 @@ export default class MarkdownEditor extends React.Component {
                 "|",
                 "link",
                 "image",
-                "horizontal-rule",
+                {
+                    name: "media",
+                    action: function customFunction(editor){
+
+                        function insertMedia (url) {
+                            const isYoutube = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/ 
+                            const isVimeo = /(http|https)?:\/\/(www\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/
+                            if(isYoutube.test(url))
+                                return ["@[youtube](", "#url#)"]
+                            else if(isVimeo.test(url))
+                                return ["@[vimeo](", "#url#)"]
+                            else
+                                return ["![](", "#url#)"]
+                        }
+                        
+                        function _replaceSelection(cm, active, startEnd, url) {
+                            if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+                                return;
+                        
+                            var text;
+                            var start = startEnd[0];
+                            var end = startEnd[1];
+                            var startPoint = cm.getCursor("start");
+                            var endPoint = cm.getCursor("end");
+                            if(url) {
+                                end = end.replace("#url#", url);
+                            }
+                            if(active) {
+                                text = cm.getLine(startPoint.line);
+                                start = text.slice(0, startPoint.ch);
+                                end = text.slice(startPoint.ch);
+                                cm.replaceRange(start + end, {
+                                    line: startPoint.line,
+                                    ch: 0
+                                });
+                            } else {
+                                text = cm.getSelection();
+                                cm.replaceSelection(start + text + end);
+                        
+                                startPoint.ch += start.length;
+                                if(startPoint !== endPoint) {
+                                    endPoint.ch += start.length;
+                                }
+                            }
+                            cm.setSelection(startPoint, endPoint);
+                            cm.focus();
+                        }
+
+                        const cm = editor.codemirror
+                        const options = editor.options                     
+	                    let stat = editor.getState(cm)
+                        var url = "http://"
+	                    if(options.promptURLs) {
+                            url = prompt(options.promptTexts.link)                            
+		                    if(!url) {
+			                    return false
+		                    }
+                        }
+                        
+	                _replaceSelection(cm, stat.link, insertMedia(url), url)
+                    },
+                    className: "fa fa-play-circle",
+                    title: "Добавить мультимедиа (youtube/vimeo)",
+                    default: true
+                },
                 "|",
                 "preview",
                 {
@@ -123,12 +195,6 @@ export default class MarkdownEditor extends React.Component {
             ],
             spellChecker: false,
             status: false,
-            showIcons: [
-                "strikethrough", "code", 'horizontal-rule'
-            ],
-            hideIcons: [
-                'side-by-side', 'fullscreen'
-            ],
             blockStyles: {
                 italic: "_"
             },
@@ -138,7 +204,13 @@ export default class MarkdownEditor extends React.Component {
             onChange: this.props.onChange,
             initialValue: this.props.body.value,
             placeholder: tt('g.write_your_story'),
-            autoDownloadFontAwesome: true
+            autoDownloadFontAwesome: true,
+            parsingConfig: {
+				allowAtxHeaderWithoutSpace: false,
+				strikethrough: false,
+				underscoresBreakWords: false
+			},
+            previewRender: extraRender
         }
     }
 

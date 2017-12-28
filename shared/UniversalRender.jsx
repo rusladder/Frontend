@@ -128,7 +128,7 @@ async function universalRender({ location, initial_state, offchain, ErrorPage, t
         if (url.indexOf('/curation-rewards') !== -1) url = url.replace(/\/curation-rewards$/, '/transfers');
         if (url.indexOf('/author-rewards') !== -1) url = url.replace(/\/author-rewards$/, '/transfers');
 
-        onchain = await proxify('getStateAsync', api, chainproxy, 300, url);
+        onchain = await proxify('getStateAsync', api, chainproxy, 150, url);
 
         if (Object.getOwnPropertyNames(onchain.accounts).length === 0 && (url.match(routeRegex.UserProfile1) || url.match(routeRegex.UserProfile3))) { // protect for invalid account
             return {

@@ -204,7 +204,7 @@ export default class MarkdownEditor extends React.Component {
             onChange: this.props.onChange,
             initialValue: this.props.body.value,
             placeholder: tt('g.write_your_story'),
-            autoDownloadFontAwesome: true,
+            autoDownloadFontAwesome: false,
             parsingConfig: {
 				allowAtxHeaderWithoutSpace: false,
 				strikethrough: false,

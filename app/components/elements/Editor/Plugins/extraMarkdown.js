@@ -1,4 +1,10 @@
-var md = require("markdown-it")(),
+var md = require("markdown-it")({
+	html: true,
+	breaks: true,
+	linkify: false,
+	typographer: false,
+	quotes: '“”‘’'
+  }),
 settings = require("./settings.json");
 /**
  * Apply a selection of markdown it plugins to the instance

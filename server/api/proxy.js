@@ -22,7 +22,7 @@ function proxyRoutes(app) {
           filter_tags: ['test', 'bm-open', 'bm-ceh23', 'bm-tasks', 'bm-taskceh1']
         };
       }
-      this.body = yield proxify(method, api, chainproxy, 15, args);
+      this.body = yield proxify(method, api, chainproxy, args);
     }
     else {
       this.body = {status: "404", data: 'Method not found'};

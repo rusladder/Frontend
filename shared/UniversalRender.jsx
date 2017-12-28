@@ -122,13 +122,13 @@ async function universalRender({ location, initial_state, offchain, ErrorPage, t
     // below is only executed on the server
     let server_store, onchain;
     try {
-        let url = location === '/' ? 'trending' : location;
+        let url = location === '/' ? '/trending' : location;
         // Replace /curation-rewards and /author-rewards with /transfers for UserProfile
         // to resolve data correctly
         if (url.indexOf('/curation-rewards') !== -1) url = url.replace(/\/curation-rewards$/, '/transfers');
         if (url.indexOf('/author-rewards') !== -1) url = url.replace(/\/author-rewards$/, '/transfers');
 
-        onchain = await proxify('getStateAsync', api, chainproxy, 150, url);
+        onchain = await proxify('getStateAsync', api, chainproxy, url);
 
         if (Object.getOwnPropertyNames(onchain.accounts).length === 0 && (url.match(routeRegex.UserProfile1) || url.match(routeRegex.UserProfile3))) { // protect for invalid account
             return {

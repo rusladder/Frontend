@@ -25,6 +25,8 @@ import { LIQUID_TICKER } from 'app/client_config';
 import { isPostVisited, visitPost } from 'app/utils/helpers';
 import tt from 'counterpart';
 
+import pinImage from 'app/assets/icons/pin.png'
+
 // function loadFbSdk(d, s, id) {
 //     return new Promise(resolve => {
 //         window.fbAsyncInit = function () {
@@ -201,6 +203,10 @@ class PostFull extends React.Component {
         this.props.showExplorePost(permlink)
     };
 
+    pinPost = () => {
+      this.props.pinPost({post: this.props.post})
+    }
+
     showTransfer = () => {
       const post_content = this.props.cont.get(this.props.post);
       const content = post_content.toJS();
@@ -220,7 +226,7 @@ class PostFull extends React.Component {
     };
 
   render() {
-        const {props: {username, post, aiPosts}, state: {PostFullReplyEditor, PostFullEditEditor, formId, showReply, showEdit},
+        const {props: {username, post, aiPosts, pinPost}, state: {PostFullReplyEditor, PostFullEditEditor, formId, showReply, showEdit},
             onShowReply, onShowEdit, onDeletePost} = this
         const post_content = this.props.cont.get(this.props.post);
         if (!post_content) return null;
@@ -365,6 +371,15 @@ class PostFull extends React.Component {
                                 {' '}{showEditOption && !showEdit && <a onClick={onShowEdit}>{tt('g.edit')}</a>}
                                 {' '}{showDeleteOption && !showReply && <a onClick={onDeletePost}>{tt('g.delete')}</a>}
                             </span>}
+                        {showEditOption &&  <span className="PostFull__reply">
+                            <img
+                               width={`18px`}
+                               height={`18px`}
+                               style={{cursor: `pointer`}}
+                               onClick={this.pinPost}
+                               src={pinImage}>
+                            </img>
+                        </span>}
                         <span className="PostFull__responses">
                             <Link to={link} title={tt('votesandcomments_jsx.response_count', {count: content.children})}>
                                 <Icon name="chatboxes" className="space-right" />{content.children}
@@ -417,7 +432,10 @@ export default connect(
         showTransfer: (transferDefaults) => {
            dispatch(user.actions.setTransferDefaults(transferDefaults))
            dispatch(user.actions.showTransfer())
-      },
+        },
+        pinPost: ({post}) => {
+          dispatch(user.actions.pinPost({payload: {post}}))
+        },
     })
 )(PostFull)
 

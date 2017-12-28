@@ -59,8 +59,28 @@ export default class MarkdownEditor extends React.Component {
         this.simplemde = new SimpleMDE(allOptions)
     }
 
-    eventWrapper() {
+    eventWrapper(e) {
         this.setState({keyChange: true})
+
+        if(e.key == 'Enter'){
+            let pos = this
+            .simplemde
+            .codemirror
+            .getCursor()
+        this
+            .simplemde
+            .codemirror
+            .setSelection(pos, pos)
+        this
+            .simplemde
+            .codemirror
+            .replaceSelection("\n")
+        this
+            .simplemde
+            .codemirror
+            .getCursor()
+        }
+        
         this
             .props
             .onChange(this.simplemde.value())

@@ -55,13 +55,3 @@ applyBundle(md, settings);
 global.markdown = module.exports = function(text) {
 	return md.render(text);
 };
-
-// // alias marked.setOptions to markdown-it.set()
-// // translate marked options to markdown-it
-// marked.setOptions = function(opt) {
-
-// 	if (opt.breakLines) {
-// 		md.options.breaks = opt.breakLines;
-// 	}
-
-// };

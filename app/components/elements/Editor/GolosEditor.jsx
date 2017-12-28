@@ -31,7 +31,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
   import MediumEditor from './MediumEditor'
   import MarkdownEditor, {insertImage, getCursor} from './MarkdownEditor'
 
-  import toMarkdown from 'to-markdown'
+  //import toMarkdown from 'to-markdown'
   import showdown from 'showdown'
 
   const converter = new showdown.Converter();
@@ -225,47 +225,10 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     }
 
     onChange = (value) => {
-      const {body, isVisualEditor} = this.state
-
-      let convertDel = {
-        filter: 'del',
-        replacement: function (content) {
-          return '~~' + content + '~~';
-        }
-      }
-      let convertStrike = {
-        filter: 'strike',
-        replacement: function (content) {
-          return '~~' + content + '~~';
-        }
-      }
-      let convertDiv = {
-        filter: 'div',
-        replacement: function (content) {
-          return '' + content + '';
-        }
-      }
-
-      let markdownValue = toMarkdown(value, {
-        converters: [convertDel, convertStrike]
+      const {body} = this.state
+      this.setState({
+        body: {value: value}
       })
-
-      if (isVisualEditor) {
-        this.setState({
-          body: {
-            pureHTML: value,
-            value: markdownValue
-          }
-        })
-
-      } else {
-        this.setState({
-          body: {
-            pureHTML: converter.makeHtml(value),
-            value: markdownValue
-          }
-        })
-      }
     }
 
     //OK

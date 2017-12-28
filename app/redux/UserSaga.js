@@ -25,10 +25,16 @@ export const userWatches = [
     lookupPreviousOwnerAuthorityWatch,
     watchLoadSavingsWithdraw,
     uploadImageWatch,
+    pinPostWatch
 ]
 
 const highSecurityPages = Array(/\/market/, /\/@.+\/(transfers|permissions|password)/, /\/~witnesses/)
 
+
+function* pinPostWatch() {
+  yield* takeLatest('user/PIN_POST', function* bla({payload}) {
+  });
+}
 function* lookupPreviousOwnerAuthorityWatch() {
     yield* takeLatest('user/lookupPreviousOwnerAuthority', lookupPreviousOwnerAuthority);
 }

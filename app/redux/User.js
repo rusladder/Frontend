@@ -41,6 +41,9 @@ export default createModule({
             state.merge({show_login_modal: false, loginBroadcastOperation: undefined, loginDefault: undefined}) },
         { action: 'SAVE_LOGIN_CONFIRM', reducer: (state, {payload}) => state.set('saveLoginConfirm', payload) },
         { action: 'SAVE_LOGIN', reducer: (state) => state }, // Use only for low security keys (like posting only keys)
+        { action: 'PIN_POST', reducer: (state) => {
+          return state
+        }},
         { action: 'REMOVE_HIGH_SECURITY_KEYS', reducer: (state) => {
             if(!state.hasIn(['current', 'private_keys'])) return state
             let empty = false

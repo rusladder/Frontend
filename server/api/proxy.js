@@ -13,19 +13,12 @@ function proxyRoutes(app) {
   router.post('/', koaBody, function* () {
     const params = this.request.body;
     const method = params.method ? params.method : null;
-    let args;
-    if (typeof api[method] === "function" && /^get/.test(method)) {
-      if (/^getDiscussionsBy/.test(method)) {
-        args = {
-          limit: 20,
-          truncate_body: 1024,
-          filter_tags: ['test', 'bm-open', 'bm-ceh23', 'bm-tasks', 'bm-taskceh1']
-        };
-      }
+    const args = params.args ? params.args : null;
+    if (method && args) {
       this.body = yield proxify(method, api, chainproxy, args);
     }
     else {
-      this.body = {status: "404", data: 'Method not found'};
+      this.body = {status: '404', data: 'Method not found'};
     }
   });
 }

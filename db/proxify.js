@@ -3,15 +3,15 @@ async function proxify(method, context, proxy, /*, options */) {
   const options = [].slice.call(arguments).splice(3);
   const key = method + JSON.stringify(options);
   const methods = ['getStateAsync', 'getDiscussionsByCreatedAsync', 'getDiscussionsByTrendingAsync', 'getDiscussionsByHotAsync'];
-  const paths = ['/created','/hot','/trending'];
+  const paths = ['/created','/hot','/trending', '/promoted'];
   let useCache = false, ttl = 30, res = null;
 
-  if (process.env.NODE_ENV === 'development') {
-    return await context[method].apply(context, options);
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   return await context[method].apply(context, options);
+  // }
 
   // prepare methods and options
-  // console.log('\x1b[36m%s %s\x1b[0m', method, options[0]);
+  console.log('\x1b[36m%s %s\x1b[0m', method, options[0]);
   if (methods.indexOf(method) == 0 && paths.indexOf(options[0]) !== -1) {
     // prepare now only first method getStateAsync
     useCache = true;
@@ -56,9 +56,10 @@ async function proxify(method, context, proxy, /*, options */) {
           ttl = 180;
           break;
         case '/hot':
+        case '/promoted':
           ttl = 600;
           break;
-        case '/trending':
+          case '/trending':
           ttl = 900;
           break;
       }

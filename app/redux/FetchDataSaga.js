@@ -58,123 +58,27 @@ export function* fetchState(location_change_action) {
     if (url.indexOf("/curation-rewards") !== -1) url = url.replace("/curation-rewards", "/transfers");
     if (url.indexOf("/author-rewards") !== -1) url = url.replace("/author-rewards", "/transfers");
 
+    yield put({type: 'global/FETCHING_STATE', payload: true});
     try {
-        let state = {};
-
-        // if empty or equal '/''
-        if (!url || typeof url !== 'string' || !url.length || url === '/') url = 'trending';
-        // remove / from start
-        if (url[0] === '/') url = url.substr(1)
-        // get parts of current url
-        const parts = url.split('/')
-        // create tag
-        const tag = typeof parts[1] !== "undefined" ? parts[1] : ''
-
-        // TODO fix bread ration
-        if (parts[0][0] === '@' || typeof parts[1] === 'string' && parts[1][0] === '@') {
-            state = yield call([api, api.getStateAsync], url)
-        }
-        else {
-          yield put({type: 'global/FETCHING_STATE', payload: true});
-          const dynamic_global_properties = yield call([api, api.getDynamicGlobalPropertiesAsync])
-          const feed_history              = yield call([api, api.getFeedHistoryAsync])
-
-          state.current_route = url;
-          state.props = dynamic_global_properties;
-          state.categories = {};
-          state.tags = {};
-          state.content = {};
-          state.accounts = {};
-          state.witnesses = {};
-          state.discussion_idx = {};
-          state.feed_price = feed_history.current_median_history; // { "base":"1.000 GBG", "quote":"1.895 GOLOS" },
-
-          state.select_tags = [];
-          state.filter_tags = [];
-
-          if (parts[0][0] === '@') {
-            const uname = parts[0].substr(1)
-            accounts[uname] = yield call([api, api.getAccountsAsync], [uname]);
-
-            // FETCH part 2
-            switch (parts[1]) {
-              case 'transfers':
-                break;
-
-              case 'posts':
-              case 'comments':
-                break;
-
-              case 'blog':
-                break;
-
-              case 'feed':
-                break;
-
-              // default:
-            }
-          }
-          else if (parts[0] === 'witnesses' || parts[0] === '~witnesses') {
-            const wits = yield call([api, api.getWitnessesByVoteAsync], '', 100);
-            for (let key in wits) state.witnesses[wits[key].owner] = wits[key];
-          }
-          else if ([ 'trending', 'trending30', 'promoted', 'responses', 'hot', 'votes', 'cashout', 'active', 'created', 'recent' ].indexOf(parts[0]) >= 0) {
-            const args = [{
-              limit: constants.FETCH_DATA_BATCH_SIZE,
-              truncate_body: constants.FETCH_DATA_TRUNCATE_BODY
-            }]
-            if (typeof tag === 'string' && tag.length) {
-              args[0].select_tags = [tag];
-
-            }
-            else {
-              const select_tags = cookie.load(SELECT_TAGS_KEY);
-              if (!tag && select_tags && select_tags.length) {
-                args[0].select_tags = state.select_tags = select_tags
-              }
-              else {
-                args[0].filter_tags = state.filter_tags = IGNORE_TAGS
-              }
-            }
-            const discussions = yield call([api, api[PUBLIC_API[parts[0]][0]]], ...args);
-            let accounts = []
-            let discussion_idxes = {}
-            discussion_idxes[ PUBLIC_API[parts[0]][1] ] = []
-            for (let i in discussions) {
-              const key = discussions[i].author + '/' + discussions[i].permlink;
-              discussion_idxes[ PUBLIC_API[parts[0]][1] ].push(key);
-              if (discussions[i].author && discussions[i].author.length)
-                accounts.push(discussions[i].author);
-              state.content[key] = discussions[i];
-            }
-            const discussions_key = typeof tag === 'string' && tag.length ? tag : state.select_tags.sort().join('/')
-            state.discussion_idx[discussions_key] = discussion_idxes
-            accounts = yield call([api, api.getAccountsAsync], accounts);
-            for (let i in accounts) {
-              state.accounts[ accounts[i].name ] = accounts[i]
-            }
-          }
-          else if (parts[0] == "tags") {
-            // by default trending tags limit=50, but if we in '/tags/' path then limit = 250
-            const trending_tags = yield call([api, api.getTrendingTagsAsync], '', parts[0] == "tags" ? '250' : '50');
-            for (let i in trending_tags) {
-              state.tags[trending_tags[i].name] = trending_tags[i]
-            }
-          }
-
-          for (var key in state.content)
-            state.content[key].active_votes = []
-         
-          yield put({type: 'global/FETCHING_STATE', payload: false});
-        }
-
-        yield put(GlobalReducer.actions.receiveState(state));
-    } catch (error) {
-        console.error('~~ Saga fetchState error ~~>', url, error);
-        yield put({type: 'global/FETCHING_STATE', payload: false});
-        yield put({type: 'global/CHAIN_API_ERROR', error: error.message});
+      // const state = yield call([api, api.getStateAsync], url);
+      const result = yield fetch('/api/v1/proxy/', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ method:"getStateAsync", args: url})
+      });
+      const state = yield result.json();
+      console.log('state', state);
+      yield put(GlobalReducer.actions.receiveState(state));
     }
-}
+    catch (error) {
+      console.error('~~ Saga fetchState error ~~>', url, error);
+      yield put({type: 'global/CHAIN_API_ERROR', error: error.message});
+    }
+    yield put({type: 'global/FETCHING_STATE', payload: false});
+  }
 
 export function* watchDataRequests() {
     yield* takeLatest('REQUEST_DATA', fetchData);

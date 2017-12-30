@@ -205,6 +205,12 @@ class PostFull extends React.Component {
 
     pinPost = () => {
       this.props.pinPost({post: this.props.post})
+      // fixme should not be called such a way
+      this.notify(`Блааааааааааааааааааааа!`)
+    }
+
+    notify = (message) => {
+      this.props.notify(message)
     }
 
     showTransfer = () => {
@@ -434,8 +440,17 @@ export default connect(
            dispatch(user.actions.showTransfer())
         },
         pinPost: ({post}) => {
-          dispatch(user.actions.pinPost({payload: {post}}))
+          const postId = post.split(`/`)[1];
+          dispatch(user.actions.pinPost({postId}))
         },
+        notify: (message) => {
+          dispatch({type: 'ADD_NOTIFICATION', payload: {
+              // key: "settings_" + Date.now(),
+              message,
+              dismissAfter: 3000}
+          });
+        },
+
     })
 )(PostFull)
 

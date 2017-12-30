@@ -29,7 +29,31 @@ const highSecurityPages = Array(/\/market/, /\/@.+\/(transfers|permissions|passw
 
 
 function* pinPostWatch() {
-  yield* takeLatest('user/PIN_POST', function* bla({payload}) {
+  yield* takeLatest('user/PIN_POST', function* bla({payload: {postId}}) {
+    const current = yield select(state => state.user.get('current'))
+    if(current) {
+      const username = current.get('username')
+      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ payload :`)
+      // console.log(payload)
+      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ post from payload :`)
+      // console.log(post)
+      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ splitted post :`)
+      // console.log(post.split(`/`))
+      // const postId = post.split(`/`)[1];
+      console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ postID :`)
+      console.log(postId)
+      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pin to user :`)
+      // console.log(username)
+      // const pinnedPostsSaved = localStorage.getItem('pinnedPosts');
+      // const pinnedPosts = pinnedPostsSaved ? JSON.parse(pinnedPostsSaved) : {};
+      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ struct :`)
+      // console.log(pinnedPosts)
+      // const pinnedPostsForUser = (username in pinnedPosts) ? pinnedPosts[username] : [];
+      // pinnedPostsForUser.push(postId)
+      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ array from struct :`)
+      // console.log(pinnedPostsForUser)
+
+    }
   });
 }
 function* lookupPreviousOwnerAuthorityWatch() {
@@ -124,6 +148,10 @@ function* usernamePasswordLogin(action) {
     const current = yield select(state => state.user.get('current'))
     if(current) {
         const username = current.get('username')
+        const pinnedPosts = localStorage.getItem('pinnedPosts')
+        console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@ pinned posts`)
+      console.log(pinnedPosts)
+
         yield fork(loadFollows, "getFollowingAsync", username, 'blog')
         yield fork(loadFollows, "getFollowingAsync", username, 'ignore')
     }

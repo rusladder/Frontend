@@ -239,6 +239,7 @@ if (env === 'development') {
 }
 
 if (env !== 'test') {
+  console.log(`######################################### render`)
     const appRender = require('./app_render');
     app.use(function*() {
         yield appRender(this);

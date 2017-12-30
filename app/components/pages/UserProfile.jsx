@@ -528,6 +528,7 @@ module.exports = {
                 }))
             },
             requestData: (args) => dispatch({type: 'REQUEST_DATA', payload: args}),
+
         })
     )(UserProfile)
 };

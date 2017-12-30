@@ -41,7 +41,23 @@ export default createModule({
             state.merge({show_login_modal: false, loginBroadcastOperation: undefined, loginDefault: undefined}) },
         { action: 'SAVE_LOGIN_CONFIRM', reducer: (state, {payload}) => state.set('saveLoginConfirm', payload) },
         { action: 'SAVE_LOGIN', reducer: (state) => state }, // Use only for low security keys (like posting only keys)
-        { action: 'PIN_POST', reducer: (state) => {
+        { action: 'PIN_POST', reducer: (state, {payload}) => {
+            console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ reducer state`)
+            console.log(state)
+            console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ reducer payload`)
+            console.log(payload)
+
+            const { postId } = payload;
+
+
+            const pinnedPosts = state.getIn(['current', 'pinnedPosts']) || [];
+            console.log(`**************** tt`)
+            console.log(pinnedPosts)
+            if (!pinnedPosts.includes(postId)) {
+              pinnedPosts.push(postId)
+              state = state.setIn(['current', 'pinnedPosts'], pinnedPosts)
+            }
+
           return state
         }},
         { action: 'REMOVE_HIGH_SECURITY_KEYS', reducer: (state) => {

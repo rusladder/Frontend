@@ -28,7 +28,7 @@ function runApp(initial_state) {
     golos.config.set('websocket', config.ws_connection_client);
     golos.config.set('chain_id', config.chain_id);
     window.$STM_Config = config;
-    plugins(config);
+    // plugins(config);
     if (initial_state.offchain.serverBusy) {
         window.$STM_ServerBusy = true;
     }

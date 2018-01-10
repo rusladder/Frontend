@@ -3,7 +3,8 @@ var md = require("markdown-it")({
 	breaks: true,
 	linkify: false,
 	typographer: false,
-	quotes: '“”‘’'
+	quotes: '“”‘’',
+	
   }),
 settings = require("./settings.json");
 /**

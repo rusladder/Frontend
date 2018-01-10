@@ -129,7 +129,7 @@ export default class MarkdownEditor extends React.Component {
                 "heading",
                 "bold",
                 "italic",
-                "strikethrough",
+                // "strikethrough",
                 "|",
                 "code",
                 "quote",
@@ -227,7 +227,7 @@ export default class MarkdownEditor extends React.Component {
             autoDownloadFontAwesome: false,
             parsingConfig: {
 				allowAtxHeaderWithoutSpace: false,
-				strikethrough: false,
+				strikethrough: true,
 				underscoresBreakWords: false
 			},
             previewRender: extraRender

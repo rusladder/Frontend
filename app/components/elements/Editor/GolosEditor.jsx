@@ -203,14 +203,16 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     }
 
     onCancel = e => {
-      if (e) 
-        e.preventDefault()
+      if (e) e.preventDefault()
+
       const {onCancel} = this.props
       const {replyForm, body} = this.state
+
       if (!body.value || confirm(tt('reply_editor.are_you_sure_you_want_to_clear_this_form'))) {
         replyForm.resetForm()
         this.setAutoVote()
         this.setState({progress: {}})
+        this.setState({body: {value: {}}})
         if (onCancel) 
           onCancel(e)
       }

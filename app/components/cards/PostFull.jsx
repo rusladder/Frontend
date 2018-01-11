@@ -24,7 +24,6 @@ import { APP_NAME, APP_ICON, APP_NAME_LATIN, SEO_TITLE } from 'app/client_config
 import { LIQUID_TICKER } from 'app/client_config';
 import { isPostVisited, visitPost } from 'app/utils/helpers';
 import tt from 'counterpart';
-
 import pinImage from 'app/assets/icons/pin.png'
 
 // function loadFbSdk(d, s, id) {

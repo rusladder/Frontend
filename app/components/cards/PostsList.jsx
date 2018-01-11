@@ -12,6 +12,8 @@ import tt from 'counterpart';
 import {encode} from 'app/utils/helpers';
 import { isPostVisited, getVisitedPosts, visitPost } from 'app/utils/helpers';
 
+import pinImage from 'app/assets/icons/pin.png'
+
 function topPosition(domElt) {
     if (!domElt) {
         return 0;
@@ -185,37 +187,21 @@ class PostsList extends React.Component {
     }
 
     render() {
-        const {posts, username, pinnedPosts, showSpam, loading, category, content,
+      const {posts, username, pinnedPosts, showSpam, loading, category, content,
             ignore_result, account} = this.props;
         const {thumbSize, showPost, nsfwPref} = this.state
         const postsInfo = [];
         let aiPosts = [];
         let postsPinned = [];
         posts.forEach((item) => {
-          const i2Array = item.split(`/`);
-          const author = i2Array[0]
-          const id = i2Array[1]
-
-
-
-          const pinned = (author === username) && pinnedPosts.includes(id)
-
-          // if (pinned) {
-          //   console.log(`+++++++++++++++++++++++++++++++++++++++ posts loop`)
-          //   console.log(pinnedPosts)
-          //   console.log(item)
-          //   console.log(author)
-          //   console.log(id)
-          // }
-
-
-
-
-
-          showPost && aiPosts.push(item);
-
-
-
+            // get author and id from item
+            const i2Array = item.split(`/`);
+            const author = i2Array[0]
+            const id = i2Array[1]
+            // already pinned?
+            const pinned = (author === username) && pinnedPosts.includes(id);
+            const pinnedIndex = pinnedPosts.indexOf(id);
+            showPost && aiPosts.push(item);
             const cont = content.get(item);
             if(!cont) {
                 console.error('PostsList --> Missing cont key', item)
@@ -225,11 +211,12 @@ class PostsList extends React.Component {
             const hide = cont.getIn(['stats', 'hide'])
             if(!(ignore || hide) || showSpam) // rephide
             {
-                console.log(`+++++++++++++++++++++++++++++++++++++++ pushed`)
-                console.log(item)
-                console.log(`pinned : ${pinned}`)
               if (!pinned) {
                 postsInfo.push({item, ignore})
+              }
+              else {
+                // postsPinned.push({item, ignore})
+                postsPinned[pinnedIndex] = {item, ignore}
               }
             }
         });
@@ -237,9 +224,7 @@ class PostsList extends React.Component {
           const sliceCount = 5, index = aiPosts.indexOf(showPost);
           aiPosts = aiPosts.slice(index < sliceCount ? 0 : index - sliceCount, index + sliceCount + 1);
         }
-        const renderSummary = items => {
-          console.log(`RENDER SUMMARY`)
-          return items.map(item => <li key={item.item}>
+        const renderSummary = items => items.map(item => <li key={item.item}>
             <PostSummary
                 account={account}
                 post={item.item}
@@ -250,16 +235,53 @@ class PostsList extends React.Component {
                 nsfwPref={nsfwPref}
                 visited={isPostVisited(item.item)}
             />
-        </li>)}
+        </li>)
 
 
 
 
         return (
             <div id="posts_list" className="PostsList">
+                {/* render pinned posts on top */}
+                {(postsPinned.length > 0) &&
+
+                <div>
+                  {/*<div style={{*/}
+                    {/*height: '20px',*/}
+                    {/*width: '20px',*/}
+                    {/*backgroundColor: 'red'*/}
+                  {/*}}>*/}
+
+                  {/*</div>*/}
+
+
+                  <div style={{
+                    padding: '6px',
+                    borderStyle: 'solid',
+                    borderRadius: '3px',
+                    borderWidth: '1px',
+                    borderColor: '#e6e6e6',
+                    backgroundColor: '#efefef'
+                  }}>
+                    <ul className="PostsList__summaries hfeed" itemScope itemType="http://schema.org/blogPosts">
+                      {renderSummary(postsPinned)}
+                    </ul>
+                  </div>
+                </div>
+
+                }
+                {/* then render unpinned posts*/}
+
+              <div style={{
+                padding: `${(postsPinned.length > 0) ? '6px' : '0px'} `,
+              }}>
+
                 <ul className="PostsList__summaries hfeed" itemScope itemType="http://schema.org/blogPosts">
                     {renderSummary(postsInfo)}
                 </ul>
+              </div>
+
+
                 {loading && <center><LoadingIndicator type="circle" /></center>}
                 {showPost && <div id="post_overlay" className="PostsList__post_overlay" tabIndex={0}>
                     <div className="PostsList__post_top_overlay">
@@ -284,13 +306,11 @@ export default connect(
         const pathname = state.app.get('location').pathname;
         const current = state.user.get('current')
         const username = current ? current.get('username') : state.offchain.get('account')
+        const content = state.global.get('content');
         let pinnedPosts = [];
         if (current) {
           pinnedPosts = state.user.get('current').get('pinnedPosts') || pinnedPosts;
         }
-        console.log(`********************************* pinnedPosts`)
-        console.log(pinnedPosts)
-        const content = state.global.get('content');
         const ignore_result = state.global.getIn(['follow', 'getFollowingAsync', username, 'ignore_result']);
         return {...props, username, pinnedPosts, content, ignore_result, pathname};
     },

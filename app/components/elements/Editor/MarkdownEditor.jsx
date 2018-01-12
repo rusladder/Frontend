@@ -6,19 +6,17 @@ import markdown from './Plugins/extraMarkdown'
 export default class MarkdownEditor extends React.Component {
 
     static propTypes = {
-        body: React.PropTypes.object,
+        value: React.PropTypes.string,
         onChange: React.PropTypes.func
-    }
-
-    static defaultProps = {
-        id: 0
     }
 
     constructor(props) {
         super(props)
+
         this.state = {
             keyChange: false
         }
+
         this.createEditor = this
             .createEditor
             .bind(this)
@@ -36,15 +34,19 @@ export default class MarkdownEditor extends React.Component {
             .bind(this)
     }
 
-    componentWillMount() {
-        this.setState({
-            id: this.props.id + 1
-        })
-    }
-
     componentDidMount() {
         this.createEditor()
         this.addEvents()
+    }
+
+    componentWillReceiveProps(nextProps){
+        if (!this.state.keyChange && (nextProps.value !== this.simplemde.value())) {
+            this.simplemde.value(nextProps.value)
+        }
+      
+        this.setState({
+            keyChange: false
+        })
     }
 
     componentWillUnmount() {
@@ -53,7 +55,7 @@ export default class MarkdownEditor extends React.Component {
 
     createEditor() {
         const initialOptions = {
-            element: document.getElementById(this.state.id + "-markdown-textarea")
+            element: document.getElementById("markdown-textarea")
         }
         const allOptions = Object.assign({}, initialOptions, this.getMarkdownOptions())
         this.simplemde = new SimpleMDE(allOptions)
@@ -75,12 +77,7 @@ export default class MarkdownEditor extends React.Component {
             .simplemde
             .codemirror
             .replaceSelection("\n")
-        this
-            .simplemde
-            .codemirror
-            .getCursor()
         }
-        
         this
             .props
             .onChange(this.simplemde.value())
@@ -99,7 +96,7 @@ export default class MarkdownEditor extends React.Component {
     }
 
     addEvents() {
-        const wrapperId = `${this.state.id}-markdown-editor-wrapper`
+        const wrapperId = `markdown-editor-wrapper`
         const wrapperEl = document.getElementById(`${wrapperId}`)
         this.editorEl = wrapperEl.getElementsByClassName('CodeMirror')[0]
         this.editorToolbarEl = wrapperEl.getElementsByClassName('editor-toolbar')[0]
@@ -115,8 +112,6 @@ export default class MarkdownEditor extends React.Component {
             .addEventListener('drop', this.onDropEvent)
     }
 
-    
-
     getMarkdownOptions() {
 
         function extraRender(text){
@@ -129,7 +124,6 @@ export default class MarkdownEditor extends React.Component {
                 "heading",
                 "bold",
                 "italic",
-                // "strikethrough",
                 "|",
                 "code",
                 "quote",
@@ -220,9 +214,9 @@ export default class MarkdownEditor extends React.Component {
             },
             dragDrop: true,
             promptURLs: true,
-            value: this.props.body.value,
+            value: this.props.value,
             onChange: this.props.onChange,
-            initialValue: this.props.body.value,
+            initialValue: this.props.value,
             placeholder: tt('g.write_your_story'),
             autoDownloadFontAwesome: false,
             parsingConfig: {
@@ -268,10 +262,9 @@ export default class MarkdownEditor extends React.Component {
             }
         }
 
-        const textarea = <textarea key={this.state.id} id={`${this.state.id}-markdown-textarea`}/>
-
+        const textarea = <textarea key={"markdown-textarea"} id={`markdown-textarea`}/>
         return (
-            <div id={`${this.state.id}-markdown-editor-wrapper`}>
+            <div id={`markdown-editor-wrapper`}>
                 {textarea}
             </div>
         )

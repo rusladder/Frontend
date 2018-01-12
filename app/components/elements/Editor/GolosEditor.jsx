@@ -13,7 +13,6 @@ import sanitize from 'sanitize-html'
 import HtmlReady from 'shared/HtmlReady'
 import g from 'app/redux/GlobalReducer'
 import {Set} from 'immutable'
-import Remarkable from 'remarkable'
 import Dropzone from 'react-dropzone'
 import {LinkWithDropdown} from 'react-foundation-components/lib/global/dropdown'
 import VerticalMenu from 'app/components/elements/VerticalMenu'
@@ -22,7 +21,10 @@ import {DEBT_TICKER, DEFAULT_DOMESTIC, DOMESTIC} from 'app/client_config'
 import Icon from 'app/components/elements/Icon.jsx'
 import {detransliterate, capitalizeFirstLetter} from 'app/utils/ParsersAndFormatters';
 
-const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
+import markdown from './Plugins/extraMarkdown'
+
+
+//const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
   // load theme styles with webpack
 
@@ -31,12 +33,13 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
   import MediumEditor from './MediumEditor'
   import MarkdownEditor, {insertImage, getCursor} from './MarkdownEditor'
 
-  //import toMarkdown from 'to-markdown'
   import showdown from 'showdown'
 
   const converter = new showdown.Converter();
   converter.setOption('strikethrough', true);
   converter.setOption('simpleLineBreaks', true);
+
+
 
   let saveEditorTimeout
 
@@ -204,17 +207,14 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
     onCancel = e => {
       if (e) e.preventDefault()
-
       const {onCancel} = this.props
       const {replyForm, body} = this.state
 
       if (!body.value || confirm(tt('reply_editor.are_you_sure_you_want_to_clear_this_form'))) {
         replyForm.resetForm()
         this.setAutoVote()
-        this.setState({progress: {}})
-        this.setState({body: {value: {}}})
-        if (onCancel) 
-          onCancel(e)
+        this.setState({progress: {}})       
+        if (onCancel) onCancel(e)
       }
     }
 
@@ -320,6 +320,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     }
 
     render() {
+
       const originalPost = {
         category: this.props.category,
         body: this.props.body
@@ -516,7 +517,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
                     {/* {isVisualEditor
                       ? <MediumEditor body={body} onChange={this.onChange}/>
                       : <MarkdownEditor body={body} onChange={this.onChange}/>} */}                     
-                    <MarkdownEditor body={body} onChange={this.onChange}/>
+                    <MarkdownEditor {...body.props} />
                   </Dropzone>
                   {type === 'submit_story' && 
                   <p className="drag-and-drop">
@@ -608,10 +609,10 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
     }
   }
 
-  export default formId => connect((state, ownProps) => {
-    const username = state
-      .user
-      .getIn(['current', 'username'])
+export default formId => connect((state, ownProps) => {
+
+    const username = state.user.getIn(['current', 'username'])
+
     const fields = ['body', 'autoVote:checked']
     const {type, jsonMetadata} = ownProps
 
@@ -631,14 +632,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       title = body = ''
 
     return {
-      ...ownProps,
-      username,
-      fields,
-      state,
-      formId,
-      isStory,
-      isFeedback,
-      isEdit,
+      ...ownProps, username, fields, state, formId, isStory, isFeedback, isEdit,
       initialValues: {
         title,
         domestic,
@@ -690,6 +684,7 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       startLoadingIndicator
     }) => {
       // const post = state.global.getIn(['content', author + '/' + permlink])
+
       const username = state
         .user
         .getIn(['current', 'username'])
@@ -747,7 +742,8 @@ const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
       {
         const html = isHtml
           ? body
-          : remarkable.render(body)
+          //: remarkable.render(body)
+          : markdown(body)
         rtags = HtmlReady(html, {mutate: false})
       }
 

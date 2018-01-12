@@ -42,15 +42,17 @@ export default createModule({
         { action: 'SAVE_LOGIN_CONFIRM', reducer: (state, {payload}) => state.set('saveLoginConfirm', payload) },
         { action: 'SAVE_LOGIN', reducer: (state) => state }, // Use only for low security keys (like posting only keys)
         { action: 'PIN_POST', reducer: (state, {payload}) => {
-          console.clear()
-          const { postId } = payload;
-          const pinnedPosts = state.getIn(['current', 'pinnedPosts']) || [];
-          if (!pinnedPosts.includes(postId)) {
-              // current post is not in pinned list
-              // clone existing pinned posts and push current into
-              const pinnedPostsNew = [...pinnedPosts, postId];
-              state = state.setIn(['current', 'pinnedPosts'], pinnedPostsNew);
-            }
+            let { postIds } = payload;
+            postIds = (typeof postIds === `string`) ? [postIds] : (postIds instanceof Array) ? postIds : []
+            const pinnedPosts = state.getIn(['current', 'pinnedPosts']) || [];
+            const pinnedPostsNew = [...pinnedPosts, ...postIds];
+            state = state.setIn(['current', 'pinnedPosts'], pinnedPostsNew);
+            // if (!pinnedPosts.includes(postIds)) {
+            //   // current post is not in pinned list
+            //   // clone existing pinned posts and push current into
+            //   const pinnedPostsNew = [...pinnedPosts, postIds];
+            //   state = state.setIn(['current', 'pinnedPosts'], pinnedPostsNew);
+            // }
             return state
         }},
         { action: 'REMOVE_HIGH_SECURITY_KEYS', reducer: (state) => {

@@ -28,34 +28,36 @@ export const userWatches = [
 const highSecurityPages = Array(/\/market/, /\/@.+\/(transfers|permissions|password)/, /\/~witnesses/)
 
 
+const lsSaveUserSettings = ({userId, what}) => {
+  let currentSettings = localStorage.getItem(userId);
+  if (currentSettings) {
+    try {
+      currentSettings = JSON.parse(currentSettings)
+    }
+    catch(e) {
+      currentSettings = Object.create(null)
+    }
+  }
+  else {
+    currentSettings = Object.create(null)
+  }
+  const newSettings = {...currentSettings, ...what};
+  const newSettingsStr = JSON.stringify(newSettings);
+  localStorage.setItem(userId, newSettingsStr)
+}
+
 function* pinPostWatch() {
-  yield* takeLatest('user/PIN_POST', function* bla({payload: {postId}}) {
+  yield* takeLatest('user/PIN_POST', function* bla({payload: {postIds}}) {
     const current = yield select(state => state.user.get('current'))
     if(current) {
-      const username = current.get('username')
-      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ payload :`)
-      // console.log(payload)
-      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ post from payload :`)
-      // console.log(post)
-      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ splitted post :`)
-      // console.log(post.split(`/`))
-      // const postId = post.split(`/`)[1];
-      console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ postID :`)
-      console.log(postId)
-      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pin to user :`)
-      // console.log(username)
-      // const pinnedPostsSaved = localStorage.getItem('pinnedPosts');
-      // const pinnedPosts = pinnedPostsSaved ? JSON.parse(pinnedPostsSaved) : {};
-      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ struct :`)
-      // console.log(pinnedPosts)
-      // const pinnedPostsForUser = (username in pinnedPosts) ? pinnedPosts[username] : [];
-      // pinnedPostsForUser.push(postId)
-      // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~ array from struct :`)
-      // console.log(pinnedPostsForUser)
-
+      const userId = current.get('username')
+      // reducer's been called already
+      const currentlyPinnedPosts = current.get('pinnedPosts');
+      lsSaveUserSettings({userId, what: {pinnedPosts: currentlyPinnedPosts}})
     }
   });
 }
+
 function* lookupPreviousOwnerAuthorityWatch() {
     yield* takeLatest('user/lookupPreviousOwnerAuthority', lookupPreviousOwnerAuthority);
 }
@@ -148,9 +150,18 @@ function* usernamePasswordLogin(action) {
     const current = yield select(state => state.user.get('current'))
     if(current) {
         const username = current.get('username')
-        const pinnedPosts = localStorage.getItem('pinnedPosts')
-        console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@ pinned posts`)
-      console.log(pinnedPosts)
+        let savedUserSettings = localStorage.getItem(username)
+        if (savedUserSettings) {
+          try {
+            savedUserSettings = JSON.parse(savedUserSettings)
+            const { pinnedPosts } = savedUserSettings;
+            if (pinnedPosts) {
+              yield put(user.actions.pinPost({postIds: pinnedPosts}))
+            }
+          }
+          catch(e) {
+          }
+        }
 
         yield fork(loadFollows, "getFollowingAsync", username, 'blog')
         yield fork(loadFollows, "getFollowingAsync", username, 'ignore')

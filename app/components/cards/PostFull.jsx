@@ -439,8 +439,8 @@ export default connect(
            dispatch(user.actions.showTransfer())
         },
         pinPost: ({post}) => {
-          const postId = post.split(`/`)[1];
-          dispatch(user.actions.pinPost({postId}))
+          const postIds = post.split(`/`)[1];
+          dispatch(user.actions.pinPost({postIds}))
         },
         notify: (message) => {
           dispatch({type: 'ADD_NOTIFICATION', payload: {

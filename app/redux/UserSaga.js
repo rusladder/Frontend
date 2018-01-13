@@ -22,7 +22,7 @@ export const userWatches = [
     lookupPreviousOwnerAuthorityWatch,
     watchLoadSavingsWithdraw,
     uploadImageWatch,
-    pinPostWatch
+    postPinToggleWatch
 ]
 
 const highSecurityPages = Array(/\/market/, /\/@.+\/(transfers|permissions|password)/, /\/~witnesses/)
@@ -46,8 +46,8 @@ const lsSaveUserSettings = ({userId, what}) => {
   localStorage.setItem(userId, newSettingsStr)
 }
 
-function* pinPostWatch() {
-  yield* takeLatest('user/PIN_POST', function* bla({payload: {postIds}}) {
+function* postPinToggleWatch() {
+  yield* takeLatest('user/POST_PIN_TOGGLE', function* () {
     const current = yield select(state => state.user.get('current'))
     if(current) {
       const userId = current.get('username')
@@ -150,18 +150,18 @@ function* usernamePasswordLogin(action) {
     const current = yield select(state => state.user.get('current'))
     if(current) {
         const username = current.get('username')
+        let pinnedPosts = [];
         let savedUserSettings = localStorage.getItem(username)
         if (savedUserSettings) {
           try {
             savedUserSettings = JSON.parse(savedUserSettings)
-            const { pinnedPosts } = savedUserSettings;
-            if (pinnedPosts) {
-              yield put(user.actions.pinPost({postIds: pinnedPosts}))
-            }
+            pinnedPosts = savedUserSettings.pinnedPosts;
           }
           catch(e) {
           }
         }
+
+        yield put(user.actions.postsPinnedInit({pinnedPosts}))
 
         yield fork(loadFollows, "getFollowingAsync", username, 'blog')
         yield fork(loadFollows, "getFollowingAsync", username, 'ignore')

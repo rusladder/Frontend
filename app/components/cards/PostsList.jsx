@@ -192,14 +192,14 @@ class PostsList extends React.Component {
         const {thumbSize, showPost, nsfwPref} = this.state
         const postsInfo = [];
         let aiPosts = [];
-        let postsPinned = [];
+        const postsPinned = [];
         posts.forEach((item) => {
             // get author and id from item
             const i2Array = item.split(`/`);
             const author = i2Array[0]
             const id = i2Array[1]
             // already pinned?
-            const pinned = (author === username) && pinnedPosts.includes(id);
+            const pinned = (category === 'blog') && (author === username) && pinnedPosts.includes(id);
             const pinnedIndex = pinnedPosts.indexOf(id);
             showPost && aiPosts.push(item);
             const cont = content.get(item);
@@ -246,22 +246,12 @@ class PostsList extends React.Component {
                 {(postsPinned.length > 0) &&
 
                 <div>
-                  {/*<div style={{*/}
-                    {/*height: '20px',*/}
-                    {/*width: '20px',*/}
-                    {/*backgroundColor: 'red'*/}
-                  {/*}}>*/}
-
-                  {/*</div>*/}
-
-
                   <div style={{
                     padding: '6px',
                     borderStyle: 'solid',
                     borderRadius: '3px',
                     borderWidth: '1px',
-                    borderColor: '#e6e6e6',
-                    backgroundColor: '#efefef'
+                    borderColor: '#e6e6e6'
                   }}>
                     <ul className="PostsList__summaries hfeed" itemScope itemType="http://schema.org/blogPosts">
                       {renderSummary(postsPinned)}

@@ -25,6 +25,7 @@ import { LIQUID_TICKER } from 'app/client_config';
 import { isPostVisited, visitPost } from 'app/utils/helpers';
 import tt from 'counterpart';
 import pinImage from 'app/assets/icons/pin.png'
+import unpinImage from 'app/assets/icons/pin-unpin.png'
 
 // function loadFbSdk(d, s, id) {
 //     return new Promise(resolve => {
@@ -231,10 +232,24 @@ class PostFull extends React.Component {
     };
 
   render() {
-        const {props: {username, post, aiPosts, pinPost}, state: {PostFullReplyEditor, PostFullEditEditor, formId, showReply, showEdit},
-            onShowReply, onShowEdit, onDeletePost} = this
+        const { props: {username, post, aiPosts, pinPost, pinnedPosts},
+                state: {PostFullReplyEditor, PostFullEditEditor, formId, showReply, showEdit},
+                onShowReply, onShowEdit, onDeletePost} = this;
         const post_content = this.props.cont.get(this.props.post);
         if (!post_content) return null;
+
+
+
+        console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@`)
+    console.log(post)
+    console.log(pinnedPosts)
+
+
+        const postId = post.split(`/`)[1];
+        const postIsPinned = pinnedPosts.includes(postId)
+        console.log(`pinned : ${postIsPinned}`)
+
+
         const p = extractContent(immutableAccessor, post_content);
         const content = post_content.toJS();
         const {author, permlink, parent_author, parent_permlink} = content
@@ -382,7 +397,7 @@ class PostFull extends React.Component {
                                height={`18px`}
                                style={{cursor: `pointer`}}
                                onClick={this.pinPost}
-                               src={pinImage}>
+                               src={ postIsPinned ? unpinImage : pinImage }>
                             </img>
                         </span>}
                         <span className="PostFull__responses">
@@ -414,6 +429,8 @@ export default connect(
     (state, ownProps) => ({
         ...ownProps,
         username: state.user.getIn(['current', 'username']),
+        pinnedPosts: state.user.getIn(['current', 'pinnedPosts']),
+
     }),
 
     // mapDispatchToProps

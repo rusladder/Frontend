@@ -26,6 +26,8 @@ import { isPostVisited, visitPost } from 'app/utils/helpers';
 import tt from 'counterpart';
 import pinImage from 'app/assets/icons/pin.png'
 import unpinImage from 'app/assets/icons/pin-unpin.png'
+import { POSTS_PINNED_MAX_COUNT } from 'app/client_config';
+
 
 // function loadFbSdk(d, s, id) {
 //     return new Promise(resolve => {
@@ -224,9 +226,19 @@ class PostFull extends React.Component {
     };
 
     pinPost = () => {
+      const {props: {pinnedPosts}} = this;
+      const pinnedPostsCount = pinnedPosts.length;
+      const pinned = this.state.pinned;
+      if (!pinned) {
+        // check max
+        if (!(pinnedPostsCount < POSTS_PINNED_MAX_COUNT)) {
+          this.notify(`No more posts to pin!`)
+          return
+        }
+      }
       this.props.pinPost({post: this.props.post})
       // fixme should not be called such a way
-      this.notify(`Блааааааааааааааааааааа!`)
+      this.notify(`Post pinned ... `)
     }
 
     notify = (message) => {

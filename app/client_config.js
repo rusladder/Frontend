@@ -108,3 +108,5 @@ export const DEFAULT_THEME = THEMES[0]
 export const USER_GENDER = ['undefined', 'male', 'female']
 
 export const PHONE_SERVICE = '+46 (769) 43-88-07'
+
+export const POSTS_PINNED_MAX_COUNT = 3;

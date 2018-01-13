@@ -113,6 +113,16 @@ class PostFull extends React.Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+      const { state: {pinned} } = this;
+      const pinnedNext = this.isPinned(nextProps);
+      if (pinned !== pinnedNext) {
+        this.setState({
+          pinned: pinnedNext
+        })
+      }
+    }
+
     componentWillMount() {
         const {post} = this.props
         const formId = `postFull-${post}`
@@ -137,12 +147,22 @@ class PostFull extends React.Component {
                 }
             }
         }
+
+        this.setState({
+          pinned: this.isPinned(this.props)
+        })
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         const names = 'cont, post, username'.split(', ');
         return names.findIndex(name => this.props[name] !== nextProps[name]) !== -1 ||
             this.state !== nextState
+    }
+
+    isPinned(props) {
+      const {post, pinnedPosts} = props;
+      const postId = post.split(`/`)[1];
+      return pinnedPosts.includes(postId)
     }
 
     fbShare(e) {
@@ -232,23 +252,11 @@ class PostFull extends React.Component {
     };
 
   render() {
-        const { props: {username, post, aiPosts, pinPost, pinnedPosts},
+        const { props: {username, post, aiPosts},
                 state: {PostFullReplyEditor, PostFullEditEditor, formId, showReply, showEdit},
                 onShowReply, onShowEdit, onDeletePost} = this;
         const post_content = this.props.cont.get(this.props.post);
         if (!post_content) return null;
-
-
-
-        console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@`)
-    console.log(post)
-    console.log(pinnedPosts)
-
-
-        const postId = post.split(`/`)[1];
-        const postIsPinned = pinnedPosts.includes(postId)
-        console.log(`pinned : ${postIsPinned}`)
-
 
         const p = extractContent(immutableAccessor, post_content);
         const content = post_content.toJS();
@@ -397,7 +405,7 @@ class PostFull extends React.Component {
                                height={`18px`}
                                style={{cursor: `pointer`}}
                                onClick={this.pinPost}
-                               src={ postIsPinned ? unpinImage : pinImage }>
+                               src={ this.state.pinned ? unpinImage : pinImage }>
                             </img>
                         </span>}
                         <span className="PostFull__responses">
@@ -456,8 +464,8 @@ export default connect(
            dispatch(user.actions.showTransfer())
         },
         pinPost: ({post}) => {
-          const postIds = post.split(`/`)[1];
-          dispatch(user.actions.pinPost({postIds}))
+          const postId = post.split(`/`)[1];
+          dispatch(user.actions.postPinToggle({postId}))
         },
         notify: (message) => {
           dispatch({type: 'ADD_NOTIFICATION', payload: {

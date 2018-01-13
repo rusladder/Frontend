@@ -41,18 +41,24 @@ export default createModule({
             state.merge({show_login_modal: false, loginBroadcastOperation: undefined, loginDefault: undefined}) },
         { action: 'SAVE_LOGIN_CONFIRM', reducer: (state, {payload}) => state.set('saveLoginConfirm', payload) },
         { action: 'SAVE_LOGIN', reducer: (state) => state }, // Use only for low security keys (like posting only keys)
-        { action: 'PIN_POST', reducer: (state, {payload}) => {
-            let { postIds } = payload;
-            postIds = (typeof postIds === `string`) ? [postIds] : (postIds instanceof Array) ? postIds : []
-            const pinnedPosts = state.getIn(['current', 'pinnedPosts']) || [];
-            const pinnedPostsNew = [...pinnedPosts, ...postIds];
-            state = state.setIn(['current', 'pinnedPosts'], pinnedPostsNew);
-            // if (!pinnedPosts.includes(postIds)) {
-            //   // current post is not in pinned list
-            //   // clone existing pinned posts and push current into
-            //   const pinnedPostsNew = [...pinnedPosts, postIds];
-            //   state = state.setIn(['current', 'pinnedPosts'], pinnedPostsNew);
-            // }
+        { action: 'POST_PIN_TOGGLE', reducer: (state, {payload}) => {
+            const { postId } = payload;
+            let pinnedPosts = state.getIn(['current', 'pinnedPosts']) || [];
+            if (pinnedPosts.includes(postId)) {
+              // current post has already been pinned
+              // filter it out from list (unpin)
+              pinnedPosts = pinnedPosts.filter((i) => (i !== postId));
+            }
+            else {
+              // push into
+              pinnedPosts = [...pinnedPosts, postId];
+            }
+            state = state.setIn(['current', 'pinnedPosts'], pinnedPosts);
+            return state
+        }},
+        { action: 'POSTS_PINNED_INIT', reducer: (state, {payload}) => {
+            const {pinnedPosts} = payload;
+            state = state.setIn(['current', 'pinnedPosts'], pinnedPosts);
             return state
         }},
         { action: 'REMOVE_HIGH_SECURITY_KEYS', reducer: (state) => {

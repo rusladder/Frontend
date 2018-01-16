@@ -134,8 +134,6 @@ export default class UserProfile extends React.Component {
         // current profile has changed - load config
         const newConfig = this.loadProfileConfig(profileNext)
         this.setState(newConfig, () => {
-          console.log(`************************ profile change! next state set :`)
-          console.log(this.state)
         })
       }
     }

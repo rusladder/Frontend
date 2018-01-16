@@ -82,7 +82,7 @@ class Post extends React.Component {
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 )
             }
@@ -166,12 +166,21 @@ class Post extends React.Component {
           if(blockedUsers.includes(post.split("/")[0])) {
             return (<IllegalContentMessage />)
           }
-          
+
+
+          const { props: { pinnedPosts, postPinToggle } } = this;
+
         return (
             <div className="Post">
                 <div className="row">
                     <div className="column">
-                        <PostFull post={post} cont={content} aiPosts={aiPosts} />
+                        <PostFull
+                          pinnedPosts={pinnedPosts}
+                          postPinToggle={postPinToggle}
+                          post={post}
+                          cont={content}
+                          aiPosts={aiPosts}
+                        />
                     </div>
                 </div>
                 {!current_user && <div className="row">
@@ -198,7 +207,7 @@ class Post extends React.Component {
                             {negativeGroup}
                         </div>
                     </div>
-                </div>                
+                </div>
             </div>
         );
     }

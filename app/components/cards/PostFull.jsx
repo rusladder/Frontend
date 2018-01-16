@@ -90,8 +90,8 @@ class PostFull extends React.Component {
         showExplorePost: React.PropTypes.func.isRequired,
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {};
         this.ljShare = this.ljShare.bind(this);
         this.vkShare = this.vkShare.bind(this);
@@ -113,15 +113,36 @@ class PostFull extends React.Component {
             const content = this.props.cont.get(this.props.post);
             deletePost(content.get('author'), content.get('permlink'))
         }
+
+        const { pinnedPosts, postPinToggle } = props;
+        // todo write separate component instead of following
+        this.pinnable = pinnedPosts && postPinToggle;
+        if (this.pinnable) {
+          this.state = {...this.state, pinned: this.isPinned(this.props)}
+        }
+    }
+
+    isPinned = (props) => {
+      const {post, pinnedPosts} = props;
+      const postId = post.split(`/`)[1];
+      return pinnedPosts.includes(postId)
+    }
+
+    pinToggle = () => {
+      const {props: { post, postPinToggle }} = this;
+      const postId = post.split(`/`)[1];
+      postPinToggle({postId})
     }
 
     componentWillReceiveProps(nextProps) {
-      const { state: {pinned} } = this;
-      const pinnedNext = this.isPinned(nextProps);
-      if (pinned !== pinnedNext) {
-        this.setState({
-          pinned: pinnedNext
-        })
+      if (this.pinnable) {
+        const {state: {pinned}} = this;
+        const pinnedNext = this.isPinned(nextProps);
+        if (pinned !== pinnedNext) {
+          this.setState({
+            pinned: pinnedNext
+          })
+        }
       }
     }
 
@@ -149,22 +170,12 @@ class PostFull extends React.Component {
                 }
             }
         }
-
-        this.setState({
-          pinned: this.isPinned(this.props)
-        })
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         const names = 'cont, post, username'.split(', ');
         return names.findIndex(name => this.props[name] !== nextProps[name]) !== -1 ||
             this.state !== nextState
-    }
-
-    isPinned(props) {
-      const {post, pinnedPosts} = props;
-      const postId = post.split(`/`)[1];
-      return pinnedPosts.includes(postId)
     }
 
     fbShare(e) {
@@ -225,22 +236,6 @@ class PostFull extends React.Component {
         this.props.showExplorePost(permlink)
     };
 
-    pinPost = () => {
-      const {props: {pinnedPosts}} = this;
-      const pinnedPostsCount = pinnedPosts.length;
-      const pinned = this.state.pinned;
-      if (!pinned) {
-        // check max
-        if (!(pinnedPostsCount < POSTS_PINNED_MAX_COUNT)) {
-          this.notify(`No more posts to pin!`)
-          return
-        }
-      }
-      this.props.pinPost({post: this.props.post})
-      // fixme should not be called such a way
-      this.notify(`Post pinned ... `)
-    }
-
     notify = (message) => {
       this.props.notify(message)
     }
@@ -263,7 +258,7 @@ class PostFull extends React.Component {
       });
     };
 
-  render() {
+    render() {
         const { props: {username, post, aiPosts},
                 state: {PostFullReplyEditor, PostFullEditEditor, formId, showReply, showEdit},
                 onShowReply, onShowEdit, onDeletePost} = this;
@@ -411,12 +406,12 @@ class PostFull extends React.Component {
                                 {' '}{showEditOption && !showEdit && <a onClick={onShowEdit}>{tt('g.edit')}</a>}
                                 {' '}{showDeleteOption && !showReply && <a onClick={onDeletePost}>{tt('g.delete')}</a>}
                             </span>}
-                        {showEditOption &&  <span className="PostFull__reply">
+                        {this.pinnable &&  <span className="PostFull__reply">
                             <img
                                width={`18px`}
                                height={`18px`}
                                style={{cursor: `pointer`}}
-                               onClick={this.pinPost}
+                               onClick={this.pinToggle}
                                src={ this.state.pinned ? unpinImage : pinImage }>
                             </img>
                         </span>}
@@ -448,9 +443,7 @@ export default connect(
     // mapStateToProps
     (state, ownProps) => ({
         ...ownProps,
-        username: state.user.getIn(['current', 'username']),
-        pinnedPosts: state.user.getIn(['current', 'pinnedPosts']),
-
+        username: state.user.getIn(['current', 'username'])
     }),
 
     // mapDispatchToProps
@@ -474,10 +467,6 @@ export default connect(
         showTransfer: (transferDefaults) => {
            dispatch(user.actions.setTransferDefaults(transferDefaults))
            dispatch(user.actions.showTransfer())
-        },
-        pinPost: ({post}) => {
-          const postId = post.split(`/`)[1];
-          dispatch(user.actions.postPinToggle({postId}))
         },
         notify: (message) => {
           dispatch({type: 'ADD_NOTIFICATION', payload: {

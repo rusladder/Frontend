@@ -1,13 +1,13 @@
 import { fromJS } from 'immutable'
 import { call, put, select } from 'redux-saga/effects';
-import { takeEvery } from 'redux-saga';
+import {takeEvery, takeLatest} from 'redux-saga';
 import g from 'app/redux/GlobalReducer'
 import tt from 'counterpart';
 import { api } from 'golos-js';
 
 export const sharedWatches = [
     watchGetState,
-    watchTransactionErrors
+    watchTransactionErrors,
 ]
 
 export function* getAccount(username, force = false) {

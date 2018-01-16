@@ -187,7 +187,7 @@ class PostsList extends React.Component {
     }
 
     render() {
-      const {posts, username, pinnedPosts, showSpam, loading, category, content,
+        const {posts, pinnedPosts, postPinToggle, showSpam, loading, category, content,
             ignore_result, account} = this.props;
         const {thumbSize, showPost, nsfwPref} = this.state
         const postsInfo = [];
@@ -199,8 +199,8 @@ class PostsList extends React.Component {
             const author = i2Array[0]
             const id = i2Array[1]
             // already pinned?
-            const pinned = (category === 'blog') && (author === username) && pinnedPosts.includes(id);
-            const pinnedIndex = pinnedPosts.indexOf(id);
+            const pinned = pinnedPosts ? pinnedPosts.includes(id) : false;
+            const pinnedIndex = pinned ? pinnedPosts.indexOf(id) : undefined;
             showPost && aiPosts.push(item);
             const cont = content.get(item);
             if(!cont) {
@@ -283,7 +283,12 @@ class PostsList extends React.Component {
                         </div>
                     </div>
                     <div className="PostsList__post_container">
-                        <Post post={showPost} aiPosts={aiPosts} />
+                        <Post
+                          post={showPost}
+                          aiPosts={aiPosts}
+                          pinnedPosts={pinnedPosts}
+                          postPinToggle={postPinToggle}
+                        />
                     </div>
                 </div>}
             </div>
@@ -297,12 +302,8 @@ export default connect(
         const current = state.user.get('current')
         const username = current ? current.get('username') : state.offchain.get('account')
         const content = state.global.get('content');
-        let pinnedPosts = [];
-        if (current) {
-          pinnedPosts = state.user.get('current').get('pinnedPosts') || pinnedPosts;
-        }
         const ignore_result = state.global.getIn(['follow', 'getFollowingAsync', username, 'ignore_result']);
-        return {...props, username, pinnedPosts, content, ignore_result, pathname};
+        return {...props, username, content, ignore_result, pathname};
     },
     dispatch => ({
         fetchState: (pathname) => {

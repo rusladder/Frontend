@@ -32,6 +32,7 @@ import Userpic from 'app/components/elements/Userpic';
 import Callout from 'app/components/elements/Callout';
 import normalizeProfile from 'app/utils/NormalizeProfile';
 import UserInvites from 'app/components/elements/UserInvites';
+import {POSTS_PINNED_MAX_COUNT, VEST_TICKER} from "../../client_config";
 
 export default class UserProfile extends React.Component {
     constructor(props) {
@@ -39,33 +40,107 @@ export default class UserProfile extends React.Component {
         this.state = {}
         this.onPrint = () => {window.print()}
         this.loadMore = this.loadMore.bind(this);
+        // synchronous action
+        const currentProfile = this.profileFromRoute();
+        // initial state struct
+        let profileConfig = {
+          posts: {
+            pinned: []
+          }}
+        profileConfig = {
+          ...profileConfig,
+          ...this.loadProfileConfig(currentProfile)
+        }
+        this.state = {
+          ...profileConfig
+        }
     }
+
+    // fixme use common lib for localstorage interaction
+    // (sync) localStorage
+    // load service data for current user profile
+    loadProfileConfig = (profile) => {
+      let result = {};
+      // client side
+      if (process.env.BROWSER) {
+        const key = `$profile`
+        const configStr = localStorage.getItem(key);
+        let config;
+        try {
+          config = JSON.parse(configStr) || {};
+        }
+        catch(e) {
+          config = {}
+        }
+        if (profile && (typeof profile === `string`)) {
+          result = config[profile] || {}
+        //   const configForProfile = config[profile] || {};
+        //   result = {...result, ...configForProfile}
+        }
+        else {
+          result = config
+        }
+        // result = config[profile] || result;
+      }
+      return result
+    }
+
+    postPinToggle = ({postId}) => {
+      const state = {...this.state};
+      let {posts: { pinned } } = state;
+      const pinnedPostsCount = pinned.length;
+      if (pinned.includes(postId)) {
+        // current post has already been pinned
+        // filter it out from list (unpin)
+        pinned = pinned.filter((i) => (i !== postId))
+      }
+      else {
+        // push into
+        if (pinnedPostsCount < POSTS_PINNED_MAX_COUNT) {
+          pinned = [...pinned, postId];
+        }
+        else {
+          return
+        }
+      }
+      state.posts.pinned = pinned
+
+      this.setState(state, () => {
+        // save to storage
+        const currentProfile = this.profileFromRoute();
+        let config = this.loadProfileConfig()
+        if (currentProfile) {
+          config = {...config, [currentProfile]: this.state}
+          const key = `$profile`
+          try {
+            const configStr = JSON.stringify(config);
+            localStorage.setItem(key, configStr)
+          }
+          catch(e) {
+          }
+        }
+
+      })
+
+    }
+
+    profileFromRoute = (props = this.props) => props.routeParams.accountname;
 
     componentWillReceiveProps(next) {
-      // if (!this.externalTransferRequest) {
-      //   return
-      // }
-      // // we've got an external transfer request shaped properly
-      // // start login track ...
-      // console.log(`^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ will receive props`)
-      // const { accountname, section } = next.routeParams;
-      // console.log(`Acc from route from NEXT : ${accountname}`)
-      // // track logged in person
-      // const loginBefore = this.props.current_user;
-      // const loginNow = next.current_user;
-      // const loginNowName = loginNow && loginNow.get('username')
-      // console.log(`Acc LOGGED IN : ${loginNowName}`)
-      // const loginMismatch = Boolean(((loginNowName && accountname)) && (loginNowName !== accountname))
-      // console.log(`MISMATCH : ${loginMismatch}`)
-      //
-      //
-      // // console.log(`was : ${String(loginBefore)} is : ${String(loginNow)}`)
-      //
-      //
-      // // console.log(next)
+      // track profile change from route
+      const profile = this.profileFromRoute(this.props);
+      const profileNext = this.profileFromRoute(next);
+      if (profile !== profileNext) {
+        // current profile has changed - load config
+        const newConfig = this.loadProfileConfig(profileNext)
+        this.setState(newConfig, () => {
+          console.log(`************************ profile change! next state set :`)
+          console.log(this.state)
+        })
+      }
     }
 
-    shouldComponentUpdate(np) {
+    shouldComponentUpdate(np, ns) {
         const {follow} = this.props;
         const {follow_count} = this.props;
 
@@ -92,7 +167,8 @@ export default class UserProfile extends React.Component {
             np.loading !== this.props.loading ||
             np.location.pathname !== this.props.location.pathname ||
             np.routeParams.accountname !== this.props.routeParams.accountname ||
-            np.follow_count !== this.props.follow_count
+            np.follow_count !== this.props.follow_count ||
+            this.state !== ns
         )
     }
 
@@ -179,6 +255,9 @@ export default class UserProfile extends React.Component {
         // const power_balance_str = numberWithCommas(vesting_steem) + " STEEM POWER";
         // const sbd_balance = parseFloat(account.sbd_balance)
         // const sbd_balance_str = numberWithCommas('$' + sbd_balance.toFixed(3));
+
+        // get pinned posts for current profile
+        const pinnedPosts = this.state.posts.pinned;
 
         let rewardsClass = "", walletClass = "";
         if( section === 'transfers' ) {
@@ -276,6 +355,8 @@ export default class UserProfile extends React.Component {
                             category="blog"
                             loadMore={this.loadMore}
                             showSpam
+                            pinnedPosts = {pinnedPosts}
+                            postPinToggle = {this.postPinToggle}
                         />
                     );
                 }

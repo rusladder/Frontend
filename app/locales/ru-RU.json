@@ -577,7 +577,9 @@
     "i_understand_dont_show_again": "Понимаю, больше не показывать",
     "insufficent_balance": "Недостаточный баланс",
     "in_week_convert_DEBT_TOKEN_to_LIQUID_TOKEN": "В 3-5 дней перевести %(amount)s %(DEBT_TOKEN)s в %(LIQUID_TOKEN)s",
-    "account_name_is_not_available": "Имя аккаунта недоступно"
+    "account_name_is_not_available": "Имя аккаунта недоступно",
+    "has_been_pinned": "Вы закрепили",
+    "has_been_unpinned": "Вы открепили"
   },
   "postsummary_jsx": {
     "resteemed": "Репост",

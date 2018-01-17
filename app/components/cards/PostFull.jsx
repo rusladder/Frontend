@@ -122,16 +122,22 @@ class PostFull extends React.Component {
         }
     }
 
-    isPinned = (props) => {
+    isPinned = (props = this.props) => {
       const {post, pinnedPosts} = props;
       const postId = post.split(`/`)[1];
       return pinnedPosts.includes(postId)
     }
 
     pinToggle = () => {
+      const post_content = this.props.cont.get(this.props.post);
+      const content = post_content.toJS();
+      const title = content.title;
       const {props: { post, postPinToggle }} = this;
       const postId = post.split(`/`)[1];
+      const message = this.isPinned() ?
+        tt('postfull_jsx.has_been_unpinned') : tt('postfull_jsx.has_been_pinned');
       postPinToggle({postId})
+      this.notify(`${message} : ${title}`)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -470,9 +476,9 @@ export default connect(
         },
         notify: (message) => {
           dispatch({type: 'ADD_NOTIFICATION', payload: {
-              // key: "settings_" + Date.now(),
+              key: "post_pin_toggle" + Date.now(),
               message,
-              dismissAfter: 3000}
+              dismissAfter: 5000}
           });
         },
 

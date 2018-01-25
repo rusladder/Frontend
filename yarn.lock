@@ -3177,26 +3177,6 @@ glogg@^1.0.0:
   dependencies:
     sparkles "^1.0.0"
 
-golos-js@0.5.21:
-  version "0.5.21"
-  resolved "https://registry.yarnpkg.com/golos-js/-/golos-js-0.5.21.tgz#1527996da1afba230d91093a09e1be791da61fe1"
-  dependencies:
-    bigi "^1.4.2"
-    bluebird "^3.4.6"
-    browserify-aes "^1.0.6"
-    bs58 "^4.0.0"
-    buffer "^5.0.6"
-    bytebuffer "^5.0.1"
-    create-hash "^1.1.2"
-    create-hmac "^1.1.4"
-    cross-env "^5.0.0"
-    debug "^2.6.8"
-    detect-node "^2.0.3"
-    ecurve "^1.0.5"
-    lodash "^4.16.4"
-    secure-random "^1.1.1"
-    ws "^1.1.1"
-
 graceful-fs@4.1.6, graceful-fs@^4.1.2, graceful-fs@^4.1.4, graceful-fs@^4.1.6:
   version "4.1.6"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.6.tgz#514c38772b31bee2e08bedc21a0aeb3abf54c19e"

@@ -436,7 +436,10 @@ class CreateAccount extends React.Component {
             calloutClass = '';
             phone_step = <div className={"callout" + calloutClass}>
               <LoadingIndicator type="circle" />&nbsp;{fetch_state.message + " "}
-              {tt('mobilevalidation_js.you_can_change_your_number') + " "}<a onClick={this.onClickSelectAnotherPhone}>{tt('mobilevalidation_js.select_another_number')}</a>.
+              <hr style={{borderBottom: `1px solid #e6e6e6`}} />
+              <p style={{fontSize: `90%`, fontStyle: `italic`}}>
+                {tt('mobilevalidation_js.you_can_change_your_number') + " "}<a onClick={this.onClickSelectAnotherPhone}>{tt('mobilevalidation_js.select_another_number')}</a>.
+              </p>
             </div>;
           }
           else {
@@ -530,7 +533,7 @@ class CreateAccount extends React.Component {
                             {passwordRules}
                             <div className="success">
                                 <label>Email <input type="email" name="email" autoComplete="off" disabled={! (fetch_state.checking && fetch_state.success)} onChange={this.onEmailChange} value={email} /></label>
-                                <p>{tt('g.email_recovery_hint')}</p>
+                                {/*<p>{tt('g.email_recovery_hint')}</p>*/}
                             </div>
                             <div className={name_error ? 'error' : ''}>
                                 <label className="uppercase">{tt('g.username')}

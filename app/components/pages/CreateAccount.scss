@@ -19,6 +19,9 @@
 
 .CreateAccount {
   form {
+    label {
+      text-transform: none !important;
+    }
     .callout {
       .LoadingIndicator {
         float: left;

@@ -24,9 +24,6 @@ import { APP_NAME, APP_ICON, APP_NAME_LATIN, SEO_TITLE } from 'app/client_config
 import { LIQUID_TICKER } from 'app/client_config';
 import { isPostVisited, visitPost } from 'app/utils/helpers';
 import tt from 'counterpart';
-import pinImage from 'app/assets/icons/pin.png'
-import unpinImage from 'app/assets/icons/pin-unpin.png'
-import { POSTS_PINNED_MAX_COUNT } from 'app/client_config';
 
 
 // function loadFbSdk(d, s, id) {
@@ -136,8 +133,13 @@ class PostFull extends React.Component {
       const postId = post.split(`/`)[1];
       const message = this.isPinned() ?
         tt('postfull_jsx.has_been_unpinned') : tt('postfull_jsx.has_been_pinned');
-      postPinToggle({postId})
-      this.notify(`${message} : ${title}`)
+      const pinOk = postPinToggle({postId});
+      if (pinOk) {
+        this.notify(`${message} : ${title}`)
+      }
+      else {
+        this.notify(`${tt('postfull_jsx.posts_pinned_max_count')}`)
+      }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -412,15 +414,12 @@ class PostFull extends React.Component {
                                 {' '}{showEditOption && !showEdit && <a onClick={onShowEdit}>{tt('g.edit')}</a>}
                                 {' '}{showDeleteOption && !showReply && <a onClick={onDeletePost}>{tt('g.delete')}</a>}
                             </span>}
-                        {this.pinnable &&  <span className="PostFull__reply">
-                            <img
-                               width={`18px`}
-                               height={`18px`}
-                               style={{cursor: `pointer`}}
-                               onClick={this.pinToggle}
-                               src={ this.state.pinned ? unpinImage : pinImage }>
-                            </img>
-                        </span>}
+                        {this.pinnable &&
+                          <span className="explore-post" title={tt(`postfull_jsx.${this.state.pinned ? 'un' : ''}pin_the_post`)}
+                                onClick={this.pinToggle}>
+                            <Icon name={ this.state.pinned ? 'unpin' : 'pin' } className="space-right" />
+                          </span>
+                        }
                         <span className="PostFull__responses">
                             <Link to={link} title={tt('votesandcomments_jsx.response_count', {count: content.children})}>
                                 <Icon name="chatboxes" className="space-right" />{content.children}

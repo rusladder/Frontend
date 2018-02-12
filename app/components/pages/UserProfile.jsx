@@ -100,7 +100,7 @@ export default class UserProfile extends React.Component {
           pinned = [...pinned, postId];
         }
         else {
-          return
+          return false;
         }
       }
       state.posts.pinned = pinned
@@ -121,7 +121,7 @@ export default class UserProfile extends React.Component {
         }
 
       })
-
+      return true;
     }
 
     profileFromRoute = (props = this.props) => props.routeParams.accountname;

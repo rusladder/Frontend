@@ -32,6 +32,8 @@ const icons = [
     'twitter',
     'linkedin',
     'pencil',
+    'pin',
+    'unpin',
     'vk',
     'link',
     'clock',
@@ -97,7 +99,7 @@ const icons = [
     'hf/hf17',
     'hf/hf18',
     'hf/hf19',
-    'hf/hf20',    
+    'hf/hf20',
 ];
 const icons_map = {};
 for (const i of icons) icons_map[i] = require(`app/assets/icons/${i}.svg`);

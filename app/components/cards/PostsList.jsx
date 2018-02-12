@@ -12,7 +12,6 @@ import tt from 'counterpart';
 import {encode} from 'app/utils/helpers';
 import { isPostVisited, getVisitedPosts, visitPost } from 'app/utils/helpers';
 
-import pinImage from 'app/assets/icons/pin.png'
 
 function topPosition(domElt) {
     if (!domElt) {

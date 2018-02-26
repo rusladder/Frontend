@@ -16,12 +16,13 @@ describe('normalizeProfile', () => {
 
         let name
         let about
+        let gender
         let location
         let website
         let profile_image = 'https://golos.io/profile_image.jpeg'
         let cover_image = 'https://golos.io/cover_image.jpeg'
 
-        assert.deepEqual(normalizeProfile(account), {name, about, location, website, profile_image, cover_image})
+        assert.deepEqual(normalizeProfile(account), {name, about, gender, location, website, profile_image, cover_image})
     })
 
     it('should return full profile object', () => {
@@ -31,12 +32,13 @@ describe('normalizeProfile', () => {
 
         let name = 'lyke'
         let about = 'some info'
+        let gender
         let location = 'NY'
         let website = 'https://lyke.me'
         let profile_image = 'https://golos.io/profile_image.jpeg'
         let cover_image = 'https://golos.io/cover_image.jpeg'
 
-        assert.deepEqual(normalizeProfile(account), {name, about, location, website, profile_image, cover_image})
+        assert.deepEqual(normalizeProfile(account), {name, about, gender, location, website, profile_image, cover_image})
     })
 
     it('should truncate fields', () => {
@@ -104,8 +106,8 @@ describe('normalizeProfile', () => {
             json_metadata: "{created_at: 'GENESIS'}"
         }
 
-        let name, about, location, website, profile_image, cover_image
+        let name, about, gender, location, website, profile_image, cover_image
         
-        assert.deepEqual(normalizeProfile(account), {name, about, location, website, profile_image, cover_image})
+        assert.deepEqual(normalizeProfile(account), {name, about, gender, location, website, profile_image, cover_image})
     })
 })

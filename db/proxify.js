@@ -1,39 +1,46 @@
-async function proxify(method, context, proxy, lifetime /*, options */) {
-  const options = [].slice.call(arguments).splice(4);
-  const proxyKey = method + JSON.stringify(options);
-  let res = [];
+const discussions = [
+    'getDiscussionsByCreatedAsync',
+    'getDiscussionsByHotAsync',
+    'getDiscussionsByTrendingAsync',
+]
 
-  if (process.env.NODE_ENV === 'development') {
-    return await context[method].apply(context, options);
-  }
+const proxifyMethods = [
+    'getTrendingTagsAsync',
+    'getCurrentMedianHistoryPriceAsync',
+    'getDynamicGlobalPropertiesAsync'
+].concat(discussions)
 
-  try {
-    const cache = await proxy.call('chaindb_get', proxyKey);
-    if (cache && cache.length >= 1)
-      res = cache[0].slice(2);
-  }
-  catch (e) {
-    console.error('-- /api/v1/proxy/method error -->', proxyKey, e.message);
-  }
-  if (typeof res === 'object' && res.length) {
-    res = res[0];
-  }
-  else {
-    await proxy.call('chaindb_update_in_progress', proxyKey);
-    if (typeof options[0] !== 'undefined') {
-      res = await context[method].apply(context, options);
+export default async function proxify(ctx, context, method, ...args) {
+    const { chainproxy, metrics } = ctx
+
+    if (proxifyMethods.includes(method)) {
+        try {
+            if (discussions.includes(method)) {
+                const [ query ] = args
+                if ('select_tags' in query) {
+                    throw new Error('select_tags not supported')
+                }
+            }
+            const [[ key, data ]] = await chainproxy.call('get_data', method)
+            if (data) {
+                return Promise.resolve(data)
+            } else {
+                throw new Error('no data')
+            }
+        } catch (e) {
+            metrics.cache(method, 'MISS')
+            return await defaultCall(ctx, context, method, args)
+        }
+    } else {
+        return await defaultCall(ctx, context, method, args)
     }
-    else {
-      res = await context[method].apply(context);
-    }
-    try {
-      await proxy.call('chaindb_set', lifetime, proxyKey, res);
-    }
-    catch (e) {
-      console.error('-- /api/v1/proxy/method error -->', proxyKey, e.message);
-    }
-  }
-  return res;
 }
 
-export default proxify;
+async function defaultCall(ctx, context, method, args) {
+    const { metrics } = ctx
+    if (metrics) {
+        return await metrics.track(context, method, args)
+    } else { 
+        return await context[method].apply(context, args)
+    }
+}

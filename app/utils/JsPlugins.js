@@ -1,5 +1,3 @@
-import { SEGMENT_ANALYTICS_KEY } from 'app/client_config';
-
 // 3rd party plugins
 export default function init(config) {
 
@@ -26,7 +24,7 @@ export default function init(config) {
                     (i[r].q = i[r].q || []).push(arguments)
                 }, i[r].l = 1 * new Date();
             a = s.createElement(o),
-                m = s.getElementsByTagName(o)[0];
+            m = s.getElementsByTagName(o)[0];
             a.async = 1;
             a.src = g;
             m.parentNode.insertBefore(a, m)
@@ -46,6 +44,7 @@ export default function init(config) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) {return;}
             js = d.createElement(s);
+            js.async = true;
             js.id = id;
             js.src = "//connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
@@ -61,7 +60,7 @@ export default function init(config) {
     /* Facebook Pixel Code */
     /* NOTE dont't forget to remove <img /> tag of facebook pixel (down below) */
     fbq('init', config.facebook_app_id); // Insert your pixel ID here.
-
+    fbq('track', 'PageView');
 
     /* Yandex.Metrika counter */
     /* NOTE dont't forget to remove <img /> tag of yandex metrika (down below) */

@@ -34,6 +34,8 @@
 @import "./elements/QrKeyView";
 @import "./elements/CTA/ctablock";
 @import "./elements/Editor/Editor";
+@import "./elements/MobileBanners/MobileBanners";
+
 
 // modules
 @import "./modules/Header";
@@ -48,6 +50,7 @@
 @import "./modules/BlocktradesDeposit";
 @import "./modules/TopRightMenu";
 @import "./modules/RocketChat";
+@import "./modules/Settings";
 
 // pages
 @import "./pages/PostsIndex";

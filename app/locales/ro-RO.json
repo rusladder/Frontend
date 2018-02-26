@@ -15,7 +15,9 @@
     "about_app_details":"%(APP_NAME)s - e o platformă socială în care fiecare câștigă prin crearea și întreținerea conținutului. În ea se folosește un sistem de încredere de puncte numerice ce este denumit Golos, care susține o valore reală la câștigurile digitale, prin prețul de pe piață al lichidităților.",
     "learn_more_at_app_url":"Află mai mult %(APP_URL)s",
     "resources":"Resurse",
-    "join_our_slack":"Alatură-te pe Slack"
+    "join_our_slack":"Alatură-te pe Slack",
+    "mobileBannerAlt": "Get it on Google Play"
+
   },
   "authorrewards_jsx":{
     "estimated_author_rewards_last_week":"Drepturi de autor estimate pe parcursul săptămânii anterioare",
@@ -64,7 +66,7 @@
     "DEBT_TOKEN_will_be_unavailable":"Conversia aurului va fi în termen de 3,5 zile de la lansare. Nu poate fi anulată. După ce a început conversia, monedele nu vor fi disponibile."
   },
   "createaccount_jsx":{
-    "will_be_send_to_phone_number": "Message will be send to: +",
+    "will_be_send_to_phone_number": "Number: +",
     "our_records_indicate_you_already_have_account":"Înregistrările noastre indică faptul că aveți deja contul %(APP_NAME)s",
     "in_order_to_prevent_abuse_APP_NAME_can_only_register_one_account_per_user":"Pentru a preveni abuzurile %(APP_NAME)s poate înregistra un singur cont pentru fiecare utilizator de confirmat.",
     "next_3_blocks":{
@@ -931,5 +933,22 @@
   "generated_password_input": {
     "i_have_read_and_agree_to_the": "Я прочитал и согласен с",
     "terms_of_service": "Условиями пользования"
+  },
+  "user_saga_js": {
+    "image_upload" : {
+      "uploading": "Загрузка",
+      "error": {
+        "account_is_not_found": "Пользователь не найден",
+        "unsupported_posting_key": "Ошибка постинг-ключа",
+        "upload_failed": "Ошибка загрузки изображения",
+        "upload_only_images": "Вы можете загружать только изображения",
+        "signature_did_not_verify": "Ошибка цифровой подписи",
+        "err_uploading": "Ошибка загрузки",
+        "login_first": "Пожалуйста, выполните вход в систему ...",
+        "login_with_posting_key": "Недоступен постинг ключ",
+        "server_unavailable": "Ошибка доступа к серверу",
+        "image_size_is_too_large": "Изображение слишком большое"
+      }
+    }
   }
 }

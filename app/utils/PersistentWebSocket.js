@@ -102,6 +102,8 @@
   }
 })(this, function () {
 
+  if(!process.env.BROWSER) return
+
   if (!('WebSocket' in window)) {
     return;
   }

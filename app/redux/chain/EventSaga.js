@@ -47,16 +47,47 @@ export default function* watchMessages(msgSource) {
                   payload: {
                     key: "chain_" + Date.now(),
                     message: `User ${from} transferred you ${amount}`,
-                    dismissAfter: 3000
+                    dismissAfter: 5000
                   }})
 
 
 
               }
             }
-
-
-
+            if (type === 'vote') {
+              const {voter, author, permlink} = payload;
+              if (voter !== username) {
+                if (author === username) {
+                  yield put({
+                    type: 'ADD_NOTIFICATION',
+                    payload: {
+                      key: "chain_" + Date.now(),
+                      message: `User ${voter} has voted your post ${permlink}`,
+                      dismissAfter: 5000
+                    }})
+                }
+              }
+            }
+            if (type === 'comment') {
+              const {
+                parent_author,
+                parent_permlink,
+                author,
+                permlink
+              } = payload;
+              //
+              if (parent_author.length !== 0) {
+                if (parent_author === username) {
+                  yield put({
+                    type: 'ADD_NOTIFICATION',
+                    payload: {
+                      key: "chain_" + Date.now(),
+                      message: `User ${author} has commented your post ${parent_permlink} with comment ${permlink}`,
+                      dismissAfter: 5000
+                    }})
+                }
+              }
+            }
           }
           else {
             console.log(`BLAAAAAAAAAAAAAAAAA`)

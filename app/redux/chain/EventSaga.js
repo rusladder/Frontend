@@ -4,13 +4,9 @@ const touched = [];
 
 
 export default function* watchMessages(msgSource) {
-  console.log('------------------------- begin receive messages')
   let message = yield call(msgSource.nextMessage)
   const currentUser = yield select(state => state.user.get('current'));
   const username = currentUser.get('username')
-
-  console.log(`^^^^^^^^^^^^^^^^^^^^^^^^^^^`)
-  console.log(username)
 
   while (message) {
     //
@@ -37,8 +33,8 @@ export default function* watchMessages(msgSource) {
             touched.push(trx_id)
           //  process operation here
             const [type, payload] = op;
-            console.log(type);
-            console.log(payload)
+            // console.log(type);
+            // console.log(payload)
             if (type === 'transfer') {
               const {to, from, amount} = payload;
               if (to === username) {
@@ -90,19 +86,13 @@ export default function* watchMessages(msgSource) {
             }
           }
           else {
-            console.log(`BLAAAAAAAAAAAAAAAAA`)
             touched.splice(touched.indexOf(trx_id), 1);
           }
         }
-
-        console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@`)
-        console.log(touched)
-
       }
     }
 
 
     message = yield call(msgSource.nextMessage)
   }
-  console.log('------------------------- done receive messages')
 }

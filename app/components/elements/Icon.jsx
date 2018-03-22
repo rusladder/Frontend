@@ -97,7 +97,12 @@ const icons = [
     'hf/hf17',
     'hf/hf18',
     'hf/hf19',
-    'hf/hf20',    
+    'hf/hf20',
+    // EDITOR ICONS
+    'editor/ic-coin-normal',
+    'editor/ic-coin-pressed',
+    'editor/ic-plus-18-normal',
+    'editor/ic-plus-normal'
 ];
 const icons_map = {};
 for (const i of icons) icons_map[i] = require(`app/assets/icons/${i}.svg`);

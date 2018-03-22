@@ -4,8 +4,7 @@ import {connect} from 'react-redux'
 import reactForm from 'app/utils/ReactForm'
 import transaction from 'app/redux/Transaction'
 
-import CategorySelector from 'app/components/cards/CategorySelector'
-import {validateCategory} from 'app/components/cards/CategorySelector'
+
 import LoadingIndicator from 'app/components/elements/LoadingIndicator'
 import Tooltip from 'app/components/elements/Tooltip'
 import sanitizeConfig, {allowedTags} from 'app/utils/SanitizeConfig'
@@ -23,6 +22,8 @@ import {detransliterate, capitalizeFirstLetter} from 'app/utils/ParsersAndFormat
 
 import markdown from './Plugins/extraMarkdown'
 
+import CategorySelector from './CategorySelector'
+import {validateCategory} from './CategorySelector'
 
 //const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 
@@ -218,12 +219,27 @@ import markdown from './Plugins/extraMarkdown'
       }
     }
 
+    
+
     //OK
     autoVoteOnChange = () => {
       const {autoVote} = this.state
       const key = 'EditorData-autoVote-story'
       localStorage.setItem(key, !autoVote.value)
       autoVote.props.onChange(!autoVote.value)
+    }
+
+    openPaymentSettings = () => {
+      console.log(this.state.payoutType)
+      if(this.state.showPaymentSettings)
+      this.setState({
+        showPaymentSettings : false
+      })
+      else{
+        this.setState({
+          showPaymentSettings : true
+        })
+      }
     }
 
     onChange = (value) => {
@@ -326,7 +342,7 @@ import markdown from './Plugins/extraMarkdown'
         body: this.props.body
       }
 
-      const {onCancel, onTitleChange, autoVoteOnChange, onNsfwChange} = this
+      const {onCancel, onTitleChange, autoVoteOnChange, openPaymentSettings, onNsfwChange} = this
 
       const {
         title,
@@ -340,7 +356,8 @@ import markdown from './Plugins/extraMarkdown'
         payoutType,
         progress,
         noClipboardData,
-        uploadedImage
+        uploadedImage,
+        showPaymentSettings
       } = this.state
 
       const {
@@ -434,7 +451,7 @@ import markdown from './Plugins/extraMarkdown'
       }
 
       return (
-        <div className='GolosEditor row'>
+        <div className='GolosEditor'>
           {isFeedback && <div className="column small-12"><Feedback/></div>}
           {/* DRAFT TOOLTIP BODY */}
           <div ref="draft" className="GolosEditor__draft GolosEditor__draft-hide">
@@ -463,7 +480,7 @@ import markdown from './Plugins/extraMarkdown'
                     ? `Визуальный ${tt('reply_editor.editor')}`
                     : `Markdown ${tt('reply_editor.editor')}`
                 } </a>} */}
-                <div className="GolosEditor__settings float-right secondary">
+                {/* <div className="GolosEditor__settings float-right secondary">
                   <input type="hidden" {...domestic.props}/> {tt('settings_jsx.choose_domestic')}: &nbsp;
                   <LinkWithDropdown
                     closeOnClickOutside
@@ -479,12 +496,12 @@ import markdown from './Plugins/extraMarkdown'
                       <Icon name="caret-down"/>
                     </a>
                   </LinkWithDropdown>
-                </div>
+                </div> */}
               </div>
             </div>}
             {/* ////////////////////// */}
             {/* TITLE BODY */}
-            <div className='row'>
+            <div className='GolosEditor__title row'>
               <div className='column small-12'>
                 <input
                   {...title.props}
@@ -502,8 +519,8 @@ import markdown from './Plugins/extraMarkdown'
             {/* EDITOR BODY  */}
             <div className='GolosEditor__body row'>
               <div className='column small-12'>
-                <span>
-                   <Dropzone
+                {/* <span> */}
+                   {/* <Dropzone
                     onDrop={this.onDrop}
                     className={type === 'submit_story'
                     ? 'dropzone'
@@ -513,23 +530,23 @@ import markdown from './Plugins/extraMarkdown'
                     accept="image/*"
                     ref={(node) => {
                     this.dropzone = node;
-                  }}> 
+                  }}>  */}
                     {/* {isVisualEditor
                       ? <MediumEditor body={body} onChange={this.onChange}/>
                       : <MarkdownEditor body={body} onChange={this.onChange}/>} */}                     
                     <MarkdownEditor {...body.props} />
-                  </Dropzone>
-                  {type === 'submit_story' && 
+                  {/* </Dropzone> */}
+                  {/* {type === 'submit_story' && 
                   <p className="drag-and-drop">
                     <a onClick={this.onOpenClick}>{tt('reply_editor.select')}</a>
                     {tt('reply_editor.upload_from_device')}
-                  </p>}
-                  {progress.message && <div className="info">{progress
+                  </p>} */}
+                  {/* {progress.message && <div className="info">{progress
                       .message
                       .replace('Uploading', tt('reply_editor.uploading'))}</div>}
                   {progress.error && <div className="error">{tt('reply_editor.image_upload')}
-                    : {progress.error}</div>}
-                </span>
+                    : {progress.error}</div>} */}
+                {/* </span> */}
               </div>
               <div>
                 {postError && <div className="error">{postError}</div>}
@@ -537,24 +554,57 @@ import markdown from './Plugins/extraMarkdown'
             </div>
             {/* END EDITOR BODY */}
             {/* ////////////////////// */}
+            
+            {isStory && !isFeedback &&
+            <div className ='GolosEditor__footer'> 
+            <div className='row'> 
             {/* TAGS BODY */}
-            {isStory && !isFeedback && <div className='row'>
-              <div className='column small-12 GolosEditor__categories'>
+            <div className='GolosEditor__categories columns large-6'>
                 <CategorySelector {...category.props} disabled={loading} isEdit={isEdit}/>
                 <div className="error">{(category.touched || category.value) && category.error}&nbsp;</div>
               </div>
-            </div>}
-            {/* END TAGS BODY */}
-            {/* ////////////////////// */}
+              {/* END TAGS BODY */}
+              {/* ////////////////////// */}
             {/* SETTINGS BODY */}
-            {isStory && !isFeedback && <div className='GolosEditor__settings row'>
-              <div className='column small-12 large-6'>               
+            {isStory && !isFeedback &&
+            <div className='GolosEditor__settings__block columns large-1 small-1 callout clearfix'>
+              <a className='GolosEditor__settings__item float-left' onClick={openPaymentSettings}> 
+                {showPaymentSettings ? <Icon name="editor/ic-coin-pressed"/>  : <Icon name="editor/ic-coin-normal"/> }
+              </a>
+              {showPaymentSettings && <div className='GolosEditor__settings__tooltip'>
+                <fieldset className="">
+                  <legend className='tooltip-title large-12'>{tt('g.rewards')}</legend>
+                  <div className="large-12">
+                    <input className='tooltip-radio' type="radio" value="100%" id="value100" checked={this.state.payoutType === '100%'} onClick={this.onPayoutTypeChange}/>
+                    <label className='tooltip-text' htmlFor="value100">
+                      {tt('reply_editor.power_up_100')}
+                    </label>
+                  </div>
+                  <div className="large-12">
+                  <input className='tooltip-radio' type="radio" value="50%" id="value50" checked={this.state.payoutType === '50%'} onClick={this.onPayoutTypeChange}/>
+                  <label className='tooltip-radio' className='tooltip-text' htmlFor="value50">
+                    {tt('reply_editor.default_50_50')}
+                  </label>
+                  </div>
+                  <div className="large-12">
+                  <input className='tooltip-radio' type="radio" value="0%" id="value0" checked={this.state.payoutType === '0%'} onClick={this.onPayoutTypeChange}/>
+                  <label className='tooltip-text' htmlFor="value0">
+                    {tt('reply_editor.decline_payout')}
+                  </label>
+                  </div>
+                  </fieldset>
+              </div>}
+              
+              {/* <a className='GolosEditor__settings__item float-right'> 
+                <Icon name="editor/ic-plus-18-normal"/> 
+              </a> */}
+               {/*  <div className='column small-12 large-3'>               
                 <label title={tt('reply_editor.check_this_to_auto_upvote_your_post')}>
                   {tt('g.upvote_post')}&nbsp;
                   <input type="checkbox" checked={autoVote.value} onChange={autoVoteOnChange}/>
                 </label>
               </div>
-              {isStory && !isEdit && <div className='column small-12 large-6'>              
+              {isStory && !isEdit && <div className='column small-12 large-3'>              
               <div className="ReplyEditor__options float-right text-right">
               {tt('g.rewards')}:&nbsp;
               <select
@@ -569,17 +619,29 @@ import markdown from './Plugins/extraMarkdown'
                 <option value="50%">{tt('reply_editor.default_50_50')}</option>
                 <option value="0%">{tt('reply_editor.decline_payout')}</option>
               </select>
-
               <br/>
               </div>
-            </div>}
-            </div>}
+            </div>} */}
+            </div>} 
             {/* END SETTINGS BODY */}
             {/* ////////////////////// */}
             {/* SUBMIT BODY */}
-            <div className='GolosEditor__submit row'>
-              <div className='column small-6 large-12'>
-                {!loading && <button type="submit" className="button" disabled={disabled}>
+             <div className='GolosEditor__submit__block columns large-5'>
+             <div className='row'>
+             {!loading && this.props.onCancel && 
+               <button
+                  type="button"
+                  className="GolosEditor__cancel__button secondary columns large-5"
+                  onClick={onCancel}>
+                  {tt('g.cancel')}
+                </button>}
+                {!loading && !this.props.onCancel && <button
+                  className="GolosEditor__cancel__button button columns large-5"
+                  disabled={submitting}
+                  onClick={onCancel}>
+                  {tt('g.clear')}
+                </button>}
+             {!loading && <button type="submit" className="GolosEditor__submit__button columns large-5" disabled={disabled}>
                   {isEdit
                     ? tt('reply_editor.update_post')
                     : postLabel}
@@ -588,21 +650,12 @@ import markdown from './Plugins/extraMarkdown'
                   <br/>
                   <LoadingIndicator type="circle"/>
                 </span>}
-                {!loading && this.props.onCancel && <button
-                  type="button"
-                  className="secondary hollow button no-border"
-                  onClick={onCancel}>
-                  {tt('g.cancel')}
-                </button>}
-                {!loading && !this.props.onCancel && <button
-                  className="button hollow no-border"
-                  disabled={submitting}
-                  onClick={onCancel}>
-                  {tt('g.clear')}
-                </button>}
-              </div>
-            </div>
+               </div>      
+            </div> 
             {/*END SUBMIT BODY */}
+            </div>
+            </div>   
+            }   
           </form>
         </div>
       )

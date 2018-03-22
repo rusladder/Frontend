@@ -1,34 +1,61 @@
 @import './mde';
 
 .GolosEditor{
-    max-width: 60rem;
-    form{
-        width: 100%;
-    }
+    max-width: 100%;
 }
 
+.editor-toolbar{
+    position: fixed;
+    top: 13rem;
+    height: 3rem;
+    z-index: 100;
+    background: white;
+    width: 100%;
+}
 .GolosEditor__title {
-    font-size: 2rem;
     border: 0;
+    height: 55px;
+    box-shadow: none;
+    font-family: RobotoSlab;
+    font-size: 42px;
     font-weight: bold;
-    padding: 0.5rem;
-    height: auto;
-    padding-bottom: 2rem;
-    padding-left: 0;
-    box-shadow: none;     
-    border-bottom: 1px solid #dbdbdb;      
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #000000;
+    top: 3.4rem;
+    position: fixed;
+    left: 145px;
+    z-index: 2;
+    width: 100%;
+    height: 13rem;
+    background: white;     
+    // border-bottom: 1px solid #dbdbdb;      
     &[type='text']:focus{
-        border: 0;
-        border-bottom: 2px solid #dbdbdb;      
-        box-shadow: none;     
-    }
+         border: 0;
+    //     //border-bottom: 2px solid #dbdbdb;      
+         box-shadow: none;    
+    //     color: #000000; 
+     }
+    ::-webkit-input-placeholder {color:#e1e1e1;}
+    ::-moz-placeholder          {color:#e1e1e1;}/* Firefox 19+ */
+    :-moz-placeholder           {color:#e1e1e1;}/* Firefox 18- */
+    :-ms-input-placeholder      {color:#e1e1e1;}
   }
 
 .GolosEditor__body{
     font-size: 1.2rem;
-    margin-top: 2rem;
+    margin-top: 13rem;
 }
 
+.input-group-button{
+    padding-right: 0.5rem;
+    .Icon{
+        padding-top: 0.4rem;
+    }
+}
 .GolosEditor__medium__body{
     &[name = 'body'] {
         height: auto;
@@ -42,34 +69,11 @@
     }
 }
 
-.GolosEditor__categories{
-    height: auto;
-    margin: 2rem 0rem 0rem 0rem;
-    & span & input {
-        &[type='text']{
-            box-shadow: none;  
-            border: 0px;
-        }
-        &[type='text']:focus{
-            border: 0px;
-            transition: none;
-            box-shadow: none;   
-            border-bottom: 1px solid #dbdbdb;  
-    }}   
-}
-
 .GolosEditor__feedback{
     h4{
         font-size: 1.5rem;
     }
     font-size: 1rem;
-}
-
-.GolosEditor__settings{
-    margin: 0rem 0rem 2rem 0rem; 
-    &input{
-        font-size: 1.2rem;        
-    }
 }
 
 .GolosEditor__draft {
@@ -96,3 +100,154 @@
     opacity: 0;
   }
 
+.GolosEditor__footer{
+    width: 100%;
+    height: 4.7rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    .GolosEditor__categories{
+        height: auto;     
+        & span & input {
+            &[type='text']{
+                box-shadow: none;  
+                border: 0px;
+            }
+            &[type='text']:focus{
+                border: 0px;
+                transition: none;
+                box-shadow: none;   
+                border-bottom: 1px solid #dbdbdb;  
+        }}   
+    }
+
+    .GolosEditor__settings__block{
+        border: none;
+        //margin: 32px 42px 0 40px;
+
+        .GolosEditor__settings__item{
+            //margin: 32px;
+        }
+    }
+
+    .GolosEditor__categories__input__block{
+        margin-top: 20px;
+
+        .input-group-rounded {
+            .input-group-field {
+              border-radius: 100px 0 0 100px;
+              padding-left: 1rem;
+            }
+          
+            .input-group-button .button {
+              border-radius:  0 100px 100px 0;
+              font-size: 0.8rem;
+            }
+          }
+          
+        .input-group{
+            width: 240px;
+            height: 40px;
+            border-radius: 100px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
+            .input-group-button .button{
+                background-color: #ffffff;
+                color: black;
+                border: none;
+            }
+        }
+        input[type="text"] {   
+            background-color: #ffffff;
+            border: none;
+            box-shadow: none;
+        }
+    }
+
+    .GolosEditor__submit__block{
+        margin-top: 23px;
+
+        .GolosEditor__submit__button{
+            // margin: 20px 0 20px 739px;
+            width: 160px;
+            height: 40px;
+            border-radius: 100px;
+            background-color: #0078c4;
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: bold;
+            font-style: normal;
+            font-stretch: normal;
+            //line-height: 1.64;
+            letter-spacing: 1.4px;
+            text-align: center;
+            color: #ffffff;
+        }
+    
+        .GolosEditor__cancel__button{
+            width: 160px;
+            height: 40px;
+            border-radius: 100px;
+            border: solid 1px #e1e1e1;
+            background-color: white;
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: bold;
+            font-style: normal;
+            font-stretch: normal;
+            //line-height: 1.64;
+            letter-spacing: 1.4px;
+            text-align: center;
+            color: #333333;
+        }
+    }
+    
+.GolosEditor__settings__tooltip{
+    width: 270px;
+    height: 208.9px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
+    position: fixed;
+    bottom: 4rem;
+    right: 38%;
+
+    .tooltip-title{
+        padding-top: 1rem;
+        padding-bottom: 1.6rem;
+        text-align: center !important;
+        width: 216px;
+        height: 19px;
+        font-family: Roboto;
+        font-size: 14px;
+        font-weight: 300;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: left;
+        color: #757575;
+    }
+    .tooltip-option{
+        padding-bottom: 1.6rem;
+    }
+    .tooltip-text{
+        height: 1.6rem;
+        font-family: Roboto;
+        font-size: 14px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.43;
+        letter-spacing: normal;
+        text-align: left;
+        color: #333333;
+        text-transform: none
+    }
+    .tooltip-radio{
+        margin-left: 1.6rem;
+        margin-bottom: 1.6rem !important
+    }
+    }
+}

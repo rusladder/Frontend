@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import shouldComponentUpdate from 'app/utils/shouldComponentUpdate'
 import {cleanReduxInput} from 'app/utils/ReduxForms'
 import tt from 'counterpart';
+import Icon from 'app/components/elements/Icon.jsx'
+
 
 class CategorySelector extends React.Component {
     static propTypes = {
@@ -56,7 +58,16 @@ class CategorySelector extends React.Component {
 
         const impProps = {...this.props}
         const categoryInput =
-            <input type="text" {...cleanReduxInput(impProps)} ref="categoryRef" tabIndex={tabIndex} disabled={disabled} />
+            <div className='GolosEditor__categories__input__block row'>
+                <div className='input-group input-group-rounded column small-12'>
+                <input className='input-group-field' type="text" {...cleanReduxInput(impProps)} ref="categoryRef" tabIndex={tabIndex} disabled={disabled} />
+                    {/* <div className="input-group-button">
+                        <Icon name="editor/ic-plus-normal"/>
+                    </div> */}
+                </div>  
+                <div>
+                </div> 
+            </div>
 
         const categorySelect = (
             <select {...cleanReduxInput(this.props)} onChange={this.categorySelectOnChange} ref="categoryRef" tabIndex={tabIndex} disabled={disabled}>

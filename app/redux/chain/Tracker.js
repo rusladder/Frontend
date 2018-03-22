@@ -1,6 +1,6 @@
 import PersistentWebSocket from 'app/utils/PersistentWebSocket'
 
-export default function tracker(url = 'ws://localhost:8090') {
+export default function tracker(url = 'wss://ws.golos.io') {
   const ws = new PersistentWebSocket(url)
   let deferred
   //

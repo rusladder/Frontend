@@ -33,7 +33,7 @@ export default function* watchMessages(msgSource) {
             touched.push(trx_id)
           //  process operation here
             const [type, payload] = op;
-            // console.log(type);
+            console.log(type);
             // console.log(payload)
             if (type === 'transfer') {
               const {to, from, amount} = payload;

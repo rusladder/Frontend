@@ -1,6 +1,6 @@
 import PersistentWebSocket from 'app/utils/PersistentWebSocket'
 
-export default function tracker(url = 'wss://ws.golos.io') {
+export default function tracker(url = 'ws://localhost:8090') {
   const ws = new PersistentWebSocket(url)
   let deferred
   //
@@ -43,7 +43,7 @@ export default function tracker(url = 'wss://ws.golos.io') {
     let golostime = Date.parse(timestamp)
     // let ageLastOps = (golostime - ProcessedOpTime) / 1000
     //
-    // console.log(`${ProcessedBlockNum} [${height + 1}] ${state} ops count : ${ops.length}`)
+    console.log(`${ProcessedBlockNum} [${height + 1}] ${state} ops count : ${ops.length}`)
     //
     client.setItem(redKey, ProcessedBlockNum);
     if (ProcessedBlockNum <= height) getOps(ProcessedBlockNum + 1, 3)
@@ -102,7 +102,7 @@ export default function tracker(url = 'wss://ws.golos.io') {
       timestamp = data.params[1][0].timestamp
       // console.log(`--------------------------`)
       // console.log(`[getNOW] ${getNOW}`)
-      // console.log(`[height] ${height}`)
+      console.log(`[height] ${height}`)
       // console.log(`[fheight] ${fheight}`)
       // not called when started with last remembered block (no cli params)
       if (getNOW || height < fheight) {

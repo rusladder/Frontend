@@ -14,6 +14,8 @@ import tt from 'counterpart';
 import React from 'react';
 import chainTracker from './chain/Tracker';
 import watchMessages from 'app/redux/chain/EventSaga';
+import watchTimer from 'app/redux/saga/test/TimeoutSaga'
+
 
 const MAX_UPLOAD_IMAGE_SIZE = 1024 * 1024
 
@@ -125,11 +127,17 @@ function* usernamePasswordLogin(action) {
         const username = current.get('username')
         yield fork(loadFollows, "getFollowingAsync", username, 'blog')
         yield fork(loadFollows, "getFollowingAsync", username, 'ignore')
-        // current user's set - connect to chain sniffer
+
+        // // current user's set - connect to chain sniffer
         if (process.env.BROWSER) {
-          const tracker = yield call(chainTracker)
-          yield fork(watchMessages, tracker)
+        //   const tracker = yield call(chainTracker)
+        //   yield fork(watchMessages, tracker)
+            yield call(watchTimer)
+
+
         }
+
+
   }
 }
 

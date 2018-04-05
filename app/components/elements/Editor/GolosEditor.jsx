@@ -559,7 +559,7 @@ import {validateCategory} from './CategorySelector'
             <div className ='GolosEditor__footer'> 
             <div className='row'> 
             {/* TAGS BODY */}
-            <div className='GolosEditor__categories columns large-6'>
+            <div className='GolosEditor__categories columns large-7'>
                 <CategorySelector {...category.props} disabled={loading} isEdit={isEdit}/>
                 <div className="error">{(category.touched || category.value) && category.error}&nbsp;</div>
               </div>
@@ -626,7 +626,7 @@ import {validateCategory} from './CategorySelector'
             {/* END SETTINGS BODY */}
             {/* ////////////////////// */}
             {/* SUBMIT BODY */}
-             <div className='GolosEditor__submit__block columns large-5'>
+             <div className='GolosEditor__submit__block columns large-4'>
              <div className='row'>
              {!loading && this.props.onCancel && 
                <button

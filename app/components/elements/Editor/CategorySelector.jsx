@@ -48,6 +48,15 @@ class CategorySelector extends React.Component {
                 this.props.onChange(e)
         }
     }
+
+    addTag (){
+        console.log("Will Add")
+    }
+
+    removeTag(){
+        console.log("will remove")
+    }
+
     render() {
         const {trending, tabIndex, disabled} = this.props
         const categories = trending.slice(0, 11).filterNot(c => validateCategory(c))
@@ -59,13 +68,18 @@ class CategorySelector extends React.Component {
         const impProps = {...this.props}
         const categoryInput =
             <div className='GolosEditor__categories__input__block row'>
-                <div className='input-group input-group-rounded column small-12'>
-                <input className='input-group-field' type="text" {...cleanReduxInput(impProps)} ref="categoryRef" tabIndex={tabIndex} disabled={disabled} />
-                    {/* <div className="input-group-button">
+                <div className='input-group input-group-rounded column small-4'>
+                    <input className='input-group-field' type="text" {...cleanReduxInput(impProps)} ref="categoryRef" tabIndex={tabIndex} disabled={disabled} />
+                    <div className="input-group-button" onClick={this.addTag}>
                         <Icon name="editor/ic-plus-normal"/>
-                    </div> */}
+                    </div>
                 </div>  
-                <div>
+                <div className='GolosEditor__tag__label__list column small-8'>
+                    <span className="GolosEditor__tag__label label">колхоз-миллионер-голос-ру 
+                        <a onClick={this.removeTag}>
+                            <Icon name="editor/ic-cross-gr-small" size='07x'/>
+                        </a>
+                    </span>
                 </div> 
             </div>
 

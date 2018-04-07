@@ -10,7 +10,7 @@ class Userpic extends Component {
     shouldComponentUpdate = shouldComponentUpdate(this, 'Userpic')
 
     render() {
-        const {json_metadata, width, height} = this.props
+        const {json_metadata, width, height, imageUrl} = this.props
         const hideIfDefault = this.props.hideIfDefault || false
 
         let url = null;
@@ -20,7 +20,12 @@ class Userpic extends Component {
             const md = JSON.parse(json_metadata);
             if(md.profile) url = md.profile.profile_image;
         } catch (e) {}
-
+        // if image url passed explicitly (unpacked elsewhere) ...
+        if (imageUrl) {
+          // ... use passed url
+          url = imageUrl
+        }
+        //
         if (url && /^(https?:)\/\//.test(url)) {
             const size = width && width > 48 ? '320x320' : '120x120';
             if($STM_Config.img_proxy_prefix) {
@@ -37,18 +42,19 @@ class Userpic extends Component {
                        width: (width || 48) + 'px',
                        height: (height || 48) + 'px'}
 
-        return <div className="Userpic" style={style} />;
+        return <div className="Userpic blaaaa" style={style} />;
     }
 }
 
 export default connect(
     (state, ownProps) => {
-        const {account, width, height, hideIfDefault} = ownProps
+        const {account, width, height, hideIfDefault, imageUrl} = ownProps
         return {
             json_metadata: state.global.getIn(['accounts', account, 'json_metadata']),
             width,
             height,
             hideIfDefault,
+            imageUrl
         }
     }
 )(Userpic)

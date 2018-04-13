@@ -64,7 +64,24 @@ const calculateEstimateOutput = ({ account, price_per_golos, savings_withdraws, 
   return Number(((total_steem * price_per_golos) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
+function TopRightMenu({
+  account,
+  savings_withdraws,
+  price_per_golos,
+  globalprops,
+  username,
+  showLogin,
+  logout,
+  loggedIn,
+  vertical,
+  navigate,
+  toggleOffCanvasMenu,
+  probablyLoggedIn,
+  location,
+  locationQueryParams,
+  changeLanguage,
+  showMessages
+}) {
     const APP_NAME = tt('g.APP_NAME');
     
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -145,11 +162,12 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
 
     if (loggedIn) { // change back to if(username) after bug fix:  Clicking on Login does not cause drop-down to close #TEMP!
         const user_menu = [
-            {link: feedLink, icon: 'new/home', iconSize: '1_25x', value: tt('g.feed'), addon: <NotifiCounter fields="feed" />},
-            {link: accountLink, icon: 'new/blogging', value: tt('g.blog')},
-            {link: commentsLink, icon: 'new/comment', value: tt('g.comments')},
-            {link: repliesLink, icon: 'new/answer', value: tt('g.replies'), addon: <NotifiCounter fields="comment_reply" />},
-            {link: walletLink, icon: 'new/wallet', value: tt('g.wallet'), addon: <NotifiCounter fields="follow,send,receive,account_update" />},
+            {link: feedLink, icon: 'home', value: tt('g.feed'), addon: <NotifiCounter fields="feed" />},
+            {link: accountLink, icon: 'profile', value: tt('g.blog')},
+            {link: commentsLink, icon: 'replies', value: tt('g.comments')},
+            {link: '#', icon: 'chatboxes', onClick: showMessages, value: tt('g.messages')},
+            {link: repliesLink, icon: 'reply', value: tt('g.replies'), addon: <NotifiCounter fields="comment_reply" />},
+            {link: walletLink, icon: 'wallet', value: tt('g.wallet'), addon: <NotifiCounter fields="follow,send,receive,account_update" />},
             {link: reset_password_link, icon: 'key', value: tt('g.change_password')},
             {link: settingsLink, icon: 'new/setting', value: tt('g.settings')},
             loggedIn ?
@@ -240,7 +258,7 @@ TopRightMenu.propTypes = {
 };
 
 export default connect(
-    state => {
+  (state) => {
         if (!process.env.BROWSER) {
             return {
                 username: null,
@@ -273,6 +291,23 @@ export default connect(
         }
     },
     dispatch => ({
+        showMessages: (e) => {
+            if (e) e.preventDefault();
+            const name = 'showMessages'
+            dispatch(user.actions.showMessages())
+        },
+        changeLanguage: e => {
+            if (e) e.preventDefault();
+            const targetLanguage = e.target.text.trim();
+            let language = DEFAULT_LANGUAGE;
+            for (var key in LANGUAGES) {
+              if (targetLanguage.localeCompare(LANGUAGES[key]) == 0)
+                language = key
+            }
+            cookie.save(LOCALE_COOKIE_KEY, language, {path: "/", expires: new Date(Date.now() + 60 * 60 * 24 * 365 * 10 * 1000)});
+            localStorage.setItem('language', language)
+            dispatch(user.actions.changeLanguage(language))
+        },
         showLogin: e => {
             if (e) e.preventDefault();
             dispatch(user.actions.showLogin())

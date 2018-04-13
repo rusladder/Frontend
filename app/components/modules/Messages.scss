@@ -1,0 +1,160 @@
+.PostsList {
+  clear: right;
+}
+
+.PostsList__summaries {
+  list-style-type: none;
+  margin-left: 0;
+}
+
+.Messages {
+  min-height: 30em;
+}
+
+.Messages__left {
+  margin-top: 1rem;
+  border-right: 1px solid $light-gray;
+  overflow-y: scroll;
+  height: 40em;
+}
+
+.Messages__left ul.List {
+  margin-left: 0rem;
+  min-width: 15em;
+  max-width: 16rem;
+  > li {
+    list-style-type: none;
+    border-bottom: 1px solid $medium-gray;
+    padding: 1em .1em .75em .5em;
+    clear: both;
+    min-height: 60px;
+    &:hover {
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+    &.selected {
+      background-color: #f0f0f0;
+    }
+    > .Userpic {
+      margin-top: -4px;
+      float: left;
+    }
+    > .right-side {
+      margin-left: 60px;
+      > strong {
+        display: block;
+        font-weight: normal;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      > small {
+        display: block;
+        color: $dark-gray;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  > li:last-child {
+    border-bottom: none;
+  }
+  > li:first-child {
+    border-bottom: none;
+  }
+  > li.top-bar {
+    padding: 0;
+    background-color: white;
+    input {
+      max-width: 100%;
+      margin-right: .5em;
+    }
+    a {
+      float: right;
+      padding: 0 .5em 0;
+    }
+  }
+}
+
+.Messages__right {
+  margin-top: 1rem;
+  border-right: 1px solid $light-gray;
+  overflow-y: scroll;
+  height: 40em;
+}
+
+.Messages__right ul.Conversation {
+  margin-left: 0rem;
+  margin-bottom: 0;
+  min-width: 15em;
+  > li {
+    list-style-type: none;
+    padding: 1em .1em .75em .5em;
+    clear: both;
+    min-height: 60px;
+    > .Userpic {
+      margin-top: -4px;
+      float: left;
+    }
+    > .right-side {
+      margin-left: 60px;
+      > strong {
+        font-weight: normal;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      > small {
+        display: block;
+        color: $dark-gray;
+      }
+    }
+  }
+  > li.bottom-bar {
+    padding: 0;
+    background-color: white;
+    textarea {}
+  }
+}
+
+.Messages__right_compact {
+  float: right;
+  width: 15rem;
+  position: relative;
+  top: -0.8rem;
+  > select {
+    border: none;
+    border-bottom: 1px solid $medium-gray;
+    border-radius: 0;
+  }
+}
+
+.Messages.fetching .Messages__right_compact {
+  visibility: hidden;
+}
+
+/* Small only */
+@media screen and (max-width: 39.9375em) {
+  .Messages__left {
+    padding: 0;
+  }
+  .Messages__right_compact {
+    padding: 0 0.5rem;
+    float: none;
+    width: auto;
+  }
+}
+
+/* Medium and up */
+@media screen and (min-width: 39.94em) {
+  .Messages__summaries {
+    > li:first-child {
+      .PostSummary {
+        margin-top: 0;
+        padding-top: 0;
+      }
+    }
+  }
+}

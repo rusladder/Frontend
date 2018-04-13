@@ -12,7 +12,8 @@ const defaultState = fromJS({
     pub_keys_used: null,
     locale: DEFAULT_LANGUAGE,
     domestic: DEFAULT_DOMESTIC,
-    theme: DEFAULT_THEME
+    theme: DEFAULT_THEME,
+    show_messages_modal: false,
 });
 
 if (process.env.BROWSER) {
@@ -145,5 +146,8 @@ export default createModule({
         },
         { action: 'NOTIFICATION_CHANNEL_CREATED', reducer: state => state.set('notification_channel_created', true) },
         { action: 'NOTIFICATION_CHANNEL_DESTROYED', reducer: state => state.set('notification_channel_created', false) },
+
+        { action: 'SHOW_MESSAGES', reducer: state => state.set('show_messages_modal', true)  },
+        { action: 'HIDE_MESSAGES', reducer: state => state.set('show_messages_modal', false) },
     ]
 });

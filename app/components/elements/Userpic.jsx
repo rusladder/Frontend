@@ -59,7 +59,11 @@ class Userpic extends Component {
             const md = JSON.parse(json_metadata);
             if(md.profile) url = md.profile.profile_image;
         } catch (e) {
-          console.warn('Try to extract image url from users metaData failed!')
+          // console.warn('Try to extract image url from users metaData failed!')
+        }
+
+        if (imageUrl) {
+          url = imageUrl
         }
 
         if (imageUrl) {

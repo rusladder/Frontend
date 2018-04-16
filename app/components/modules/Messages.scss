@@ -12,110 +12,131 @@
 }
 
 .Messages__left {
-  margin-top: 1rem;
   border-right: 1px solid $light-gray;
-  overflow-y: scroll;
-  height: 40em;
-}
-
-.Messages__left ul.List {
-  margin-left: 0rem;
-  min-width: 15em;
-  max-width: 16rem;
-  > li {
-    list-style-type: none;
-    border-bottom: 1px solid $medium-gray;
-    padding: 1em .1em .75em .5em;
-    clear: both;
-    min-height: 60px;
-    &:hover {
-      background-color: #f0f0f0;
-      cursor: pointer;
-    }
-    &.selected {
-      background-color: #f0f0f0;
-    }
-    > .Userpic {
-      margin-top: -4px;
-      float: left;
-    }
-    > .right-side {
-      margin-left: 60px;
-      > strong {
-        display: block;
-        font-weight: normal;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+  .topbar {
+    height: 4rem;
+    padding: 0.75em 1em 0;
+    border-bottom: 1px solid $light-gray;
+    .row {
+      .small-10 {
+        padding: 0 0 0 1em;
       }
-      > small {
-        display: block;
-        color: $dark-gray;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .small-2 {
+        text-align: center;
+        padding: .4em 0 0;
       }
     }
   }
-  > li:last-child {
-    border-bottom: none;
-  }
-  > li:first-child {
-    border-bottom: none;
-  }
-  > li.top-bar {
-    padding: 0;
-    background-color: white;
-    input {
-      max-width: 100%;
-      margin-right: .5em;
+  ul.List {
+    margin-left: 0;
+    margin-bottom: 0;
+    min-width: 15em;
+    max-width: 18rem;
+    overflow-y: scroll;
+    height: 36em;
+    > li {
+      list-style-type: none;
+      border-bottom: 1px solid $light-gray;
+      padding: 1em .5em .5em 1em;
+      clear: both;
+      min-height: 60px;
+      &:hover {
+        background-color: #f0f0f0;
+        cursor: pointer;
+      }
+      &.selected {
+        background-color: #f0f0f0;
+      }
+      > .Userpic {
+        margin-top: -4px;
+        float: left;
+      }
+      > .right-side {
+        margin-left: 60px;
+        > strong {
+          display: block;
+          font-weight: normal;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        > small {
+          display: block;
+          color: $dark-gray;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
-    a {
-      float: right;
-      padding: 0 .5em 0;
+    > li:last-child {
+      border-bottom: none;
     }
   }
 }
 
 .Messages__right {
-  margin-top: 1rem;
-  border-right: 1px solid $light-gray;
-  overflow-y: scroll;
-  height: 40em;
-}
-
-.Messages__right ul.Conversation {
-  margin-left: 0rem;
-  margin-bottom: 0;
-  min-width: 15em;
-  > li {
-    list-style-type: none;
-    padding: 1em .1em .75em .5em;
-    clear: both;
-    min-height: 60px;
-    > .Userpic {
-      margin-top: -4px;
-      float: left;
-    }
-    > .right-side {
-      margin-left: 60px;
-      > strong {
-        font-weight: normal;
-        display: block;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+  .topbar {
+    height: 4rem;
+    padding: 0.75em 1em 0;
+    border-bottom: 1px solid $light-gray;
+    .row {
+      .small-10 {
+        padding: 0 1em;
+        .Userpic {
+          float: left;
+        }
+        h6 {
+          float: left;
+          padding: .5em .75em 0;
+        }
       }
-      > small {
-        display: block;
-        color: $dark-gray;
+      .small-2 {
       }
     }
   }
-  > li.bottom-bar {
-    padding: 0;
-    background-color: white;
-    textarea {}
+  .bottombar {
+    height: 4rem;
+    padding: 0.75em 1em 0;
+    border-top: 1px solid $light-gray;
+    .row {
+      .small-10 {
+        padding: 0 1em;
+      }
+      .small-2 {
+      }
+    }
+  }
+  ul.Conversation {
+    margin-left: 0;
+    margin-bottom: 0;
+    min-width: 15em;
+    overflow-y: scroll;
+    height: 32em;
+      > li {
+      list-style-type: none;
+      padding: 1em;
+      clear: both;
+      min-height: 60px;
+      > .Userpic {
+        margin-top: 4px;
+        float: left;
+      }
+      > .right-side {
+        margin-left: 48px;
+        > strong {
+          font-weight: normal;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        > small {
+          display: block;
+          color: $dark-gray;
+        }
+      }
+    }
   }
 }
 

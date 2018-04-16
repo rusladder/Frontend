@@ -76,7 +76,7 @@ class Modals extends React.Component {
                     <CloseButton onClick={hideSignUp} />
                     <SignUp />
                 </Reveal>}
-                {show_messages_modal && <Reveal onHide={hideMessages} show={show_messages_modal} size="large">
+                {show_messages_modal && <Reveal onHide={hideMessages} show={show_messages_modal} size="large" revealClassName="MessagesBox">
                     <CloseButton onClick={hideMessages} />
                     <MessageBox />
                 </Reveal>}

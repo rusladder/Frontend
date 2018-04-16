@@ -320,6 +320,8 @@
     "all_accounts_refunded": "All Recovered Accounts have been fully Refunded"
   },
   "reply_editor": {
+    "select": "Select image",
+    "upload_from_device": " to upload it from your device, or just drag it to the editor area",
     "shorten_title": "Shorten title",
     "exceeds_maximum_length": "Exceeds maximum length (%(maxKb)sKB)",
     "including_the_category": "(including the category '%(rootCategory)s')",

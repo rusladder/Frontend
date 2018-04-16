@@ -611,6 +611,8 @@
     "account_recovery_request_not_confirmed":"Cererea de recuperare a contului nu este încă confirmată, vă rugăm să verificați mai târziu. Vă mulțumim pentru răbdare."
   },
   "reply_editor":{
+    "select": "Выберете изображение",
+    "upload_from_device": " чтобы загрузить его со своего устройства, или просто перетащите мышкой в область редактора",
     "shorten_title":"Reduceți antetul",
     "exceeds_maximum_length":"Depășește lungimea maximă (%(maxKb)sKB)",
     "including_the_category":"(inclusiv categoria «%(rootCategory)s»)",

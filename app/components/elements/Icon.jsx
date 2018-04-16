@@ -100,18 +100,26 @@ const icons = [
     'hf/hf19',
     'hf/hf20',
     'vote',
-    'flag'
+    'flag',
+    // EDITOR ICONS
+    'editor/ic-coin-normal',
+    'editor/ic-coin-pressed',
+    'editor/ic-plus-18-normal',
+    'editor/ic-plus-normal',
+    'editor/ic-cross-gr',
+    'editor/ic-cross-gr-small',
+    'editor/ic-cross-medium',
 ];
 const icons_map = {};
 for (const i of icons) icons_map[i] = require(`app/assets/icons/${i}.svg`);
 
-const rem_sizes = {'1x': '1.12', '1_5x': '1.5', '1_75x': '1.75', '2x': '2', '3x': '3.45', '4x': '4.60', '5x': '5.75', '10x': '10.0'};
+const rem_sizes = {'07x': '0.7', '1x': '1.12', '1_5x': '1.5', '1_75x': '1.75', '2x': '2', '3x': '3.45', '4x': '4.60', '5x': '5.75', '10x': '10.0'};
 
 export default class Icon extends React.Component {
 
     static propTypes = {
         name: React.PropTypes.string.isRequired,
-        size: React.PropTypes.oneOf(['1x', '1_5x', '2x', '3x', '4x', '5x', '10x']),
+        size: React.PropTypes.oneOf(['07x', '1x', '1_5x', '2x', '3x', '4x', '5x', '10x']),
         inverse: React.PropTypes.bool,
         className: React.PropTypes.string
     };

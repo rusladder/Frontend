@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import {Component} from 'react'
-import Remarkable from 'remarkable'
 import YoutubePreview from 'app/components/elements/YoutubePreview'
 import sanitizeConfig, {noImageText} from 'app/utils/SanitizeConfig'
 import {renderToString} from 'react-dom/server';
@@ -9,13 +8,7 @@ import sanitize from 'sanitize-html'
 import HtmlReady from 'shared/HtmlReady'
 import tt from 'counterpart';
 
-const remarkable = new Remarkable({
-    html: true, // remarkable renders first then sanitize runs...
-    breaks: true,
-    linkify: false, // linkify is done locally
-    typographer: false, // https://github.com/jonschlinkert/remarkable/issues/142#issuecomment-221546793
-    quotes: '“”‘’'
-})
+import markdown from '../elements/Editor/Plugins/extraMarkdown'
 
 class MarkdownViewer extends Component {
 
@@ -65,6 +58,7 @@ class MarkdownViewer extends Component {
         let html = false;
         // See also ReplyEditor isHtmlTest
         const m = text.match(/^<html>([\S\s]*)<\/html>$/);
+
         if (m && m.length === 2) {
             html = true;
             text = m[1];
@@ -75,11 +69,13 @@ class MarkdownViewer extends Component {
 
         // Strip out HTML comments. "JS-DOS" bug.
         text = text.replace(/<!--([\s\S]+?)(-->|$)/g, '(html comment removed: $1)')
+        let renderedText = html ? text : markdown(text)
 
-        let renderedText = html ? text : remarkable.render(text)
 
         // Embed videos, link mentions and hashtags, etc...
         if(renderedText) renderedText = HtmlReady(renderedText).html
+
+        //console.log("renderedText HTML READY", renderedText)
 
         // Complete removal of javascript and other dangerous tags..
         // The must remain as close as possible to dangerouslySetInnerHTML

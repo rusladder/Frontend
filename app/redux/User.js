@@ -12,7 +12,8 @@ const defaultState = fromJS({
     pub_keys_used: null,
     locale: DEFAULT_LANGUAGE,
     domestic: DEFAULT_DOMESTIC,
-    theme: DEFAULT_THEME
+    theme: DEFAULT_THEME,
+    show_messages_modal: false,
 });
 
 if (process.env.BROWSER) {
@@ -142,5 +143,8 @@ export default createModule({
                 return state.setIn(key, fromJS(value))
             }
         },
+
+        { action: 'SHOW_MESSAGES', reducer: state => state.set('show_messages_modal', true)  },
+        { action: 'HIDE_MESSAGES', reducer: state => state.set('show_messages_modal', false) },
     ]
 });

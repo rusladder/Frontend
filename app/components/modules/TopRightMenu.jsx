@@ -65,7 +65,24 @@ const calculateEstimateOutput = ({a, p, sw, g}) => {
   return Number( ( (total_steem * p) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, toggleOffCanvasMenu, probablyLoggedIn, location, locationQueryParams, changeLanguage}) {
+function TopRightMenu({
+  account,
+  savings_withdraws,
+  price_per_golos,
+  globalprops,
+  username,
+  showLogin,
+  logout,
+  loggedIn,
+  vertical,
+  navigate,
+  toggleOffCanvasMenu,
+  probablyLoggedIn,
+  location,
+  locationQueryParams,
+  changeLanguage,
+  showMessages
+}) {
     const APP_NAME = tt('g.APP_NAME');
 
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -170,6 +187,7 @@ const estimateOutput = <LocalizedCurrency amount={calculateEstimateOutput({a:acc
             {link: feedLink, icon: 'home', value: tt('g.feed'), addon: <NotifiCounter fields="feed" />},
             {link: accountLink, icon: 'profile', value: tt('g.blog')},
             {link: commentsLink, icon: 'replies', value: tt('g.comments')},
+            {link: '#', icon: 'chatboxes', onClick: showMessages, value: tt('g.messages')},
             {link: repliesLink, icon: 'reply', value: tt('g.replies'), addon: <NotifiCounter fields="comment_reply" />},
             {link: walletLink, icon: 'wallet', value: tt('g.wallet'), addon: <NotifiCounter fields="follow,send,receive,account_update" />},
             {link: reset_password_link, icon: 'key', value: tt('g.change_password')},
@@ -269,7 +287,7 @@ TopRightMenu.propTypes = {
 };
 
 export default connect(
-    state => {
+  (state) => {
         if (!process.env.BROWSER) {
             return {
                 username: null,
@@ -302,6 +320,11 @@ export default connect(
         }
     },
     dispatch => ({
+        showMessages: (e) => {
+            if (e) e.preventDefault();
+            const name = 'showMessages'
+            dispatch(user.actions.showMessages())
+        },
         changeLanguage: e => {
             if (e) e.preventDefault();
             const targetLanguage = e.target.text.trim();

@@ -22,23 +22,33 @@ class CategorySelector extends React.Component {
         // redux connect (overwrite in HTML)
         trending: React.PropTypes.object.isRequired, // Immutable.List
     }
+
     static defaultProps = {
         autoComplete: 'on',
         id: 'CategorySelectorId',
         isEdit: false,
     }
-    constructor() {
-        super()
-        this.state = {createCategory: true}
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            createCategory: true, 
+            value: props.value,
+            tagsList : []
+        }
+        
         this.shouldComponentUpdate = shouldComponentUpdate(this, 'CategorySelector')
+
         this.categoryCreateToggle = e => {
             e.preventDefault()
+            console.log("!!!categoryCreateToggle!!!")
             this.props.onChange()
             this.setState({ createCategory: !this.state.createCategory })
             setTimeout(() => this.refs.categoryRef.focus(), 300)
         }
         this.categorySelectOnChange = e => {
             e.preventDefault()
+            console.log("!!!categorySelectOnChange!!!")
             const {value} = e.target
             const {onBlur} = this.props // call onBlur to trigger validation immediately
             if (value === 'new') {
@@ -47,39 +57,71 @@ class CategorySelector extends React.Component {
             } else
                 this.props.onChange(e)
         }
+
+        this.handleChange = this.handleChange.bind(this)
+        this.removeTag = this.removeTag.bind(this)
     }
 
-    addTag (){
-        console.log("Will Add")
-    }
+    handleChange = (e) => {
+        e.preventDefault()
+        let inputValue = e.target.value, _tagsArray = this.state.tagsList
 
-    removeTag(){
-        console.log("will remove")
+        if(/[,.; ]/g.test(inputValue)){
+            inputValue = inputValue.replace(/[,.; ]/g, ' ')
+            inputValue.split(' ').forEach((element) => {
+                if (element && element.length > 0)
+                    _tagsArray.push(element)
+            })
+            this.setState({value: ''})
+            this.setState({tagsList: _tagsArray})
+            this.props.onChange(_tagsArray.join(' '))
+        }
+        else{
+            this.setState({value: inputValue})
+        }
+    }
+    
+    removeTag = (el) => {
+        let elementIndex = this.state.tagsList.indexOf(el),
+            _tagsArray = this.state.tagsList
+        _tagsArray.splice(elementIndex, 1)
+        this.setState({tagsList: _tagsArray})
+        this.props.onChange(_tagsArray.join(' '))
     }
 
     render() {
         const {trending, tabIndex, disabled} = this.props
         const categories = trending.slice(0, 11).filterNot(c => validateCategory(c))
-        const {createCategory} = this.state
+        const {createCategory, tags} = this.state
 
         const categoryOptions = categories.map((c, idx) =>
             <option value={c} key={idx}>{c}</option>)
 
-        const impProps = {...this.props}
+        let tagsListElement = [];
+
+        this.state.tagsList.forEach((element, index) => {
+            if (element)
+                tagsListElement.push(
+                <span className="GolosEditor__tag__label label" key={'tag_element_' + index}>{element} 
+                    <a onClick={() => this.removeTag(element)}>
+                        <Icon name="editor/ic-cross-gr-small" size='07x'/>
+                    </a>
+                </span>)          
+       })
+
+
         const categoryInput =
             <div className='GolosEditor__categories__input__block row'>
                 <div className='input-group input-group-rounded column small-4'>
-                    <input className='input-group-field' type="text" {...cleanReduxInput(impProps)} ref="categoryRef" tabIndex={tabIndex} disabled={disabled} />
-                    <div className="input-group-button" onClick={this.addTag}>
-                        <Icon name="editor/ic-plus-normal"/>
-                    </div>
+                    <input className='input-group-field' value={this.state.value} type="text" ref="categoryRef" onChange={this.handleChange}/>
+                    <a>
+                        <div className="input-group-button">
+                            <Icon name="editor/ic-plus-normal"/>
+                        </div>
+                    </a>
                 </div>  
                 <div className='GolosEditor__tag__label__list column small-8'>
-                    <span className="GolosEditor__tag__label label">колхоз-миллионер-голос-ру 
-                        <a onClick={this.removeTag}>
-                            <Icon name="editor/ic-cross-gr-small" size='07x'/>
-                        </a>
-                    </span>
+                    {tagsListElement}
                 </div> 
             </div>
 
@@ -101,7 +143,6 @@ export function validateCategory(category, required = true) {
     if(!category || category.trim() === '') return required ? tt('g.required') : null
     const cats = category.trim().split(' ')
     return (
-        // !category || category.trim() === '' ? 'Required' :
         cats.length > 5 ? tt('category_selector_jsx.use_limitied_amount_of_categories', {amount: 5}) :
         cats.find(c => c.length > 24)           ? tt('category_selector_jsx.maximum_tag_length_is_24_characters') :
         cats.find(c => c.split('-').length > 2) ? tt('category_selector_jsx.use_one_dash') :
@@ -119,5 +160,6 @@ export default connect((state, ownProps) => {
     // apply translations
     // they are used here because default prop can't acces intl property
     const placeholder = tt('category_selector_jsx.tag_your_story');
+    console.log("PROPS", ownProps)
     return { trending, placeholder, ...ownProps, }
 })(CategorySelector);

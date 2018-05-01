@@ -37,7 +37,7 @@
     > li {
       list-style-type: none;
       border-bottom: 1px solid $light-gray;
-      padding: 1em .5em .5em 1em;
+      padding: 0em .5em .5em 1em;
       clear: both;
       min-height: 60px;
       &:hover {
@@ -46,6 +46,14 @@
       }
       &.selected {
         background-color: #f0f0f0;
+      }
+      > .timestamp {
+        display: block;
+        text-align: right;
+        font-size: 0.813em;
+        color: $medium-gray;
+        line-height: 0.813em;
+        padding: 0.5em 0 0 0;
       }
       > .Userpic {
         margin-top: -4px;
@@ -130,10 +138,19 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          color: map-get($foundation-palette, 'primary');
+        }
+        .timestamp {
+          display: block;
+          text-align: right;
+          font-size: 0.813em;
+          float: right;
+          color: $medium-gray;
+          line-height: 0.813em;
+          padding: 0.5em 0 0 0;
         }
         > small {
           display: block;
-          color: $dark-gray;
         }
       }
     }

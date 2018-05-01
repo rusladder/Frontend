@@ -159,6 +159,9 @@ class CreateAccount extends React.Component {
       else if (!/^[0-9]{1,45}$/.test(value)) {
         phone_error = tt('mobilevalidation_js.have_only_digits');
       }
+      else if (value[0] === `0`) {
+        phone_error = tt('mobilevalidation_js.cant_start_with_zero');
+      }
       else if (value.length < 7) {
         phone_error = tt('mobilevalidation_js.be_longer');
       }

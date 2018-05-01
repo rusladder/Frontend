@@ -850,7 +850,8 @@
     "have_only_digits": "have only digits",
     "you_can_change_your_number": "You can select another one phone number.",
     "select_another_number": "Select another phone",
-    "waiting_from_you": "Waiting SMS message with confirmation code %(code)s from your number to our verification number %(phone)s."
+    "waiting_from_you": "Waiting SMS message with confirmation code %(code)s from your number to our verification number %(phone)s.",
+    "cant_start_with_zero": "can't start with zero"
   },
   "chainvalidation_js": {
     "account_name_should": "Account name should ",

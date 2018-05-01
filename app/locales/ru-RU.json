@@ -41,7 +41,8 @@
     "have_only_digits": "должен состоять только из цифр",
     "you_can_change_your_number": "Если вы ошиблись во время ввода своего номера телефона, вы можете ввести его заново.",
     "select_another_number": "Указать другой номер",
-    "waiting_from_you": "Отправьте код %(code)s на номер %(phone)s для подтверждения вашего номера телефона."
+    "waiting_from_you": "Отправьте код %(code)s на номер %(phone)s для подтверждения вашего номера телефона.",
+    "cant_start_with_zero": "не может начинаться с 0"
   },
   "chainvalidation_js": {
     "account_name_should": "Имя аккаунта должно ",

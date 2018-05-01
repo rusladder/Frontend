@@ -1,13 +1,16 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDOM from 'react-dom';
 import reactForm from 'app/utils/ReactForm';
-import {Map} from 'immutable';
+import {List, Map, fromJS} from 'immutable';
 import { Link } from 'react-router';
 import Icon from 'app/components/elements/Icon';
+import transaction from 'app/redux/Transaction';
 import user from 'app/redux/User';
 import LoadingIndicator from 'app/components/elements/LoadingIndicator';
 import {validate_account_name} from 'app/utils/ChainValidation';
 import Userpic from 'app/components/elements/Userpic';
+import TimeAgoWrapper from 'app/components/elements/TimeAgoWrapper';
+import Tooltip from 'app/components/elements/Tooltip';
 import tt from 'counterpart';
 
 const testData = {
@@ -22,86 +25,183 @@ class MessageBox extends Component {
     static propTypes = {
         // connector props
         username: React.PropTypes.string,
+        history: PropTypes.object.isRequired,
+        loading: PropTypes.bool.isRequired,
+        gstatus: PropTypes.object.isRequired,
     };
 
     constructor(props) {
         super()
-        this.state = {selected: 0};
+        this.state = {
+            selected: null,
+            sending: false
+        };
+        this.initForm(props)
+    }
+
+    initForm(props) {
+        reactForm({
+            instance: this,
+            name: 'converstaionForm',
+            fields: ['memo'],
+            initialValues: props.initialValues,
+            validation: values => ({
+              memo: null
+            })
+        })
+    }
+
+    componentWillMount() {
+      this.props.dispatchGetHistory({account: this.props.username});
     }
 
     componentDidMount() {}
 
-    onSelectListItem = index => {
-      this.setState({selected: index});
+    onSelectListItem = key => {
+      this.setState({selected: key});
     }
 
+    errorCallback = errorStr => {
+      this.setState({trxError: errorStr, loading: false});
+    }
+
+    clearError = () => {
+      this.setState({trxError: undefined});
+    }
+
+    onChangeMemo = (e) => {
+      const {value} = e.target;
+      this.state.memo.props.onChange(value);
+    }
+
+    dispatchSubmit = (formPayload) => {
+      console.warn('formPayload', formPayload);
+        const {dispatchSendMessage, username} = this.props;
+        const {selected} = this.state;
+        const memo = formPayload.memo;
+        dispatchSendMessage({
+            operation: {
+                from: username,
+                to: selected,
+                amount: '0.001 GOLOS',
+                memo: (memo ? memo : '')
+            },
+            errorCallback: this.errorCallback
+        });
+    }
 
     render() {
-        const { selected } = this.state;
-        const { username } = this.props;
+        const {selected, memo, converstaionForm : {handleSubmit}} = this.state;
+        const {history, username, loading} = this.props;
         const fetching = false;
         const disabled = false;
-        const randomInt = ((min, max) => {return Math.floor(Math.random() * (max - min + 1)) + min;});
-        const getLorem = (len => {const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."; return lorem.substr(0,len); })
-        let odd = true;
-        const userList = <ul className="List">
-            {testData.usernames.map((key, index) => {
-                odd = !odd;
-                return <li key={`user-${index}`} className={index == selected ? 'selected' : ''} onClick={() => this.onSelectListItem(index)}>
-                  <Userpic account={testData.useravatars[index]} />
-                  <div className="right-side"><strong>{key}</strong><small>{getLorem(randomInt(15, 50))}</small></div>
-                </li>
-            })}
-        </ul>;
-        const conversation = <ul className="Conversation">
-            {testData.conversation.map((key, index) => {
-                odd = !odd;
-                return <li key={`conv-${index}`} className={index == selected ? 'selected' : ''}>
-                    <Userpic account={odd ? testData.useravatars[selected] : username} width="36" height="36"/>
-                    <div className="right-side">
-                        <strong>{odd ? testData.usernames[selected] : username}</strong>
-                        <small>{key}</small>
-                    </div>
-                </li>
-            })}
-        </ul>
+        let tmp = {};
+        history.reverse().map(item => {
+            if (item.getIn([1, 'op', 0]) !== 'transfer') return;
+            const data = item.getIn([1, 'op', 1]).toJS();
+            const conversant = username === data.from ? data.to : data.from;
+            if (typeof tmp[conversant] !== 'object') tmp[conversant] = [];
+            tmp[conversant].push({
+              from: data.from,
+              to: data.to,
+              amount: data.amount,
+              memo: data.memo,
+              timestamp: item.getIn([1, 'timestamp'])
+            });
+        });
+        const conversantionsMap = Map(fromJS(tmp)).sort(
+          (a, b) => new Date(a.getIn([0, 'timestamp'])) < new Date(b.getIn([0, 'timestamp']))
+        );
+        let selectedKey = selected;
+        if (! selectedKey) {
+          selectedKey = conversantionsMap.keySeq().first();
+        }
+        const conversantions = conversantionsMap.map((value, key) => {
+            const memo = value.getIn([0, 'memo']);
+            return <li key={`conversant-${key}`} className={key == selectedKey ? 'selected' : ''} onClick={() => this.onSelectListItem(key)}>
+                <Tooltip className="timestamp" t={new Date(value.getIn([0, 'timestamp'])).toLocaleString()}>
+                    <TimeAgoWrapper date={value.getIn([0, 'timestamp'])} />
+                </Tooltip>
+                <Userpic account={key} />
+                <div className="right-side">
+                    <strong>{key}</strong>
+                    <small>{typeof memo !== 'string' ? JSON.stringify(memo) : memo}</small>
+                </div>
+            </li>
+        });
+
+        const conversation = conversantionsMap.get(selectedKey, Map()).reverse().map((value, key) => {
+            return <li key={`conversation-item-${key}`}>
+                <Userpic account={value.get('from')} width="36" height="36"/>
+                <div className="right-side">
+                    <strong>{value.get('from')}</strong>
+                    <Tooltip className="timestamp" t={new Date(value.get('timestamp')).toLocaleString()}>
+                        <TimeAgoWrapper date={value.get('timestamp')} />
+                    </Tooltip>
+                    <small>{value.get('memo')}</small>
+                </div>
+            </li>
+        });
 
         return (<div className={'Messages row' + (fetching ? ' fetching' : '')}>
             <div className="Messages__left column shrink small-collapse">
-              <div className="topbar">
-                <div className="row">
-                  <div className="column small-10">
-                    <input type="text" placeholder={tt("voting_jsx.search")} disabled={disabled} />
-                  </div>
-                  <div className="column small-2">
-                    <Link to="/message.html"><Icon name="pencil" /></Link>
-                  </div>
+                <div className="topbar">
+                    <div className="row">
+                        <div className="column small-10">
+                            <input type="text" placeholder={tt("voting_jsx.search")} disabled={disabled} />
+                        </div>
+                        <div className="column small-2">
+                            <Link to="/message.html"><Icon name="pencil" /></Link>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              {userList}
+                <ul className="List">
+                    {conversantions}
+                </ul>
             </div>
             <div className="Messages__right column show-for-large">
-              <div className="topbar">
-                <div className="row">
-                  <div className="column small-10">
-                    <Userpic account={testData.usernames[selected]} width="36" height="36"/>
-                    <h6>{testData.usernames[selected]}</h6>
-                  </div>
-                  <div className="column small-2">
-                  </div>
+                <div className="topbar">
+                    <div className="row">
+                        <div className="column small-10">
+                            <Userpic account={selectedKey} width="36" height="36"/>
+                            <h6>{selectedKey}</h6>
+                        </div>
+                        <div className="column small-2"></div>
+                    </div>
                 </div>
-              </div>
-              {conversation}
-              <div className="bottombar">
-                <div className="row">
-                  <div className="column small-10">
-                    <input type="text" placeholder={tt('g.reply')} />
-                  </div>
-                  <div className="column small-2">
-                    <button type="submit" className="button" disabled={disabled}>{tt('g.submit')}</button>
-                  </div>
+                <ul className="Conversation">
+                    {conversation}
+                </ul>
+                <div className="bottombar">
+                  <form onSubmit={handleSubmit(({data}) => {this.dispatchSubmit({...data})})}>
+                    <div className="row">
+                        <div className="column small-10">
+                            <input
+                                {...memo.props}
+                                type="text"
+                                ref="memo"
+                                placeholder={tt('g.reply')}
+                                onChange={this.onChangeMemo}
+                                autoComplete="off"
+                                autoCorrect="off"
+                                autoCapitalize="off"
+                                spellCheck="false"
+                                disabled={loading}
+                            />
+                        </div>
+                        <div className="column small-2">
+                            <button
+                                type="submit"
+                                className="button"
+                                disabled={disabled}
+                                onChange={this.clearError}
+                            >
+                                {tt('g.submit')}
+                            </button>
+                        </div>
+                    </div>
+                  </form>
                 </div>
-              </div>
             </div>
         </div>)
     }
@@ -110,11 +210,40 @@ class MessageBox extends Component {
 import {connect} from 'react-redux'
 
 export default connect(
-    (state, ownProps) => ({
-        ...ownProps,
-        username: state.user.getIn(['current', 'username']),
-    }),
+    (state, ownProps) => {
+        const username = state.user.getIn(['current', 'username']);
+        const history  = state.global.getIn(['accounts', username, 'transfer_history']);
+        const loading  = state.app.get('loading');
+        const gstatus   = state.global.get('status');
+        const initialValues = {
+            memo: null,
+        }
+        return {
+            ...ownProps,
+            initialValues,
+            username,
+            history,
+            loading,
+            gstatus,
+        }
+    },
     dispatch => ({
-        dispatchSome: ({a}) => {}
+        dispatchGetHistory: ({account}) => {
+          dispatch({type: 'FETCH_STATE', payload: {pathname: `@${account}/transfers`}})
+        },
+        dispatchSendMessage: ({
+            operation,
+            errorCallback,
+        }) => {
+            const successCallback = () => {
+                dispatch({type: 'FETCH_STATE', payload: {pathname: `@${operation.from}/transfers`}})
+            }
+            dispatch(transaction.actions.broadcastOperation({
+                type: 'transfer',
+                operation,
+                successCallback,
+                errorCallback,
+            }))
+        }
     })
 )(MessageBox)

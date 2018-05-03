@@ -80,3 +80,27 @@ li {
     }
 }
 
+li.wrap-bla {
+  //padding-left: 0.5rem !important;
+  //padding-top: 0 !important;
+  padding-right: 0 !important;
+  //padding-bottom: 0 !important;
+  //background: lime;
+  //margin-left: ;
+  //align-self: flex-start;
+  > a {
+    align-items: center;
+  }
+  > a > span {
+    padding-left: 0.25rem;
+  }
+  > a > span.Icon {
+    padding-left: 0px;
+    width: 1rem !important;
+    height: 1rem !important;
+    svg {
+      width: 1rem !important;
+      height: 1rem !important;
+    }
+  }
+}

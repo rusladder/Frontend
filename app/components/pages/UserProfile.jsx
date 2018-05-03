@@ -393,6 +393,9 @@ export default class UserProfile extends React.Component {
                     <Link className="UserProfile__menu-item" to={`/@${accountname}/recent-replies`} activeClassName="active">
                         {tt('g.replies')} {isMyAccount && <NotifiCounter fields="comment_reply" />}
                     </Link>
+                    <Link to={`/@${accountname}/notifications`} activeClassName="active">
+                        {tt('g.notifications')} {isMyAccount && <NotifiCounter fields="comment_reply"/>}
+                    </Link>
                     {/*<li><Link to={`/@${accountname}/feed`} activeClassName="active">Feed</Link></li>*/}
                     <LinkWithDropdown
                         closeOnClickOutside

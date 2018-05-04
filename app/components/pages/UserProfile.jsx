@@ -32,6 +32,7 @@ import Userpic from 'app/components/elements/Userpic';
 import Callout from 'app/components/elements/Callout';
 import normalizeProfile from 'app/utils/NormalizeProfile';
 // import UserInvites from 'app/components/elements/UserInvites';
+import NotificationHistory from 'app/components/modules/NotificationHistory';
 
 export default class UserProfile extends React.Component {
     constructor(props) {
@@ -185,6 +186,11 @@ export default class UserProfile extends React.Component {
         // const sbd_balance_str = numberWithCommas('$' + sbd_balance.toFixed(3));
 
         let rewardsClass = "", walletClass = "";
+        //
+        if( section === 'notifications' ) {
+          tab_content = <NotificationHistory />
+        }
+        //
         if( section === 'transfers' ) {
             // transfers, check if url has query params
             const { location: { query } } = this.props;

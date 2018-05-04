@@ -1,0 +1,33 @@
+.NotificationHistory_category-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  //text-align: center;
+  line-height: 1;
+  cursor: pointer;
+  //-webkit-appearance: none;
+  //-webkit-transition: background-color 0.25s ease-out, color 0.25s ease-out;
+  transition: background-color 0.25s ease-out, color 0.25s ease-out;
+  //vertical-align: middle;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.85em 1em;
+  //margin: 0 0 1rem 0;
+  //font-size: 0.9rem;
+  //background-color: #0078c4;
+  //background-color: #0078c4;
+  background-color: #ffffff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
+  //color: #fefefe;
+  //color: #fefefe;
+  text-transform: uppercase;
+  height: 60px;
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 1.4px;
+}

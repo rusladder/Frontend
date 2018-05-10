@@ -5,6 +5,7 @@ import client from 'socketcluster-client';
 import NotifyContent from 'app/components/elements/Notifications/NotifyContent'
 //
 let socket;
+
 //
 function socketEventIterator(channel) {
   let resolveNextValue, resolved;
@@ -32,6 +33,7 @@ function socketEventIterator(channel) {
     });
   };
 }
+
 //
 function* userChannelListener(channel) {
   try {
@@ -39,11 +41,19 @@ function* userChannelListener(channel) {
     // yield fork(logoutListener)
     while (true) {
       const action = yield call(next);
-      // console.log(action)
-      yield put({
-        type: 'ADD_NOTIFICATION',
-        payload: NotifyContent(action)
-      })
+      if ('type' in action) {
+        console.clear()
+        yield console.log(action)
+        yield put({
+          type: 'ADD_NOTIFICATION',
+          payload: NotifyContent(action)
+        })
+      }
+      else {
+        if (action.operations.length > 0) {
+          yield console.log(action)
+        }
+      }
     }
   } catch (error) {
     // the way redux-saga 0.9.5 catches an effect cancellation
@@ -55,16 +65,19 @@ function* userChannelListener(channel) {
     }
   }
 }
+
 //
 function onConnectedError(e) {
   console.clear()
   console.log(`<<< notification channel's down. Reconnecting ...`)
 }
+
 //
 function onConnectedClose(e) {
   console.clear()
   console.log(`<<< notification channel's down. Reconnecting ...`)
 }
+
 //
 function initConnection(user, scOptions) {
   // console.log(`|||| channel requested for user `, user)
@@ -86,6 +99,7 @@ function initConnection(user, scOptions) {
     socket.on('error', onSocketError)
   })
 }
+
 //
 function* processLogout() {
   // console.log(`||||||||||||||||||||||||||||||||||| LOGOUT`)
@@ -99,6 +113,7 @@ function* logoutListener(chl) {
   yield take('user/LOGOUT'/*, processLogout*/);
   yield cancel(chl)
 }
+
 //
 function* onUserLogin() {
   // console.log(`||||||||||||||||||||||||||||||||||| STARTING CHANNEL LISTENER `)
@@ -110,9 +125,9 @@ function* onUserLogin() {
     try {
       //
       const scOptions = {
-        hostname: pushServiceUrl,
-        secure: true,
-        // port: 8000
+        // hostname: pushServiceUrl,
+        // secure: true,
+        port: 8000
       };
       // {socketid: ..., ...}
       const response = yield call(initConnection, channelName, scOptions)
@@ -130,6 +145,7 @@ function* onUserLogin() {
     }
   }
 }
+
 //
 export default {
   onUserLogin

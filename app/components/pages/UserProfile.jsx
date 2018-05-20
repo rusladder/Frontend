@@ -32,7 +32,7 @@ import Userpic from 'app/components/elements/Userpic';
 import Callout from 'app/components/elements/Callout';
 import normalizeProfile from 'app/utils/NormalizeProfile';
 // import UserInvites from 'app/components/elements/UserInvites';
-import NotificationHistory from 'app/components/modules/NotificationHistory';
+import NotificationLog from 'app/components/modules/NotificationLog';
 
 export default class UserProfile extends React.Component {
     constructor(props) {
@@ -188,7 +188,7 @@ export default class UserProfile extends React.Component {
         let rewardsClass = "", walletClass = "";
         //
         if( section === 'notifications' ) {
-          tab_content = <NotificationHistory />
+          tab_content = <NotificationLog />
         }
         //
         if( section === 'transfers' ) {
@@ -494,7 +494,7 @@ export default class UserProfile extends React.Component {
                 <div>
                   {printLink}
                 </div>
-                <div>
+                <div style={{backgroundColor: '#F8F8F8'}}>
                   {tab_content}
                 </div>
                 <br/><br/>

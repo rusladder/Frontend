@@ -984,5 +984,12 @@
     "exceeded_maximum_allowed_bandwidth": "Недостаточно пропускной способности аккаунта. Пополните Силу Голоса либо дождитесь восстановления",
     "already_voted": "Вы уже голосовали за этот пост",
     "only_vote_once_every": "Голосовать можно не чаще, чем раз в 3 секунды"
+  },
+  "NotificationLog_jsx": {
+    "selector_menu_type_all": "Все",
+    "selector_menu_type_comments": "Комментарии",
+    "selector_menu_type_downvotes": "Флаги",
+    "selector_menu_type_transfers": "Переводы",
+    "selector_menu_type_upvotes": "Апвоуты"
   }
 }

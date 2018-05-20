@@ -395,11 +395,13 @@ export default class UserProfile extends React.Component {
                     <li><Link to={`/@${accountname}/recent-replies`} activeClassName="active">
                         {tt('g.replies')} {isMyAccount && <NotifiCounter fields="comment_reply" />}
                     </Link></li>
-                    <li>
-                      <Link to={`/@${accountname}/notifications`} activeClassName="active">
-                        {tt('g.notifications')} {isMyAccount && <NotifiCounter fields="comment_reply"/>}
-                      </Link>
-                    </li>
+                    {isMyAccount &&
+                      <li>
+                       <Link to={`/@${accountname}/notifications`} activeClassName="active">
+                          {tt('g.notifications')} {isMyAccount && <NotifiCounter fields="comment_reply"/>}
+                        </Link>
+                      </li>
+                    }
                     {/*<li><Link to={`/@${accountname}/feed`} activeClassName="active">Feed</Link></li>*/}
                     <li>
                         <LinkWithDropdown

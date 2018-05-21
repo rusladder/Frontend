@@ -3,6 +3,8 @@ import {SagaCancellationException} from 'redux-saga';
 import user from 'app/redux/User'
 import client from 'socketcluster-client';
 import NotifyContent from 'app/components/elements/Notifications/NotifyContent'
+import {getNotificationsCount} from 'app/utils/ServerApiClient';
+
 //
 let socket;
 
@@ -120,6 +122,12 @@ function* onUserLogin() {
   const currentUser = yield select(state => state.user.get('current'));
   const channelName = currentUser.get('username');
   const pushServiceUrl = yield select(state => state.offchain.get('config').get('push_server_url'));
+
+  const count = yield getNotificationsCount('golos.loto')
+
+  console.log('%%%%%%%%%%%%%%%%%%%%%%%%% ', count)
+
+
   // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ `, pushServiceUrl)
   if (channelName && pushServiceUrl) {
     try {

@@ -66,7 +66,7 @@ const calculateEstimateOutput = ({ account, price_per_golos, savings_withdraws, 
 
 function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
     const APP_NAME = tt('g.APP_NAME');
-    
+
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
     const mcl = vertical ? '' : ' sub-menu';
     const lcn = vertical ? '' : 'show-for-large';
@@ -89,6 +89,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
     const accountLink = `/@${username}`;
     const commentsLink = `/@${username}/comments`;
     const reset_password_link = `/@${username}/password`;
+    const notificationsLink = `/@${username}/notifications`;
 
     const searchItem = <li className={scn}>
         <a href="/static/search.html" title={tt('g.search')}>
@@ -98,10 +99,12 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
     ;
 
     const notificationItem = <li className={scn}>
-        <a href="#" title={tt('g.search')} className="number">
-          <Icon name="new/bell" size="1_25x" />
+      <Link to={notificationsLink} className="number">
+        {/*<a href={notificationsLink} title={tt('g.search')} className="number">*/}
+          {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x" />}
           20
-        </a>
+        {/*</a>*/}
+      </Link>
       </li>
     ;
 

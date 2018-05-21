@@ -4,6 +4,7 @@ import Tarantool from 'db/tarantool';
 import config from 'config';
 import webPush from 'web-push';
 import { checkCSRF } from "server/utils/misc";
+import fetch from 'node-fetch';
 
 if(config.has('notify.gcm_key')) {
     webPush.setGCMAPIKey(config.get('notify.gcm_key'));
@@ -22,7 +23,7 @@ export default function useNotificationsApi(app) {
     // get all notifications for account
     router.get('/notifications/:account', function *() {
         const account = this.params.account;
- 
+
         if (!account || account !== this.session.a) {
             this.body = []; return;
         }
@@ -39,7 +40,7 @@ export default function useNotificationsApi(app) {
     // mark account's notification as read
     router.put('/notifications/:account/:ids', function *() {
         const {account, ids} = this.params;
-     
+
         if (!ids || !account || account !== this.session.a) {
             this.body = []; return;
         }
@@ -71,6 +72,30 @@ export default function useNotificationsApi(app) {
         } catch (error) {
             console.error(`[reqid ${this.request.header['x-request-id']}] ${this.session.uid} ERRORLOG notifications @${account} ${error.message}`);
         }
+    });
+
+    // get all notifications for account
+    router.get('/notifications/:account/count', function *() {
+      const account = this.params.account;
+
+      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$', account)
+
+      // !!!!!!!!!!!!!!!!!!!!!!!!! todo uncomment after testing!!
+      // if (!account || account !== this.session.a) {
+      //   this.body = {}; return;
+      // }
+      //
+      try {
+        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ fetch!')
+        const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
+        // const res = yield Tarantool.instance('tarantool').select('notifications', 0, 1, 0, 'eq', account);
+        const response = yield fetch(notifyApiUrl, {method: 'GET'})
+        this.body = yield response.json()
+      } catch (error) {
+        console.error(error);
+        this.body = {};
+      }
+      return;
     });
 }
 

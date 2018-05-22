@@ -74,29 +74,28 @@ export default function useNotificationsApi(app) {
         }
     });
 
-    // get all notifications for account
-    router.get('/notifications/:account/count', function *() {
-      const account = this.params.account;
-
-      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$', account)
-
-      // !!!!!!!!!!!!!!!!!!!!!!!!! todo uncomment after testing!!
-      // if (!account || account !== this.session.a) {
-      //   this.body = {}; return;
-      // }
+  // get all notifications for account
+  router.get('/notifications/:account/count', function* () {
+    const account = this.params.account;
+    // todo check this
+    // if (!account || account !== this.session.a) {
+    //   this.body = {}; return;
+    // }
+    //
+    try {
+      const notifyRestApiUrl = `http://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}:8000/api/v1`
       //
-      try {
-        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ fetch!')
-        const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
-        // const res = yield Tarantool.instance('tarantool').select('notifications', 0, 1, 0, 'eq', account);
-        const response = yield fetch(notifyApiUrl, {method: 'GET'})
-        this.body = yield response.json()
-      } catch (error) {
-        console.error(error);
-        this.body = {};
-      }
-      return;
-    });
+      // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
+      const url = `${notifyRestApiUrl}/${account}/count`
+      console.log('$$$$$$$ fetch from ', url)
+      const response = yield fetch(url, {method: 'GET'})
+      this.body = yield response.json()
+    } catch (error) {
+      console.error(error);
+      this.body = {};
+    }
+    return;
+  });
 }
 
 const status = (ctx, account) =>

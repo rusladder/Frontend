@@ -12,7 +12,8 @@ const defaultState = fromJS({
     pub_keys_used: null,
     locale: DEFAULT_LANGUAGE,
     domestic: DEFAULT_DOMESTIC,
-    theme: DEFAULT_THEME
+    theme: DEFAULT_THEME,
+    notifications: {}
 });
 
 if (process.env.BROWSER) {
@@ -143,7 +144,14 @@ export default createModule({
                 return state.setIn(key, fromJS(value))
             }
         },
+        // notifications processing
         { action: 'NOTIFICATION_CHANNEL_CREATED', reducer: state => state.set('notification_channel_created', true) },
         { action: 'NOTIFICATION_CHANNEL_DESTROYED', reducer: state => state.set('notification_channel_created', false) },
+        //
+        { action: 'NOTIFICATIONS_UNTOUCHED_COUNTER_CHANGED', reducer: (state, {payload}) => {
+            const {count} = payload
+            state = state.setIn(['notifications', 'untouched_count'], count)
+            return state
+        }},
     ]
 });

@@ -118,17 +118,16 @@ function* logoutListener(chl) {
 
 //
 function* onUserLogin() {
-  // console.log(`||||||||||||||||||||||||||||||||||| STARTING CHANNEL LISTENER `)
+  console.log(`||||||||||||||||||||||||||||||||||| STARTING CHANNEL LISTENER `)
   const currentUser = yield select(state => state.user.get('current'));
-  const channelName = currentUser.get('username');
+  const currentUserId = currentUser.get('username');
+  const channelName = currentUserId;
   const pushServiceUrl = yield select(state => state.offchain.get('config').get('push_server_url'));
-
-  const count = yield getNotificationsCount('golos.loto')
-
-  console.log('%%%%%%%%%%%%%%%%%%%%%%%%% ', count)
-
-
-  // console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ `, pushServiceUrl)
+  //
+  const count = yield getNotificationsCount(currentUserId)
+  // refresh the bell counter first
+  yield put(user.actions.notificationsUntouchedCounterChanged({count}))
+  // then start listening to pushes
   if (channelName && pushServiceUrl) {
     try {
       //

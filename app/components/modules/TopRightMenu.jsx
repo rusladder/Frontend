@@ -64,7 +64,7 @@ const calculateEstimateOutput = ({ account, price_per_golos, savings_withdraws, 
   return Number(((total_steem * price_per_golos) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
+function TopRightMenu({notifications_untouched_count, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
     const APP_NAME = tt('g.APP_NAME');
 
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -98,16 +98,14 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
       </li>
     ;
 
-    const notificationItem = <li className={scn}>
-      <Link to={notificationsLink} className="number">
-        {/*<a href={notificationsLink} title={tt('g.search')} className="number">*/}
-          {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x" />}
-          20
-        {/*</a>*/}
-      </Link>
-      </li>
-    ;
-
+    const notificationItem = (typeof notifications_untouched_count === 'number') &&
+      <li className={scn}>
+        <Link to={notificationsLink} className="number">
+          {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x"/>}
+          {notifications_untouched_count}
+        </Link>
+      </li>;
+    //
     // const messengerItem = <li className={scn}>
     //     <a href="#" title={tt('g.search')} className="number">
     //       <Icon name="new/messenger" size="1_5x" />
@@ -264,7 +262,9 @@ export default connect(
                 price_per_golos = parseFloat(base.split(' ')[0]) / parseFloat(quote.split(' ')[0])
         }
         const globalprops = state.global.get('props');
-
+        //
+        const notifications_untouched_count = state.user.getIn(['notifications', 'untouched_count']);
+        //
         return {
             account,
             username,
@@ -272,7 +272,8 @@ export default connect(
             savings_withdraws,
             price_per_golos,
             globalprops,
-            probablyLoggedIn: false
+            probablyLoggedIn: false,
+            notifications_untouched_count
         }
     },
     dispatch => ({

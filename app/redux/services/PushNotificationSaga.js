@@ -1,9 +1,11 @@
-import {take, call, put, select, fork, cancel} from 'redux-saga/effects';
+import {takeLatest} from 'redux-saga';
+import {take, call, put, select, fork, cancel,} from 'redux-saga/effects';
 import {SagaCancellationException} from 'redux-saga';
 import user from 'app/redux/User'
 import client from 'socketcluster-client';
 import NotifyContent from 'app/components/elements/Notifications/NotifyContent'
 import {getNotificationsCount} from 'app/utils/ServerApiClient';
+import {fetchState} from "../FetchDataSaga";
 
 //
 let socket;
@@ -115,9 +117,21 @@ function* logoutListener(chl) {
   yield take('user/LOGOUT'/*, processLogout*/);
   yield cancel(chl)
 }
+//
+function* fetchNotifications(location_change_action) {
+  const {pathname} = location_change_action.payload;
+  yield console.log('\\\\\\\\\\\\\\\\\\\\\\ ', location_change_action)
 
+  // const locationStr = yield select(state => state.routing.getIn(['locationBeforeTransitions', 'pathname']))
+  // yield console.log('\\\\\\\\\\\\\\\\\\\\\\ ', locationStr)
+}
+//
+function* routerListener() {
+  yield* takeLatest('@@router/LOCATION_CHANGE', fetchNotifications);
+}
 //
 function* onUserLogin() {
+  yield fork(routerListener)
   console.log(`||||||||||||||||||||||||||||||||||| STARTING CHANNEL LISTENER `)
   const currentUser = yield select(state => state.user.get('current'));
   const currentUserId = currentUser.get('username');

@@ -77,7 +77,7 @@ export default function useNotificationsApi(app) {
   // get all notifications for account
   router.get('/notifications/:account/count', function* () {
     const account = this.params.account;
-    // todo check this
+    // todo check this.session.a
     // if (!account || account !== this.session.a) {
     //   this.body = {}; return;
     // }

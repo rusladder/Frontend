@@ -74,7 +74,7 @@ export default function useNotificationsApi(app) {
         }
     });
 
-  // get all notifications for account
+  // get total count of (untouched) notifications for account
   router.get('/notifications/:account/count', function* () {
     const account = this.params.account;
     // todo check this.session.a
@@ -87,6 +87,31 @@ export default function useNotificationsApi(app) {
       //
       // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
       const url = `${notifyRestApiUrl}/${account}/count`
+      console.log('$$$$$$$ fetch from ', url)
+      const response = yield fetch(url, {method: 'GET'})
+      this.body = yield response.json()
+    } catch (error) {
+      console.error(error);
+      this.body = {};
+    }
+    return;
+  });
+
+  // get total list (fixme HUGE!) of (whether touched or not) notifications for account by notification type
+  router.get('/notifications/:account/:type', function* () {
+    // const account = this.params.account;
+    const {params: {account, type}} = this;
+    console.log(']]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] ', account, type)
+    // todo check this.session.a
+    // if (!account || account !== this.session.a) {
+    //   this.body = {}; return;
+    // }
+    //
+    try {
+      const notifyRestApiUrl = `http://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}:8000/api/v1`
+      //
+      // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
+      const url = `${notifyRestApiUrl}/${account}/${type}`
       console.log('$$$$$$$ fetch from ', url)
       const response = yield fetch(url, {method: 'GET'})
       this.body = yield response.json()

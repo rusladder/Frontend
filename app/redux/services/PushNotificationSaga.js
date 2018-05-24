@@ -1,12 +1,12 @@
 import {takeLatest} from 'redux-saga';
-import {take, call, put, select, fork, cancel,} from 'redux-saga/effects';
+import {take, call, put, select, fork, cancel, } from 'redux-saga/effects';
 import {SagaCancellationException} from 'redux-saga';
 import user from 'app/redux/User'
 import client from 'socketcluster-client';
 import NotifyContent from 'app/components/elements/Notifications/NotifyContent'
-import {getNotificationsCount} from 'app/utils/ServerApiClient';
+import {getNotificationsCount, getNotificationsList} from 'app/utils/ServerApiClient';
 import {fetchState} from "../FetchDataSaga";
-
+import {routeRegex} from 'app/ResolveRoute'
 //
 let socket;
 
@@ -113,25 +113,54 @@ function* processLogout() {
 }
 
 // listen to logout only after successful login
-function* logoutListener(chl) {
+function* logoutListener(tasks) {
   yield take('user/LOGOUT'/*, processLogout*/);
-  yield cancel(chl)
+
+  for (const task of tasks) {
+    yield cancel(task)
+  }
+
+  yield processLogout()
 }
 //
-function* fetchNotifications(location_change_action) {
-  const {pathname} = location_change_action.payload;
-  yield console.log('\\\\\\\\\\\\\\\\\\\\\\ ', location_change_action)
-
-  // const locationStr = yield select(state => state.routing.getIn(['locationBeforeTransitions', 'pathname']))
-  // yield console.log('\\\\\\\\\\\\\\\\\\\\\\ ', locationStr)
+function* onRouteChange(location_change_action) {
+  const {pathname, query} = location_change_action.payload;
+  const [,, section] = pathname.match(routeRegex.UserProfile2);
+  console.log(query)
+  //
+  if (section === 'notifications') {
+    //
+    let type = 'all'
+    if ('type' in query) {
+      type = query.type;
+    }
+    console.log('------> put NOTIFICATIONS_FETCH')
+    yield put(user.actions.notificationsSelectorChanged(type));
+    yield put({type: 'NOTIFICATIONS_FETCH', payload: {type}});
+  }
 }
 //
 function* routerListener() {
-  yield* takeLatest('@@router/LOCATION_CHANGE', fetchNotifications);
+  yield* takeLatest('@@router/LOCATION_CHANGE', onRouteChange);
+}
+//
+function* fetchNotifications({payload}) {
+  const {type} = payload
+  const account = yield select(state => state.user.get('current').get('username'));
+  yield put(user.actions.notificationsFetching(true));
+  const list = yield getNotificationsList({account, type})
+  console.log('-------> fetched ', list)
+  yield put(user.actions.notificationsFetching(false));
+  yield put(user.actions.notificationsListChanged(list));
+}
+//
+function* fetchListener() {
+  yield* takeLatest('NOTIFICATIONS_FETCH', fetchNotifications);
 }
 //
 function* onUserLogin() {
-  yield fork(routerListener)
+  const _fetchListener = yield fork(fetchListener)
+  const _routerListener = yield fork(routerListener)
   console.log(`||||||||||||||||||||||||||||||||||| STARTING CHANNEL LISTENER `)
   const currentUser = yield select(state => state.user.get('current'));
   const currentUserId = currentUser.get('username');
@@ -159,7 +188,7 @@ function* onUserLogin() {
       // start tracking user logout
       const chListener = yield fork(userChannelListener, channelName)
       // listen to logout only after successful login
-      yield fork(logoutListener, chListener)
+      yield fork(logoutListener, [chListener, _fetchListener, _routerListener])
       // console.log('|||| channel listener started ...')
     } catch (e) {
       // console.log('||||||||||| socket connection error! ', e)

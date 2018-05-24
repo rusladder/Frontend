@@ -2,6 +2,7 @@
   padding-left: 0.45rem !important;
   padding-right: 0.45rem !important;
 }
+
 //
 //
 .NotificationHistory_card {
@@ -33,6 +34,12 @@
         justify-content: center;
         flex: 1 1 auto;
       }
+      //
+      ul > li > a.active {
+        color: #3F46AD;
+        border-bottom: #3F46AD solid 3px;
+      }
+      //
       ul > li > a {
         margin: 0;
         padding-left: 0.7rem;
@@ -48,39 +55,29 @@
       }
 
     }
-
-    //
-    //> ul.menu {
-    //  //
-    //  display: flex;
-    //  justify-content: space-between;
-    //  position: relative;
-    //  margin: 0;
-    //  padding: 0;
-    //  list-style: none;
-    //  //
-    //  > li > a {
-    //    margin: 0;
-    //    padding-left: 0.7rem;
-    //    padding-right: 0.7rem;
-    //    color: #9FA3A7;
-    //    text-transform: uppercase;
-    //    font-family: Roboto;
-    //    letter-spacing: 1.29px;
-    //    &:hover {
-    //      color: $black;
-    //    }
-    //  }
-    //  //
-    //  > li > a.active {
-    //    color: $black;
-    //    font-weight: bold;
-    //  }
-    //
-    //}
   }
-
+  //
+  .contentWrapper.noPadding {
+    padding: 0 !important;
+  }
+  //
+  .contentWrapper.center {
+    justify-content: center;
+  }
+  //
   .contentWrapper {
+    //
+    display: flex;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-family: Roboto;
+    font-size: 1rem;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1.4px;
     //
     > span {
       color: lightgrey;
@@ -99,13 +96,6 @@
   margin-bottom: 1rem;
   background-color: #FFFFFF;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
-  font-family: Roboto;
-  font-size: 1rem;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: 1.4px;
 }
 
 .NotificationHistory_cardHeader {

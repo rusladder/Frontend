@@ -24,19 +24,6 @@ const ipsum2 = (
     leo aenean, maecenas amet vel et in porttitor ac,
     ornare nibh in nonummy ut bibendum ligula, erat odio ipsum euismod nunc qui.
   </span>)
-
-//
-
-const Card = ({title, content, twClass = '', cwClass = ''} = {}) => (
-  <div className="NotificationHistory_card">
-    <div className={twClass}>
-      {title}
-    </div>
-    <div className={cwClass}>
-      {content}
-    </div>
-  </div>
-)
 //
 const t1 = (
   <span>
@@ -54,7 +41,35 @@ const t2 = (
 </span>
 )
 
+//
+class Menu extends React.Component {
+  //
+  constructor(props) {
+    super(props)
+    const {type} = props;
+    this.state = {
+      type
+    }
+  }
 
+  //
+  render(props) {
+  }
+}
+
+//
+const Card = ({title, content, twClass = '', cwClass = ''} = {}) => (
+  <div className="NotificationHistory_card">
+    <div className={twClass}>
+      {title}
+    </div>
+    <div className={cwClass}>
+      {content}
+    </div>
+  </div>
+)
+
+//
 class NotificationLog extends React.Component {
   //
   constructor() {
@@ -62,53 +77,94 @@ class NotificationLog extends React.Component {
   }
 
   //
-  get log() {
+  get menu() {
+    // todo optimize this
+
+
+    const {
+      activeMenuItem: active,
+      currentUserId
+    } = this.props;
+
+
+    console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYY ', currentUserId)
+
     //
-    const menu = (
+    return (
       <div className="columns shrink">
         <ul className="menu" style={{flexWrap: 'wrap'}}>
-        <li>
-          <Link to={`/@a153048/notifications`} activeClassName="active">
-            {tt('NotificationLog_jsx.selector_menu_type_all')}
-          </Link>
-        </li>
-        <li>
-          <Link to={`/@a153048/notifications/comments`} activeClassName="active">
-            {tt('NotificationLog_jsx.selector_menu_type_comments')}
-          </Link>
-        </li>
-        <li>
-          <Link to={`/@a153048/notifications/transfers`} activeClassName="active">
-            {tt('NotificationLog_jsx.selector_menu_type_transfers')}
-          </Link>
-        </li>
-        <li>
-          <Link to={`/@a153048/notifications/upvotes`} activeClassName="active">
-            {tt('NotificationLog_jsx.selector_menu_type_upvotes')}
-          </Link>
-        </li>
-        <li>
-          <Link to={`/@a153048/notifications/downvotes`} activeClassName="active">
-            {tt('NotificationLog_jsx.selector_menu_type_downvotes')}
-          </Link>
-        </li>
-      </ul>
+          <li key={0}>
+            <Link to={`/@${currentUserId}/notifications`} className={(active === 'all' || !active) ? 'active' : ''}>
+              {tt('NotificationLog_jsx.selector_menu_type_all')}
+            </Link>
+          </li>
+          <li key={1}>
+            <Link to={`/@${currentUserId}/notifications?type=comment`} className={active === 'comment' ? 'active' : ''}>
+              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+              {tt('NotificationLog_jsx.selector_menu_type_comments')}
+            </Link>
+          </li>
+          <li key={2}>
+            <Link to={`/@${currentUserId}/notifications?type=transfer`}
+                className={active === 'transfer' ? 'active' : ''}>
+              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+              {tt('NotificationLog_jsx.selector_menu_type_transfers')}
+            </Link>
+          </li>
+          <li key={3}>
+            <Link to={`/@${currentUserId}/notifications?type=upvote`} className={active === 'upvote' ? 'active' : ''}>
+              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+
+              {tt('NotificationLog_jsx.selector_menu_type_upvotes')}
+            </Link>
+          </li>
+          <li key={4}>
+            <Link to={`/@${currentUserId}/notifications?type=downvote`}
+                className={active === 'downvote' ? 'active' : ''}>
+              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+
+              {tt('NotificationLog_jsx.selector_menu_type_downvotes')}
+            </Link>
+          </li>
+        </ul>
       </div>
     )
+  }
+
+  //
+  get content() {
+    const {fetching, list} = this.props;
+    console.log('====================== ', list)
+    return (
+      !fetching && list && (
+        <div className="column large-12 medium-12 small-12">
+          {
+            list.map(item => {
+              const [id,, timestamp, type,,, payload] = item;
+              return (<div className="row" key={id}>{type}</div>)
+            })
+          }
+        </div>
+      )
+    )
+  }
+
+  //
+  get log() {
     //
     return (
       <Card
-          title={menu}
+          title={this.menu}
           twClass="titleWrapper noPadding center"
-          content={ipsum1}
+          content={this.content}
           cwClass="contentWrapper"
-
       />
     )
   }
 
   //
   render() {
+    const {fetching} = this.props;
     return (
       <div className="row">
         <div className="column small-12 medium-3 NotificationHistory_column" /*style={{background: 'green'}}*/>
@@ -121,13 +177,21 @@ class NotificationLog extends React.Component {
         </div>
         <div className="column small-12 medium-6 NotificationHistory_column">
           {this.log}
+          {fetching && (
+            <div className="row" style={{justifyContent: 'center', alignItems: 'center', padding: '10rem'}}>
+              <div style={{color: '#d3d3d3'}} className="la-ball-clip-rotate-multiple la-3x">
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          )}
         </div>
         <div className="column small-12 medium-3 NotificationHistory_column" /*style={{background: 'green'}}*/>
           <Card
-            title={t2}
-            twClass="titleWrapper upper"
-            content={ipsum2}
-            cwClass="contentWrapper"
+              title={t2}
+              twClass="titleWrapper upper"
+              content={ipsum2}
+              cwClass="contentWrapper"
           />
         </div>
       </div>
@@ -135,10 +199,20 @@ class NotificationLog extends React.Component {
   }
 }
 
+//
 export default connect(
   // mapStateToProps
   (state, ownProps) => {
+    const activeMenuItem = state.user.getIn(['notifications', 'selector'])
+    const fetching = state.user.getIn(['notifications', 'fetching'])
+    const currentUserId = state.user.getIn(['current', 'username'])
+    const list = state.user.getIn(['notifications', 'list'])
+
     return {
+      fetching,
+      activeMenuItem,
+      currentUserId,
+      list,
       ...ownProps
     }
   },

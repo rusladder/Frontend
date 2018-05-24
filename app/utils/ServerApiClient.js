@@ -81,7 +81,25 @@ if (process.env.BROWSER) {
     window.getNotifications = getNotifications;
     window.markNotificationRead = markNotificationRead;
 }
-
+//
+export async function getNotificationsList({account, type}) {
+  if (!process.env.BROWSER || window.$STM_ServerBusy) return Promise.resolve(null);
+  const request = Object.assign({}, {method: 'get'});
+  let result;
+  try {
+    const response = await fetch(`/api/v1/notifications/${account}/${type}`, request);
+    const {status} = response;
+    if (status === 200) {
+      const resp = await response.json();
+      result = resp;
+    }
+  } catch (e) {
+  }
+  finally {
+    return result;
+  }
+}
+//
 export async function getNotificationsCount(account) {
   if (!process.env.BROWSER || window.$STM_ServerBusy) return Promise.resolve(null);
   const request = Object.assign({}, {method: 'get'});
@@ -89,14 +107,11 @@ export async function getNotificationsCount(account) {
   try {
     const response = await fetch(`/api/v1/notifications/${account}/count`, request);
     const {status} = response;
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ STATUS ', status)
     if (status === 200) {
       const {count} = await response.json();
       result = count;
-      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ RESULT ', result)
     }
   } catch (e) {
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ERROR ', e)
   }
   finally {
     return result;

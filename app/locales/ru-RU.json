@@ -973,5 +973,8 @@
         "image_size_is_too_large": "Изображение слишком большое"
       }
     }
+  },
+  "messages_jsx": {
+    "start_conversation": "Написать сообщение"
   }
 }

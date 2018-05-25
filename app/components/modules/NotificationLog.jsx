@@ -1,8 +1,9 @@
 import React from 'react';
 import {connect} from 'react-redux';
-
 import {Link} from 'react-router';
 import tt from 'counterpart';
+import notificationLogItem from 'app/components/elements/Notifications/NotificationLogItem';
+
 //
 const ipsum1 = (
   <span>
@@ -106,7 +107,7 @@ class NotificationLog extends React.Component {
           </li>
           <li key={2}>
             <Link to={`/@${currentUserId}/notifications?type=transfer`}
-                className={active === 'transfer' ? 'active' : ''}>
+                  className={active === 'transfer' ? 'active' : ''}>
               {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
               {tt('NotificationLog_jsx.selector_menu_type_transfers')}
             </Link>
@@ -120,7 +121,7 @@ class NotificationLog extends React.Component {
           </li>
           <li key={4}>
             <Link to={`/@${currentUserId}/notifications?type=downvote`}
-                className={active === 'downvote' ? 'active' : ''}>
+                  className={active === 'downvote' ? 'active' : ''}>
               {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
 
               {tt('NotificationLog_jsx.selector_menu_type_downvotes')}
@@ -137,14 +138,7 @@ class NotificationLog extends React.Component {
     console.log('====================== ', list)
     return (
       !fetching && list && (
-        <div className="column large-12 medium-12 small-12">
-          {
-            list.map(item => {
-              const [id,, timestamp, type,,, payload] = item;
-              return (<div className="row" key={id}>{type}</div>)
-            })
-          }
-        </div>
+        list.map(item => notificationLogItem(item))
       )
     )
   }
@@ -154,10 +148,10 @@ class NotificationLog extends React.Component {
     //
     return (
       <Card
-          title={this.menu}
-          twClass="titleWrapper noPadding center"
-          content={this.content}
-          cwClass="contentWrapper"
+        title={this.menu}
+        twClass="titleWrapper noPadding center"
+        content={this.content}
+        cwClass="contentWrapper nopadding"
       />
     )
   }
@@ -169,10 +163,10 @@ class NotificationLog extends React.Component {
       <div className="row">
         <div className="column small-12 medium-3 NotificationHistory_column" /*style={{background: 'green'}}*/>
           <Card
-              title={t1}
-              twClass="titleWrapper upper"
-              content={ipsum1}
-              cwClass="contentWrapper"
+            title={t1}
+            twClass="titleWrapper upper"
+            content={ipsum1}
+            cwClass="contentWrapper"
           />
         </div>
         <div className="column small-12 medium-6 NotificationHistory_column">
@@ -188,10 +182,10 @@ class NotificationLog extends React.Component {
         </div>
         <div className="column small-12 medium-3 NotificationHistory_column" /*style={{background: 'green'}}*/>
           <Card
-              title={t2}
-              twClass="titleWrapper upper"
-              content={ipsum2}
-              cwClass="contentWrapper"
+            title={t2}
+            twClass="titleWrapper upper"
+            content={ipsum2}
+            cwClass="contentWrapper"
           />
         </div>
       </div>

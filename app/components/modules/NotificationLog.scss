@@ -68,9 +68,10 @@
   .contentWrapper {
     //
     display: flex;
-    align-items: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    //padding-left: 1rem;
+    //padding-right: 1rem;
     font-family: Roboto;
     font-size: 1rem;
     font-weight: normal;
@@ -82,10 +83,6 @@
     > span {
       color: lightgrey;
     }
-    //
-    display: flex;
-    align-items: center;
-    padding: 1rem;
   }
 
   display: flex;

@@ -12,14 +12,9 @@ import Userpic from 'app/components/elements/Userpic';
 import TimeAgoWrapper from 'app/components/elements/TimeAgoWrapper';
 import Tooltip from 'app/components/elements/Tooltip';
 import tt from 'counterpart';
+import {api} from 'golos-js'
 
-const testData = {
-  "usernames" : ["Irina Leland","Jessica Mcelravy","Alline Glynn","Really Long Long User Name","Deeanna Ling","Eloise Kenison","Gigi Kaup","Earline Rippeon","Jonell Dierking","Farrah Klumpp","Misti Mackiewicz","Soo Chaires","Adina Sobolik","Leeann Segraves","Dominique Cefalu","Deangelo Rouillard","Tereasa Korman","Shela Usher","Gerda Ranck","Olga Brimer","Brande Primmer","Mae Sohn","Heide Donelson","Sara Schulte","Aletha Walston","Vivien Fleury","Savannah Harsh","Matt Cowherd","Tatyana Stiner","Lorrine Salone","Jeromy Ackermann","Prudence Svendsen","Audie Lightfoot","Carlena Sweeney","Neva Thatch","Judson Charlesworth","Eddy Siddall","Lorie Lattin","Joan Normandin","Georgette Simien","Rex Pellegrin","Fiona Duran","Sona Bigby","Latarsha Kaelin","Hoyt Sporer","Harry Tillis","Kathlyn Hoye","Catherina Copenhaver","Arielle Wengerd","Bert Gundersen"],
-  "useravatars": ["val","jazzycrypt","acidsun","knopki","marina","vi1son","on0tole","dicov","dr2073","arcange","illlefr4u","natalyt","crypto.owl","creatorgalaxy","smailer","spinner","litrbooh","asdes","denn","aleksandraz","ullikume","misha","zahar","erikkartmen","boddhisattva","anech512","xanoxt","elena-singer","dikanevroman","gennadij","dhrms","rusteemitblog","terem","russkaya","aim","natka2","ianboil","analise","cryptoknight","slidenergy","mayamarinero","econmag","kostikus","francisgrey","redhat","singularity","sept","mishka","saira","ukrainian","maksim","neo","alien","blackmoon","vako","park.bom","myrussia","dinamo","apteka","commodore","jet","bitcoinfo","cars","cats-02","rbrown","smotritelmayaka","boomerang","elenakorotkova","chiliec","seaside","huso","quasimax","psychologist","narin","fetta","andrvik","max-max","eduard","dmitriu","zoss","midnight","pavel.didkovsky","bambr","teror","mommo","awispa","andreyn","tarimta","annaart","lumia","sonik","vitarecord","sxiii","dajana","gammy","blockchained","art-auction","stepanov","harhor","naminutku"],
-  "conversation": ["Would only join TPP if the deal were substantially better than the deal offered to Pres. Obama. We already have BILATERAL deals with six of the eleven nations in TPP, and are working to make a deal with the biggest of those  nations, Japan, who has hit us hard on trade for years!","You only like the 'TPP' because of the 'PP' part","How old are you? Good lord!","Oh come on, that was pretty funny.","Yeah, in the 3rd grade it was funny. Just wow. Who would have thought a presidential election would turn half the country into toddlers! 😂😂","Half of the country voted for the toddler.","yeah that was a tough talk to have with my kids that November morning.","Did you tell them the Country decided to not vote for a lying, corrupt, satanic nightmare of a human being?","You’re right, they didn’t. Less people voted for Trump and I think your description is accurate.","The Art of the Deal! Learn it, live it, love it!","Jacob Wohl: 5 Reasons Trump Should Take Out Bashar al-Assad","Now is the time to Bomb Bashar a-Assad and eliminate the entire Iranian proxy-regime in Syria","We need to send a message to North Korea by following through on Syria","Yes, some new brand of Sunni islamofascist nutcases will spring up if we take out Assad","The difference is, unlike with Obama, the next ISIS won't have the funding of the United States and (more importantly) Saudi Arabia","If we take out Assad, we can install a moderate leader. Think about what we did in Egypt.","If we are timid with Assad, Kim Jong Un will take advantage of us","Your lack of leadership is staggering. Sad.","‏You are a beta male"]
-}
 
-/** Warning .. This is used for Power UP too. */
 class MessageBox extends Component {
 
     static propTypes = {
@@ -27,13 +22,18 @@ class MessageBox extends Component {
         username: React.PropTypes.string,
         history: PropTypes.object.isRequired,
         loading: PropTypes.bool.isRequired,
-        gstatus: PropTypes.object.isRequired,
+        fetching: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
         super()
         this.state = {
+            conversations: Map(),
             selected: null,
+            searchField: '',
+            filtered: Map(),
+            lookupValues: [],
+            isLookingUp: false,
             sending: false
         };
         this.initForm(props)
@@ -51,11 +51,37 @@ class MessageBox extends Component {
         })
     }
 
+    prepareConversations(np, ns) {
+        const {history, username} = np;
+        if (history.size) {
+            let tmp = {};
+            history.reverse().map(item => {
+                if (item.getIn([1, 'op', 0]) !== 'transfer') return;
+                const data = item.getIn([1, 'op', 1]).toJS();
+                const conversant = username === data.from ? data.to : data.from;
+                if (typeof tmp[conversant] !== 'object') tmp[conversant] = [];
+                tmp[conversant].push({
+                    isnew: false,
+                    from: data.from,
+                    to: data.to,
+                    amount: data.amount,
+                    memo: data.memo,
+                    timestamp: item.getIn([1, 'timestamp'])
+                });
+            });
+            this.setState({conversations: Map(fromJS(tmp))});
+        }
+    }
+
     componentWillMount() {
       this.props.dispatchGetHistory({account: this.props.username});
     }
 
     componentDidMount() {}
+
+    componentWillReceiveProps(np, ns) {
+      this.prepareConversations(np, ns);
+    }
 
     onSelectListItem = key => {
       this.setState({selected: key});
@@ -75,7 +101,6 @@ class MessageBox extends Component {
     }
 
     dispatchSubmit = (formPayload) => {
-      console.warn('formPayload', formPayload);
         const {dispatchSendMessage, username} = this.props;
         const {selected} = this.state;
         const memo = formPayload.memo;
@@ -90,33 +115,92 @@ class MessageBox extends Component {
         });
     }
 
-    render() {
-        const {selected, memo, converstaionForm : {handleSubmit}} = this.state;
-        const {history, username, loading} = this.props;
-        const fetching = false;
-        const disabled = false;
-        let tmp = {};
-        history.reverse().map(item => {
-            if (item.getIn([1, 'op', 0]) !== 'transfer') return;
-            const data = item.getIn([1, 'op', 1]).toJS();
-            const conversant = username === data.from ? data.to : data.from;
-            if (typeof tmp[conversant] !== 'object') tmp[conversant] = [];
-            tmp[conversant].push({
-              from: data.from,
-              to: data.to,
-              amount: data.amount,
-              memo: data.memo,
-              timestamp: item.getIn([1, 'timestamp'])
+    lookupAccount(name) {
+        let lookupValues = [];
+        let isLookingUp = true;
+        let promise;
+        if (name.length > 0) {
+            promise = api.lookupAccountsAsync(name, 7).then(res => {
+                return res && res.length ? res : [];
             });
+        }
+        if (promise) {
+            promise
+            .then(lookupValues => this.setState({lookupValues, isLookingUp: false}))
+            .catch(() => this.setState({lookupValues, isLookingUp: false}));
+            this.setState({lookupValues, isLookingUp});
+        } else {
+            isLookingUp = false;
+            this.setState({lookupValues, isLookingUp});
+        }
+    }
+
+    onChangeSearch = (e) => {
+        const searchField = e.target.value;
+        if (this.state.isLookingUp) return;
+        let filtered = Map();
+        let lookupValues = this.state.lookupValues;
+        if (searchField.length) {
+            const {conversations} = this.state;
+            filtered = conversations.filter((value, key) => {return key.indexOf(searchField) !== -1});
+            if (searchField.length > 2) {
+                const inFiletered = filtered.filter((value, key) => {return key.indexOf(searchField) === 0});
+                if (inFiletered.size == 0) {
+                  this.lookupAccount(searchField);
+                }
+            }
+            else {
+              lookupValues = [];
+            }
+        }
+        else {
+          lookupValues = [];
+        }
+        this.setState({
+          searchField,
+          filtered,
+          lookupValues,
         });
-        const conversantionsMap = Map(fromJS(tmp)).sort(
+    }
+
+    fillLookupObject(items, username) {
+      let tmp = {};
+      for (let i in items) {
+          if (typeof tmp[items[i]] !== 'object') tmp[items[i]] = [];
+          tmp[items[i]].push({
+              isnew: true,
+              from: username,
+              to: items[i],
+              memo: ' ',
+              timestamp: new Date()
+          });
+      }
+      return tmp;
+    }
+
+    render() {
+        const {
+            conversations,
+            filtered,
+            selected,
+            searchField,
+            lookupValues,
+            isLookingUp,
+            memo,
+            converstaionForm : {handleSubmit}
+        } = this.state;
+        const {history, username} = this.props;
+        const fetching = this.props.loading || this.props.fetching || false;
+
+        let result = Map(fromJS(this.fillLookupObject(lookupValues, username))).merge(searchField.length ? filtered : conversations).sort(
           (a, b) => new Date(a.getIn([0, 'timestamp'])) < new Date(b.getIn([0, 'timestamp']))
         );
         let selectedKey = selected;
         if (! selectedKey) {
-          selectedKey = conversantionsMap.keySeq().first();
+            selectedKey = result.keySeq().first();
         }
-        const conversantions = conversantionsMap.map((value, key) => {
+        const conversationsList = result.map((value, key) => {
+            const isNew = value.getIn([0, 'isnew']);
             const memo = value.getIn([0, 'memo']);
             return <li key={`conversant-${key}`} className={key == selectedKey ? 'selected' : ''} onClick={() => this.onSelectListItem(key)}>
                 <Tooltip className="timestamp" t={new Date(value.getIn([0, 'timestamp'])).toLocaleString()}>
@@ -125,38 +209,46 @@ class MessageBox extends Component {
                 <Userpic account={key} />
                 <div className="right-side">
                     <strong>{key}</strong>
-                    <small>{typeof memo !== 'string' ? JSON.stringify(memo) : memo}</small>
+                    <small>{isNew ? '*' : typeof memo !== 'string' ? JSON.stringify(memo) : memo}</small>
                 </div>
             </li>
         });
 
-        const conversation = conversantionsMap.get(selectedKey, Map()).reverse().map((value, key) => {
+        const conversantionBody = result.get(selectedKey, Map()).reverse().map((value, key) => {
+            const isNew = value.get('isnew');
             return <li key={`conversation-item-${key}`}>
-                <Userpic account={value.get('from')} width="36" height="36"/>
-                <div className="right-side">
+                {isNew ? null : <Userpic account={value.get('from')} width="36" height="36"/>}
+                {isNew ? null : <div className="right-side">
                     <strong>{value.get('from')}</strong>
                     <Tooltip className="timestamp" t={new Date(value.get('timestamp')).toLocaleString()}>
                         <TimeAgoWrapper date={value.get('timestamp')} />
                     </Tooltip>
                     <small>{value.get('memo')}</small>
-                </div>
+                </div>}
             </li>
         });
 
         return (<div className={'Messages row' + (fetching ? ' fetching' : '')}>
             <div className="Messages__left column shrink small-collapse">
                 <div className="topbar">
-                    <div className="row">
-                        <div className="column small-10">
-                            <input type="text" placeholder={tt("voting_jsx.search")} disabled={disabled} />
-                        </div>
-                        <div className="column small-2">
-                            <Link to="/message.html"><Icon name="pencil" /></Link>
-                        </div>
-                    </div>
+                    <form>
+                        <input
+                            type="text"
+                            ref="searchRef"
+                            placeholder={tt("g.username")}
+                            onChange={this.onChangeSearch}
+                            autoComplete="off"
+                            autoCorrect="off"
+                            autoCapitalize="off"
+                            spellCheck="false"
+                            disabled={fetching}
+                            value={searchField}
+                        />
+                    </form>
                 </div>
                 <ul className="List">
-                    {conversantions}
+                    {conversationsList}
+                    {isLookingUp && <li><center><LoadingIndicator type="circle" /></center></li>}
                 </ul>
             </div>
             <div className="Messages__right column show-for-large">
@@ -170,7 +262,7 @@ class MessageBox extends Component {
                     </div>
                 </div>
                 <ul className="Conversation">
-                    {conversation}
+                    {conversantionBody}
                 </ul>
                 <div className="bottombar">
                   <form onSubmit={handleSubmit(({data}) => {this.dispatchSubmit({...data})})}>
@@ -186,14 +278,14 @@ class MessageBox extends Component {
                                 autoCorrect="off"
                                 autoCapitalize="off"
                                 spellCheck="false"
-                                disabled={loading}
+                                disabled={fetching}
                             />
                         </div>
                         <div className="column small-2">
                             <button
                                 type="submit"
                                 className="button"
-                                disabled={disabled}
+                                disabled={fetching}
                                 onChange={this.clearError}
                             >
                                 {tt('g.submit')}
@@ -203,6 +295,7 @@ class MessageBox extends Component {
                   </form>
                 </div>
             </div>
+            {fetching && <div className="Messages__fetching"><LoadingIndicator type="circle" /></div>}
         </div>)
     }
 }
@@ -214,7 +307,7 @@ export default connect(
         const username = state.user.getIn(['current', 'username']);
         const history  = state.global.getIn(['accounts', username, 'transfer_history']);
         const loading  = state.app.get('loading');
-        const gstatus   = state.global.get('status');
+        const fetching = state.global.get('fetching');
         const initialValues = {
             memo: null,
         }
@@ -224,7 +317,7 @@ export default connect(
             username,
             history,
             loading,
-            gstatus,
+            fetching,
         }
     },
     dispatch => ({

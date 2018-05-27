@@ -41,35 +41,6 @@ const t2 = (
     </b>
 </span>
 )
-
-//
-class Menu extends React.Component {
-  //
-  constructor(props) {
-    super(props)
-    const {type} = props;
-    this.state = {
-      type
-    }
-  }
-
-  //
-  render(props) {
-  }
-}
-
-//
-const Card = ({title, content, twClass = '', cwClass = ''} = {}) => (
-  <div className="NotificationHistory_card">
-    <div className={twClass}>
-      {title}
-    </div>
-    <div className={cwClass}>
-      {content}
-    </div>
-  </div>
-)
-
 //
 class NotificationLog extends React.Component {
   //
@@ -80,16 +51,10 @@ class NotificationLog extends React.Component {
   //
   get menu() {
     // todo optimize this
-
-
     const {
       activeMenuItem: active,
       currentUserId
     } = this.props;
-
-
-    console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYY ', currentUserId)
-
     //
     return (
       <div className="columns shrink">
@@ -133,7 +98,7 @@ class NotificationLog extends React.Component {
   }
 
   //
-  get content() {
+  get log() {
     const {fetching, list} = this.props;
     console.log('====================== ', list)
     return (
@@ -144,55 +109,86 @@ class NotificationLog extends React.Component {
   }
 
   //
-  get log() {
-    //
-    return (
-      <Card
-        title={this.menu}
-        twClass="titleWrapper noPadding center"
-        content={this.content}
-        cwClass="contentWrapper nopadding"
-      />
-    )
-  }
-
-  //
   render() {
     const {fetching} = this.props;
     return (
       <div className="row">
-        <div className="column small-12 medium-3 NotificationHistory_column" /*style={{background: 'green'}}*/>
-          <Card
-            title={t1}
-            twClass="titleWrapper upper"
-            content={ipsum1}
-            cwClass="contentWrapper"
-          />
-        </div>
-        <div className="column small-12 medium-6 NotificationHistory_column">
-          {this.log}
-          {fetching && (
-            <div className="row" style={{justifyContent: 'center', alignItems: 'center', padding: '10rem'}}>
-              <div style={{color: '#d3d3d3'}} className="la-ball-clip-rotate-multiple la-3x">
-                <div></div>
-                <div></div>
+
+        <div className="column small-12 medium-3 nlog_column">
+          <div className={'golos-card'}>
+            <div className={'golos-card__item'}>
+              <div style={{
+                padding: '0 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                minHeight: '3rem',
+                textTransform: 'uppercase',
+                fontWeight: 'bold'
+              }}>
+                {t1}
               </div>
             </div>
-          )}
+            <div className={'golos-card__item'}>
+              <div className={'golos-card__divider_horizontal'}></div>
+            </div>
+            <div className={'golos-card__item golos-card__item_color-light-grey golos-card_padding-all'}>
+              {ipsum1}
+            </div>
+          </div>
         </div>
-        <div className="column small-12 medium-3 NotificationHistory_column" /*style={{background: 'green'}}*/>
-          <Card
-            title={t2}
-            twClass="titleWrapper upper"
-            content={ipsum2}
-            cwClass="contentWrapper"
-          />
+
+        <div className="column small-12 medium-6 nlog_column">
+          <div className={'golos-card'}>
+            <div className={'golos-card__item'}>
+              <div style={{minHeight: '3rem'}}>
+                {this.menu}
+              </div>
+            </div>
+            <div className={'golos-card__item'}>
+              <div className={'golos-card__divider_horizontal'}></div>
+            </div>
+            <div className={'golos-card__item'}>
+              {this.log}
+            </div>
+          </div>
+
+
+          {/*{this.log}*/}
+          {/*{fetching && (*/}
+          {/*<div className="row" style={{justifyContent: 'center', alignItems: 'center', padding: '10rem'}}>*/}
+          {/*<div style={{color: '#d3d3d3'}} className="la-ball-clip-rotate-multiple la-3x">*/}
+          {/*<div></div>*/}
+          {/*<div></div>*/}
+          {/*</div>*/}
+          {/*</div>*/}
+          {/*)}*/}
+        </div>
+        <div className="column small-12 medium-3 nlog_column">
+          <div className={'golos-card'}>
+            <div className={'golos-card__item'}>
+              <div style={{
+                padding: '0 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                minHeight: '3rem',
+                textTransform: 'uppercase',
+                fontWeight: 'bold'
+              }}>
+                {t2}
+              </div>
+            </div>
+            <div className={'golos-card__item'}>
+              <div className={'golos-card__divider_horizontal'}></div>
+            </div>
+            <div className={'golos-card__item golos-card__item_color-light-grey golos-card_padding-all'}>
+              {ipsum2}
+            </div>
+          </div>
         </div>
       </div>
     )
   }
 }
-
 //
 export default connect(
   // mapStateToProps

@@ -189,10 +189,10 @@ function TopRightMenu({notifications_untouched_count, account, savings_withdraws
                         <div className="TopRightMenu__notificounter"><NotifiCounter fields="total" /></div>
                     </li>}
                 </LinkWithDropdown>
-                {/* <li className={"delim " + scn} /> */}
-                {/* {notificationItem} */}
-                {/* <li className={"delim " + scn} />
-                {messengerItem} */}
+                <li className="delim show-for-medium" />
+                 {notificationItem}
+                <li className="delim show-for-medium" />
+                {/*{messengerItem}*/}
                 {navAdditional}
             </ul>
         );

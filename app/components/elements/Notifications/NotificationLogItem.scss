@@ -1,0 +1,14 @@
+.notification-log-item__type-icon {
+  //background: yellow;
+  display: flex;
+  align-items: center;
+
+  > svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  //& > svg:hover > path {
+  //  fill: black !important;
+  //}
+}

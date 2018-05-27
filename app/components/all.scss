@@ -55,6 +55,10 @@
 @import "./modules/SignUp";
 @import "./modules/TopRightMenu";
 @import "./modules/UserWallet";
+@import "elements/Notifications/NotificationLog";
+@import "elements/Notifications/NotificationLogItem";
+
+
 
 // pages
 @import "./pages/CreateAccount";

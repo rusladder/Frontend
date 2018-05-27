@@ -1,0 +1,69 @@
+.nlog_column {
+  padding-left: 0.45rem !important;
+  padding-right: 0.45rem !important;
+}
+
+//
+.golos-card {
+  display: flex;
+  flex-direction: column;
+  font-family: Roboto;
+  font-size: 1rem;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 1.4px;
+  border-radius: 8px;
+  padding: 0rem;
+  background-color: #FFFFFF;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+}
+
+//
+.golos-card_padding-no-top {
+  padding: 0 1rem 1rem;
+}
+
+//
+.golos-card_padding-all {
+  padding: 1rem;
+}
+
+//
+.golos-card__divider_horizontal {
+  //
+  height: 1px;
+  border-bottom: 1px solid #E9E9E9;
+}
+
+//
+.golos-card__item {
+  //
+  ul.menu > li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1 1 auto;
+  }
+  //
+  ul.menu > li > a {
+    padding: 1rem 0;
+    text-transform: uppercase;
+    color: #9FA3A7;
+    &:hover {
+      color: #3F46AD;
+    }
+  }
+  //
+  ul.menu > li > a.active {
+    color: #3F46AD;
+    font-weight: bold;
+  }
+}
+
+//
+.golos-card__item_color-light-grey {
+  color: lightgrey;
+}
+

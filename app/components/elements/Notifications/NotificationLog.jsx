@@ -100,7 +100,6 @@ class NotificationLog extends React.Component {
   //
   get log() {
     const {fetching, list} = this.props;
-    console.log('====================== ', list)
     return (
       !fetching && list && (
         list.map(item => notificationLogItem(item))

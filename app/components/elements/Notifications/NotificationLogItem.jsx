@@ -3,8 +3,8 @@ import {Link} from 'react-router';
 import Userpic from 'app/components/elements/Userpic';
 import iComment from 'app/assets/icons/notification/comment.svg'
 import iTransfer from 'app/assets/icons/notification/transfer.svg'
-import iVoteUp from 'app/assets/icons/notification/vote_up.svg'
-import iVoteDown from 'app/assets/icons/notification/vote_down.svg'
+import iVoteUp from 'app/assets/icons/notification/upvote.svg'
+import iVoteDown from 'app/assets/icons/notification/downvote.svg'
 //
 export default function notificationsLogItem(itemTuple) {
   // console.log(`))))))) `, what)

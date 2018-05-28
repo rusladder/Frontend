@@ -129,12 +129,11 @@ function* usernamePasswordLogin(action) {
         yield fork(loadFollows, "getFollowingAsync", username, 'blog')
         yield fork(loadFollows, "getFollowingAsync", username, 'ignore')
         if(process.env.BROWSER) {
-          const notification_channel_created = yield select(state => state.user.get('notification_channel_created'))
-          if (!notification_channel_created) {
+          const started = yield select(state => state.user.getIn(['notifications', 'started']))
+          if (!started) {
             const {onUserLogin} = NotificationSaga;
             // clientside
-            // when logged in
-            // start listening to the personal server event channel
+            // when logged in start listening to the personal server event channel
             yield call(onUserLogin);
           }
         }

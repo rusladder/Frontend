@@ -81,7 +81,7 @@ function onSocketConnectedError(e) {
 }
 //
 function onSocketConnectedClose(e) {
-  console.log(`[x] notification connection closed, reconnecting ...`)
+  console.log(`[x] notification connection closed.`)
 }
 //
 function initConnection(user, scOptions) {
@@ -113,10 +113,7 @@ function initConnection(user, scOptions) {
 }
 //
 function* processLogout() {
-  // console.log(`||||||||||||||||||||||||||||||||||| LOGOUT`)
   yield socket.destroy();
-  yield put(user.actions.notificationChannelDestroyed())
-  // console.log('|||| SCClient destroyed!')
 }
 // listen to logout only after successful login
 function* logoutListener(tasks) {
@@ -185,7 +182,7 @@ function* onUserLogin() {
       // {socketid: ..., ...}
       const response = yield call(initConnection, channelName, scOptions)
       // socket successfully created - notify
-      yield put(user.actions.notificationChannelCreated())
+      yield put(user.actions.notifyStarted())
       //
       // console.log('|||| socket connected! ', response)
       // start tracking user logout

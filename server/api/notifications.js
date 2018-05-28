@@ -87,7 +87,6 @@ export default function useNotificationsApi(app) {
       //
       // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
       const url = `${notifyRestApiUrl}/${account}/count`
-      console.log('$$$$$$$ fetch from ', url)
       const response = yield fetch(url, {method: 'GET'})
       this.body = yield response.json()
     } catch (error) {
@@ -101,7 +100,6 @@ export default function useNotificationsApi(app) {
   router.get('/notifications/:account/:type', function* () {
     // const account = this.params.account;
     const {params: {account, type}} = this;
-    console.log(']]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] ', account, type)
     // todo check this.session.a
     // if (!account || account !== this.session.a) {
     //   this.body = {}; return;
@@ -112,7 +110,6 @@ export default function useNotificationsApi(app) {
       //
       // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
       const url = `${notifyRestApiUrl}/${account}/${type}`
-      console.log('$$$$$$$ fetch from ', url)
       const response = yield fetch(url, {method: 'GET'})
       this.body = yield response.json()
     } catch (error) {

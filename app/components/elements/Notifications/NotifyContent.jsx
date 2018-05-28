@@ -3,8 +3,8 @@ import {Link} from 'react-router';
 import Userpic from 'app/components/elements/Userpic';
 import iconCross from 'app/assets/icons/cross.svg'
 import commentMulti from 'app/assets/icons/notification/comment_multi.svg'
-import upVoteMulti from 'app/assets/icons/notification/up_vote_multi.svg'
-import downVoteMulti from 'app/assets/icons/notification/down_vote_multi.svg'
+import upVoteMulti from 'app/assets/icons/notification/upvote_multi.svg'
+import downVoteMulti from 'app/assets/icons/notification/downvote_multi.svg'
 //
 const actionStyle = {
   // fixme

@@ -12,8 +12,7 @@ import {PrivateKey, Signature, hash} from 'golos-js/lib/auth/ecc'
 import {api} from 'golos-js'
 import g from 'app/redux/GlobalReducer'
 import tt from 'counterpart';
-import React from 'react';
-import PushNotificationSaga from 'app/redux/services/PushNotificationSaga';
+import NotificationSaga from 'app/redux/notifications/NotificationSaga';
 
 
 const MAX_UPLOAD_IMAGE_SIZE = 1024 * 1024
@@ -132,8 +131,7 @@ function* usernamePasswordLogin(action) {
         if(process.env.BROWSER) {
           const notification_channel_created = yield select(state => state.user.get('notification_channel_created'))
           if (!notification_channel_created) {
-            // console.log(']]]]]]]]]]]]]]]]]]]]]]] ', notification_channel_created)
-            const {onUserLogin} = PushNotificationSaga;
+            const {onUserLogin} = NotificationSaga;
             // clientside
             // when logged in
             // start listening to the personal server event channel

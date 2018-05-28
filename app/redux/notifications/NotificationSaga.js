@@ -9,7 +9,6 @@ import {fetchState} from "../FetchDataSaga";
 import {routeRegex} from 'app/ResolveRoute'
 //
 let socket;
-
 //
 function socketEventIterator(channel) {
   let resolveNextValue, resolved;
@@ -20,7 +19,6 @@ function socketEventIterator(channel) {
   // this subscribes twice causing event doubling
   chan.watch(
     event => {
-      // console.log(`----------------------------------------- `, event)
       resolveNextValue(event);
       resolved = true;
     })
@@ -37,27 +35,27 @@ function socketEventIterator(channel) {
     });
   };
 }
-
 //
 function* userChannelListener(channel) {
   try {
     const next = yield call(socketEventIterator, channel)
     // yield fork(logoutListener)
     while (true) {
-      const action = yield call(next);
-      if ('type' in action) {
-        console.clear()
-        yield console.log(action)
-        yield put({
-          type: 'ADD_NOTIFICATION',
-          payload: NotifyContent(action)
-        })
-      }
-      else {
-        if (action.operations.length > 0) {
-          yield console.log(action)
-        }
-      }
+      const message = yield call(next);
+      console.log(message)
+      // if ('type' in action) {
+      //   console.clear()
+      //   yield console.log(action)
+      //   yield put({
+      //     type: 'ADD_NOTIFICATION',
+      //     payload: NotifyContent(action)
+      //   })
+      // }
+      // else {
+      //   if (action.operations.length > 0) {
+      //     yield console.log(action)
+      //   }
+      // }
     }
   } catch (error) {
     // the way redux-saga 0.9.5 catches an effect cancellation
@@ -69,41 +67,50 @@ function* userChannelListener(channel) {
     }
   }
 }
-
 //
-function onConnectedError(e) {
-  console.clear()
-  console.log(`<<< notification channel's down. Reconnecting ...`)
-}
-
 //
-function onConnectedClose(e) {
-  console.clear()
-  console.log(`<<< notification channel's down. Reconnecting ...`)
+//
+//
+function onSocketConnect(e) {
+  console.log(`[x] notification connection established`)
 }
-
+//
+function onSocketConnectedError(e) {
+  const {message} = e;
+  console.log('[x] notification connection error : ', message)
+}
+//
+function onSocketConnectedClose(e) {
+  console.log(`[x] notification connection closed, reconnecting ...`)
+}
 //
 function initConnection(user, scOptions) {
-  // console.log(`|||| channel requested for user `, user)
-  // console.log(`|||| initializing SCluster client ...`)
   socket = client.create(scOptions);
   return new Promise((resolve, reject) => {
-    const onSocketConnect = e => {
-      socket.off('connect', onSocketConnect)
-      socket.on('error', onConnectedError)
-      socket.on('close', onConnectedClose)
+    //
+    const reattachHandlers = () => {
+      socket.off('connect', onConnect)
+      socket.off('error', onError)
+      socket.on('connect', onSocketConnect)
+      socket.on('error', onSocketConnectedError)
+      socket.on('close', onSocketConnectedClose)
+    }
+    //
+    const onConnect = e => {
+      console.log('[xxx] notification connection established')
+      reattachHandlers()
       resolve(e)
     }
-    const onSocketError = e => {
-      socket.off('error', onSocketConnect)
+    //
+    const onError = e => {
+      console.log('[xxx] notification connection error', e)
+      reattachHandlers()
       reject(e)
-      return
     }
-    socket.on('connect', onSocketConnect)
-    socket.on('error', onSocketError)
+    socket.on('connect', onConnect)
+    socket.on('error', onError)
   })
 }
-
 //
 function* processLogout() {
   // console.log(`||||||||||||||||||||||||||||||||||| LOGOUT`)
@@ -111,7 +118,6 @@ function* processLogout() {
   yield put(user.actions.notificationChannelDestroyed())
   // console.log('|||| SCClient destroyed!')
 }
-
 // listen to logout only after successful login
 function* logoutListener(tasks) {
   yield take('user/LOGOUT'/*, processLogout*/);
@@ -134,7 +140,6 @@ function* onRouteChange(location_change_action) {
     if ('type' in query) {
       type = query.type;
     }
-    console.log('------> put NOTIFICATIONS_FETCH')
     yield put(user.actions.notificationsSelectorChanged(type));
     yield put({type: 'NOTIFICATIONS_FETCH', payload: {type}});
   }
@@ -149,7 +154,6 @@ function* fetchNotifications({payload}) {
   const account = yield select(state => state.user.get('current').get('username'));
   yield put(user.actions.notificationsFetching(true));
   const list = yield getNotificationsList({account, type})
-  console.log('-------> fetched ', list)
   yield put(user.actions.notificationsFetching(false));
   yield put(user.actions.notificationsListChanged(list));
 }
@@ -161,7 +165,6 @@ function* fetchListener() {
 function* onUserLogin() {
   const _fetchListener = yield fork(fetchListener)
   const _routerListener = yield fork(routerListener)
-  console.log(`||||||||||||||||||||||||||||||||||| STARTING CHANNEL LISTENER `)
   const currentUser = yield select(state => state.user.get('current'));
   const currentUserId = currentUser.get('username');
   const channelName = currentUserId;
@@ -195,7 +198,6 @@ function* onUserLogin() {
     }
   }
 }
-
 //
 export default {
   onUserLogin

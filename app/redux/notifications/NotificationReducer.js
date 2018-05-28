@@ -1,13 +1,8 @@
 export default [
   {
-    action: 'NOTIFICATION_CHANNEL_CREATED',
-    reducer: state => state.set('notification_channel_created', true)
+    action: 'NOTIFY_STARTED',
+    reducer: state => state.setIn(['notifications', 'started'], true)
   },
-  {
-    action: 'NOTIFICATION_CHANNEL_DESTROYED',
-    reducer: state => state.set('notification_channel_created', false)
-  },
-//
   {
     action: 'NOTIFICATIONS_UNTOUCHED_COUNTER_CHANGED',
     reducer: (state, {payload}) => {

@@ -126,19 +126,42 @@ function* logoutListener(tasks) {
   yield processLogout()
 }
 //
-function* onRouteChange(location_change_action) {
-  const {pathname, query} = location_change_action.payload;
-  const [,, section] = pathname.match(routeRegex.UserProfile2);
-  console.log(query)
-  //
-  if (section === 'notifications') {
+function* fetchNotifications() {
+  const type = yield select(state => state.user.getIn(['notifications', 'page', 'menu', 'selector']));
+  console.log('@@@@@ fetching ', type)
+  // const account = yield select(state => state.user.get('current').get('username'));
+  // yield put(user.actions.notificationsFetching(true));
+  // const list = yield getNotificationsList({account, type})
+  // yield put(user.actions.notificationsFetching(false));
+  // yield put(user.actions.notificationsListChanged(list));
+}
+//
+function* fetchRequestListener() {
+  yield* takeLatest('NOTIFY_REQUEST_DATA_FETCH', fetchNotifications);
+}
+//
+function* onRouteChange({payload}) {
+  const {pathname, query} = payload;
+  // track notifications section for an authorized user
+  const [, username, section] = pathname.match(routeRegex.UserProfile2);
+  // nothing to do in other case
+  if (username && section) {
+    // get rid of @
+    const route_username = username.substring(1)
+    // check who's logged in
+    const authorized_username = yield select(state => state.user.get('current').get('username'));
+    // process only if route belongs to currently authorized user
+    const ok = (section === 'notifications') && (route_username === authorized_username);
     //
-    let type = 'all'
-    if ('type' in query) {
-      type = query.type;
+    if (ok) {
+      // notification type selector is in query string
+      let {type} = query;
+      // let type have a value in any case
+      type = type || 'all';
+      // set current notifications type
+      yield put(user.actions.notifyPageMenuSelectorSet(type));
+      yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
     }
-    yield put(user.actions.notificationsSelectorChanged(type));
-    yield put({type: 'NOTIFICATIONS_FETCH', payload: {type}});
   }
 }
 //
@@ -146,32 +169,25 @@ function* routerListener() {
   yield* takeLatest('@@router/LOCATION_CHANGE', onRouteChange);
 }
 //
-function* fetchNotifications({payload}) {
-  const {type} = payload
-  const account = yield select(state => state.user.get('current').get('username'));
-  yield put(user.actions.notificationsFetching(true));
-  const list = yield getNotificationsList({account, type})
-  yield put(user.actions.notificationsFetching(false));
-  yield put(user.actions.notificationsListChanged(list));
-}
-//
-function* fetchListener() {
-  yield* takeLatest('NOTIFICATIONS_FETCH', fetchNotifications);
-}
-//
 function* onUserLogin() {
-  const _fetchListener = yield fork(fetchListener)
-  const _routerListener = yield fork(routerListener)
-  const currentUser = yield select(state => state.user.get('current'));
-  const currentUserId = currentUser.get('username');
-  const channelName = currentUserId;
-  const pushServiceUrl = yield select(state => state.offchain.get('config').get('push_server_url'));
+  // first start fetch request listener
+  const fetchRequestListenerEffect = yield fork(fetchRequestListener)
+  // then check current route on login since @@router/LOCATION_CHANGE has already fired
+  // and process route actions if any
+  const currentRoute = yield select(state => state.routing.locationBeforeTransitions);
+  yield call(onRouteChange, {payload: currentRoute})
+  // then start listening to route change normally
+  const routerListenerEffect = yield fork(routerListener)
+  const authorized_user = yield select(state => state.user.get('current'));
+  const authorized_username = authorized_user.get('username');
+  const channel_name = authorized_username;
+  const push_service_url = yield select(state => state.offchain.get('config').get('push_server_url'));
   //
-  const count = yield getNotificationsCount(currentUserId)
+  const count = yield getNotificationsCount(authorized_username)
   // refresh the bell counter first
   yield put(user.actions.notifyHeaderCounterSet(count))
   // then start listening to pushes
-  if (channelName && pushServiceUrl) {
+  if (channel_name && push_service_url) {
     try {
       //
       const scOptions = {
@@ -180,16 +196,14 @@ function* onUserLogin() {
         port: 8000
       };
       // {socketid: ..., ...}
-      const response = yield call(initConnection, channelName, scOptions)
-      // socket successfully created - notify
+      const response = yield call(initConnection, channel_name, scOptions)
+      // start listening to user message channel
+      const chListener = yield fork(userChannelListener, channel_name)
+      // start listening to user logout
+      yield fork(logoutListener, [chListener, fetchRequestListenerEffect, routerListenerEffect])
+      // client notifications service initialized - let redux know
       yield put(user.actions.notifyStarted())
       //
-      // console.log('|||| socket connected! ', response)
-      // start tracking user logout
-      const chListener = yield fork(userChannelListener, channelName)
-      // listen to logout only after successful login
-      yield fork(logoutListener, [chListener, _fetchListener, _routerListener])
-      // console.log('|||| channel listener started ...')
     } catch (e) {
       // console.log('||||||||||| socket connection error! ', e)
     }

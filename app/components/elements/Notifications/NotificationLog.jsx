@@ -192,7 +192,7 @@ class NotificationLog extends React.Component {
 export default connect(
   // mapStateToProps
   (state, ownProps) => {
-    const activeMenuItem = state.user.getIn(['notifications', 'selector'])
+    const activeMenuItem = state.user.getIn(['notifications', 'page', 'menu', 'selector'])
     const fetching = state.user.getIn(['notifications', 'fetching'])
     const currentUserId = state.user.getIn(['current', 'username'])
     const list = state.user.getIn(['notifications', 'list'])

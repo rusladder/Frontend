@@ -137,10 +137,11 @@ function* fetchNotifications() {
   const type = yield select(state => state.user.getIn(['notifications', 'page', 'menu', 'selector']));
   console.log('@@@@@ fetching ', type)
   const authorized_username = yield select(state => state.user.get('current').get('username'));
-  // yield put(user.actions.notificationsFetching(true));
-  // const list = yield getNotificationsList({account, type})
-  // yield put(user.actions.notificationsFetching(false));
-  // yield put(user.actions.notificationsListChanged(list));
+  yield put(user.actions.notificationsFetching(true));
+  const list = yield getNotificationsList({account: authorized_username, type})
+  console.log('@@@@@ fetched')
+  yield put(user.actions.notificationsFetching(false));
+  yield put(user.actions.notificationsListChanged(list));
 }
 //
 function* fetchRequestListener() {

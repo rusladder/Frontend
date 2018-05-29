@@ -42,7 +42,14 @@ function* userChannelListener(channel) {
     // yield fork(logoutListener)
     while (true) {
       const message = yield call(next);
-      console.log(message)
+      const {notifications: {list}} = message;
+      for (const n of list) {
+        console.log(n)
+          yield put({
+            type: 'ADD_NOTIFICATION',
+            payload: NotifyContent(n)
+          })
+      }
       // if ('type' in action) {
       //   console.clear()
       //   yield console.log(action)
@@ -118,18 +125,18 @@ function* processLogout() {
 // listen to logout only after successful login
 function* logoutListener(tasks) {
   yield take('user/LOGOUT'/*, processLogout*/);
-
+  // cancel all the notification tasks
   for (const task of tasks) {
     yield cancel(task)
   }
-
+  //
   yield processLogout()
 }
 //
 function* fetchNotifications() {
   const type = yield select(state => state.user.getIn(['notifications', 'page', 'menu', 'selector']));
   console.log('@@@@@ fetching ', type)
-  // const account = yield select(state => state.user.get('current').get('username'));
+  const authorized_username = yield select(state => state.user.get('current').get('username'));
   // yield put(user.actions.notificationsFetching(true));
   // const list = yield getNotificationsList({account, type})
   // yield put(user.actions.notificationsFetching(false));
@@ -143,24 +150,28 @@ function* fetchRequestListener() {
 function* onRouteChange({payload}) {
   const {pathname, query} = payload;
   // track notifications section for an authorized user
-  const [, username, section] = pathname.match(routeRegex.UserProfile2);
-  // nothing to do in other case
-  if (username && section) {
-    // get rid of @
-    const route_username = username.substring(1)
-    // check who's logged in
-    const authorized_username = yield select(state => state.user.get('current').get('username'));
-    // process only if route belongs to currently authorized user
-    const ok = (section === 'notifications') && (route_username === authorized_username);
-    //
-    if (ok) {
-      // notification type selector is in query string
-      let {type} = query;
-      // let type have a value in any case
-      type = type || 'all';
-      // set current notifications type
-      yield put(user.actions.notifyPageMenuSelectorSet(type));
-      yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
+  const uProfile = pathname.match(routeRegex.UserProfile2);
+  // we're under some user profile route
+  if (uProfile) {
+    const [, username, section] = uProfile
+    // nothing to do in other case
+    if (username && section) {
+      // get rid of @
+      const route_username = username.substring(1)
+      // check who's logged in
+      const authorized_username = yield select(state => state.user.get('current').get('username'));
+      // process only if route belongs to currently authorized user
+      const ok = (section === 'notifications') && (route_username === authorized_username);
+      //
+      if (ok) {
+        // notification type selector is in query string
+        let {type} = query;
+        // let type have a value in any case
+        type = type || 'all';
+        // set current notifications type
+        yield put(user.actions.notifyPageMenuSelectorSet(type));
+        yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
+      }
     }
   }
 }

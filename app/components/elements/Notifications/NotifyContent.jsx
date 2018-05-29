@@ -19,7 +19,7 @@ const actionStyle = {
 const cross = () => <span className="NotificationContent__action" dangerouslySetInnerHTML={{__html: iconCross}} />
 //
 const transfer = data => {
-  // console.log('~~~~~~~~~~~~ ', data)
+  console.log('~~~~~~~~~~~~ ', data)
   const {
     from: {
       account,
@@ -69,8 +69,10 @@ const comment = data => {
       // todo refactor url const names
       url: parent_url
     },
-    count
+    // count
   } = data;
+  // fixme test!!! remove
+  const count = 1;
   //
   const oncePerBlock = (count === 1);
   //
@@ -128,8 +130,10 @@ const upvote = data => {
       // todo refactor url const names
       url: parent_url
     },
-    count
+    // count
   } = data;
+  // fixme test!!! remove
+  const count = 1;
   //
   const oncePerBlock = (count === 1);
   //
@@ -187,8 +191,10 @@ const downvote = data => {
       // todo refactor url const names
       url: parent_url
     },
-    count
+    // count
   } = data;
+  // fixme test!!! remove
+  const count = 1;
   //
   const oncePerBlock = (count === 1);
   //
@@ -233,9 +239,9 @@ function render(what) {
   // console.log(`))))))) `, what)
   const {type, payload} = what;
   return (
-    type === 'NOTIFY_COMMENT' ? comment(payload) :
-      type === 'NOTIFY_TRANSFER' ? transfer(payload) :
-        type === 'NOTIFY_VOTE_UP' ? upvote(payload) :
+    type === 'comment' ? comment(payload) :
+      type === 'transfer' ? transfer(payload) :
+        type === 'voteup' ? upvote(payload) :
           downvote(payload)
   )
 }

@@ -188,7 +188,9 @@ export default class UserProfile extends React.Component {
         let rewardsClass = "", walletClass = "";
         //
         if( section === 'notifications' ) {
-          tab_content = <NotificationLog />
+          tab_content = isMyAccount ?
+            <NotificationLog /> :
+            null
         }
         //
         if( section === 'transfers' ) {

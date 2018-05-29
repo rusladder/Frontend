@@ -169,7 +169,7 @@ function* onUserLogin() {
   //
   const count = yield getNotificationsCount(currentUserId)
   // refresh the bell counter first
-  yield put(user.actions.notificationsUntouchedCounterChanged({count}))
+  yield put(user.actions.notifyHeaderCounterSet(count))
   // then start listening to pushes
   if (channelName && pushServiceUrl) {
     try {

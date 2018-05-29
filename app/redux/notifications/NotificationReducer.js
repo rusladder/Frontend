@@ -4,12 +4,8 @@ export default [
     reducer: state => state.setIn(['notifications', 'started'], true)
   },
   {
-    action: 'NOTIFICATIONS_UNTOUCHED_COUNTER_CHANGED',
-    reducer: (state, {payload}) => {
-      const {count} = payload
-      state = state.setIn(['notifications', 'untouched_count'], count)
-      return state
-    }
+    action: 'NOTIFY_HEADER_COUNTER_SET',
+    reducer: (state, {payload}) => state.setIn(['notifications', 'header', 'counter'], payload)
   },
   {
     action: 'NOTIFICATIONS_LIST_CHANGED',

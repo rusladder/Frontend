@@ -65,7 +65,7 @@ const calculateEstimateOutput = ({a, p, sw, g}) => {
   return Number( ( (total_steem * p) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({notifications_untouched_count, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
+function TopRightMenu({notifications_header_counter, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
     const APP_NAME = tt('g.APP_NAME');
 
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -91,21 +91,22 @@ function TopRightMenu({notifications_untouched_count, account, savings_withdraws
     const commentsLink = `/@${username}/comments`;
     const reset_password_link = `/@${username}/password`;
     const notificationsLink = `/@${username}/notifications`;
-
+    //
     const searchItem = <li className={scn}>
         <a href="/static/search.html" title={tt('g.search')}>
           {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/search" size="1_25x" />}
         </a>
       </li>
     ;
-
-    const notificationItem = (typeof notifications_untouched_count === 'number') &&
-      <li className={scn}>
-        <Link to={notificationsLink} className="number">
-          {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x"/>}
-          {notifications_untouched_count}
-        </Link>
-      </li>;
+    //
+    const notificationItem =
+      (typeof notifications_header_counter === 'number') &&
+        <li className={scn}>
+          <Link to={notificationsLink} className="number">
+            {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x"/>}
+            {notifications_header_counter}
+          </Link>
+        </li>
     //
     // const messengerItem = <li className={scn}>
     //     <a href="/static/search.html" title={tt('g.search')} className="number">
@@ -263,7 +264,7 @@ export default connect(
         }
         const globalprops = state.global.get('props');
         //
-        const notifications_untouched_count = state.user.getIn(['notifications', 'untouched_count']);
+        const notifications_header_counter = state.user.getIn(['notifications', 'header', 'counter']);
         //
         return {
             account,
@@ -273,7 +274,7 @@ export default connect(
             price_per_golos,
             globalprops,
             probablyLoggedIn: false,
-            notifications_untouched_count
+            notifications_header_counter
         }
     },
     dispatch => ({

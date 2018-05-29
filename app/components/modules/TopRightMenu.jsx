@@ -14,6 +14,7 @@ import { LIQUID_TICKER, DEBT_TICKER } from 'app/client_config';
 import LocalizedCurrency from 'app/components/elements/LocalizedCurrency';
 import {vestingSteem} from 'app/utils/StateFunctions';
 import { getURL } from 'app/utils/URLConstants'
+import notificationLogItem from "../elements/Notifications/NotificationLogItem";
 
 const defaultNavigate = (e) => {
     if (e.metaKey || e.ctrlKey) {
@@ -65,7 +66,7 @@ const calculateEstimateOutput = ({a, p, sw, g}) => {
   return Number( ( (total_steem * p) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({notifications_header_counter, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
+function TopRightMenu({notificationList, notifications_header_counter, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
     const APP_NAME = tt('g.APP_NAME');
 
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -102,11 +103,23 @@ function TopRightMenu({notifications_header_counter, account, savings_withdraws,
     const notificationItem =
       (typeof notifications_header_counter === 'number') &&
         <li className={scn}>
-          <Link to={notificationsLink} className="number">
+          <div className="TRMenu__item_notification">
             {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x"/>}
             {notifications_header_counter}
-          </Link>
+          </div>
         </li>
+
+
+    const nList =
+      <div className={'golos-card'}>
+        <div className={'golos-card__item'}>
+          {notificationList && notificationList.slice(0, 4).map(item => notificationLogItem(item))}
+        </div>
+        {/*<div className={'golos-card__item'}>*/}
+        {/*<div className={'golos-card__divider_horizontal'}></div>*/}
+        {/*</div>*/}
+      </div>
+
     //
     // const messengerItem = <li className={scn}>
     //     <a href="/static/search.html" title={tt('g.search')} className="number">
@@ -191,7 +204,15 @@ function TopRightMenu({notifications_header_counter, account, savings_withdraws,
                     </li>}
                 </LinkWithDropdown>
                 <li className="delim show-for-medium" />
+                <LinkWithDropdown
+                  closeOnClickOutside
+                  dropdownPosition="bottom"
+                  dropdownAlignment="bottom"
+                  dropdownContent={nList}
+                >
+                  {/*fixme refactor into separate component!!*/}
                  {notificationItem}
+                </LinkWithDropdown>
                 <li className="delim show-for-medium" />
                 {/*{messengerItem}*/}
                 {navAdditional}
@@ -266,6 +287,8 @@ export default connect(
         //
         const notifications_header_counter = state.user.getIn(['notifications', 'header', 'counter']);
         //
+        const notificationList = state.user.getIn(['notifications', 'list'])
+        //
         return {
             account,
             username,
@@ -274,7 +297,8 @@ export default connect(
             price_per_golos,
             globalprops,
             probablyLoggedIn: false,
-            notifications_header_counter
+            notifications_header_counter,
+            notificationList
         }
     },
     dispatch => ({

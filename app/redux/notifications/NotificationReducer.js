@@ -19,6 +19,9 @@ export default [
     reducer: (state, {payload}) => {
       // fexme type's redundant for now
       const {type, list} = payload
+      // sort by timestamp descending
+      list.sort((a, b) => b[2] - a[2]);
+      //
       state = state.setIn(['notifications', 'list'], list)
       return state
     }

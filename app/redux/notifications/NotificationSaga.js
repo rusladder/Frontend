@@ -1,5 +1,5 @@
 import {takeLatest} from 'redux-saga';
-import {take, call, put, select, fork, cancel, } from 'redux-saga/effects';
+import {take, call, put, select, fork, cancel,} from 'redux-saga/effects';
 import {SagaCancellationException} from 'redux-saga';
 import user from 'app/redux/User'
 import client from 'socketcluster-client';
@@ -9,6 +9,7 @@ import {fetchState} from "../FetchDataSaga";
 import {routeRegex} from 'app/ResolveRoute'
 //
 let socket;
+
 //
 function socketEventIterator(channel) {
   let resolveNextValue, resolved;
@@ -35,6 +36,7 @@ function socketEventIterator(channel) {
     });
   };
 }
+
 //
 function* userChannelListener(channel) {
   try {
@@ -44,14 +46,14 @@ function* userChannelListener(channel) {
       const message = yield call(next);
       const {notifications: {list, untouched_count}} = message;
       yield put(user.actions.notifyHeaderCounterSet(untouched_count))
-
       console.log(message)
 
+
       for (const n of list) {
-          yield put({
-            type: 'ADD_NOTIFICATION',
-            payload: NotifyContent(n)
-          })
+        yield put({
+          type: 'ADD_NOTIFICATION',
+          payload: NotifyContent(n)
+        })
       }
       // if ('type' in action) {
       //   console.clear()
@@ -77,6 +79,7 @@ function* userChannelListener(channel) {
     }
   }
 }
+
 //
 //
 //
@@ -84,15 +87,18 @@ function* userChannelListener(channel) {
 function onSocketConnect(e) {
   console.log(`[x] notification connection established`)
 }
+
 //
 function onSocketConnectedError(e) {
   const {message} = e;
   console.log('[x] notification connection error : ', message)
 }
+
 //
 function onSocketConnectedClose(e) {
   console.log(`[x] notification connection closed.`)
 }
+
 //
 function initConnection(user, scOptions) {
   socket = client.create(scOptions);
@@ -121,10 +127,12 @@ function initConnection(user, scOptions) {
     socket.on('error', onError)
   })
 }
+
 //
 function* processLogout() {
   yield socket.destroy();
 }
+
 // listen to logout only after successful login
 function* logoutListener(tasks) {
   yield take('user/LOGOUT'/*, processLogout*/);
@@ -135,6 +143,7 @@ function* logoutListener(tasks) {
   //
   yield processLogout()
 }
+
 //
 function* fetchNotifications() {
   const type = yield select(state => state.user.getIn(['notifications', 'page', 'menu', 'selector']));
@@ -146,10 +155,12 @@ function* fetchNotifications() {
   yield put(user.actions.notificationsFetching(false));
   yield put(user.actions.notificationsListChanged(list));
 }
+
 //
 function* fetchRequestListener() {
   yield* takeLatest('NOTIFY_REQUEST_DATA_FETCH', fetchNotifications);
 }
+
 //
 function* onRouteChange({payload}) {
   const {pathname, query} = payload;
@@ -179,10 +190,12 @@ function* onRouteChange({payload}) {
     }
   }
 }
+
 //
 function* routerListener() {
   yield* takeLatest('@@router/LOCATION_CHANGE', onRouteChange);
 }
+
 //
 function* onUserLogin() {
   // first start fetch request listener
@@ -224,6 +237,7 @@ function* onUserLogin() {
     }
   }
 }
+
 //
 export default {
   onUserLogin

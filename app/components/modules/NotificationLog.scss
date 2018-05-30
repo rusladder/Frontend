@@ -1,9 +1,9 @@
+// fixme temporary
 .nlog_column {
   padding-left: 0.45rem !important;
   padding-right: 0.45rem !important;
 }
-
-//
+// fixme this should be global (theme part)
 .golos-card {
   display: flex;
   flex-direction: column;
@@ -19,24 +19,20 @@
   background-color: #FFFFFF;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
 }
-
 //
 .golos-card_padding-no-top {
   padding: 0 1rem 1rem;
 }
-
 //
 .golos-card_padding-all {
   padding: 1rem;
 }
-
 //
 .golos-card__divider_horizontal {
   //
   height: 1px;
   border-bottom: 1px solid #E9E9E9;
 }
-
 //
 .golos-card__item {
   //

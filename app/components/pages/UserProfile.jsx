@@ -32,7 +32,7 @@ import Userpic from 'app/components/elements/Userpic';
 import Callout from 'app/components/elements/Callout';
 import normalizeProfile from 'app/utils/NormalizeProfile';
 // import UserInvites from 'app/components/elements/UserInvites';
-import NotificationLog from 'app/components/elements/Notifications/NotificationLog';
+import NotificationLog from 'app/components/modules/NotificationLog';
 
 export default class UserProfile extends React.Component {
     constructor(props) {

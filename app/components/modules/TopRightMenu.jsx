@@ -113,10 +113,13 @@ function TopRightMenu({notificationList, notifications_header_counter, account, 
       <div className={'golos-card popup arrow_box'} style={{marginTop: '5px'}}>
         <div className={'golos-card__item'}>
           {notificationList && notificationList.slice(0, 5).map(item => notificationLogItem(item))}
+          <div className={'notification-log-item footer'}>
+            <Link to={notificationsLink} className="button small primary">
+              {/*{tt('g.search')}*/}
+              {'Показать все'}
+            </Link>
+          </div>
         </div>
-        {/*<div className={'golos-card__item'}>*/}
-        {/*<div className={'golos-card__divider_horizontal'}></div>*/}
-        {/*</div>*/}
       </div>
 
     //

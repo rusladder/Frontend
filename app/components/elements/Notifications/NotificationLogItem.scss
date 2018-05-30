@@ -62,20 +62,28 @@
 .popup {
   //
   .golos-card__item {
-    padding: 0.2rem;
+    padding: 0.4rem;
   }
   //
   .notification-log-item {
+    background-color: #FFFFFF;
     font-size: 12px;
+    //border: 1px solid rgba(0, 0, 0, 0.01);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.01);
+    //box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5), 0 1px 4px 0 rgba(0,0,0,0.15);
     //
     padding-top: 0.4rem;
+    margin-top: 0.2rem;
     //
     &:first-child {
       padding-bottom: 0.4rem;
+      margin-top: 0;
     }
     //
     &:last-child {
       padding-bottom: 0.4rem;
+      //margin-bottom: 0.2rem;
     }
     //
     > div {
@@ -85,7 +93,22 @@
       }
       //padding-left: 0.8rem;
     }
+    //
+    .button {
+      width: 100%;
+      color: white;
+      margin: 0;
+    }
 
   }
+
+  .notification-log-item.footer {
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    border: none;
+    box-shadow: none;
+  }
+
+
 }
 

@@ -9,6 +9,10 @@ import iVoteDown from 'app/assets/icons/notification/downvote.svg'
 export default function notificationsLogItem(itemTuple) {
   // console.log(`))))))) `, what)
   let [id, , timestamp, type, , , payload] = itemTuple;
+  //
+  // transform timestamp to readable format
+  timestamp = new Date(timestamp).toLocaleString()
+
   // fixme temporary - should not be here
   payload = JSON.parse(payload)
   //
@@ -133,7 +137,7 @@ export default function notificationsLogItem(itemTuple) {
 
 
   return (
-    <div className="notification-log-item">
+    <div key={id} className="notification-log-item">
       <div>
         <span className="notification-log-item__type-icon" dangerouslySetInnerHTML={{__html: icon}} />
       </div>
@@ -149,12 +153,9 @@ export default function notificationsLogItem(itemTuple) {
               {message}
             </span>
           </span>
-        <span style={{
-          fontSize: '12px',
-          fontWeight: 300
-        }}>
-            Два часа назад
-          </span>
+        <span style={{fontSize: '12px', fontWeight: 300, fontStyle: "italic"}}>
+          {timestamp}
+        </span>
       </div>
     </div>
 

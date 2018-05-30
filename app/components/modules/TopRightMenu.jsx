@@ -102,8 +102,8 @@ function TopRightMenu({notificationList, notifications_header_counter, account, 
     //
     const notificationItem =
       (typeof notifications_header_counter === 'number') &&
-        <li className={scn}>
-          <div className="TRMenu__item_notification">
+        <li className={scn} style={{cursor: 'pointer', margin: 0}}>
+          <div className="TRMenu__notification-item">
             {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x"/>}
             {notifications_header_counter}
           </div>
@@ -111,9 +111,9 @@ function TopRightMenu({notificationList, notifications_header_counter, account, 
 
 
     const nList =
-      <div className={'golos-card'}>
+      <div className={'golos-card popup arrow_box'} style={{marginTop: '5px'}}>
         <div className={'golos-card__item'}>
-          {notificationList && notificationList.slice(0, 4).map(item => notificationLogItem(item))}
+          {notificationList && notificationList.slice(0, 5).map(item => notificationLogItem(item))}
         </div>
         {/*<div className={'golos-card__item'}>*/}
         {/*<div className={'golos-card__divider_horizontal'}></div>*/}
@@ -209,6 +209,7 @@ function TopRightMenu({notificationList, notifications_header_counter, account, 
                   dropdownPosition="bottom"
                   dropdownAlignment="bottom"
                   dropdownContent={nList}
+                  dropdownStyle={{borderRadius: 0, boxShadow: 'none', backgroundColor: 'transparent'}}
                 >
                   {/*fixme refactor into separate component!!*/}
                  {notificationItem}

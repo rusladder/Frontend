@@ -1,5 +1,7 @@
 .sub-menu {
     li {
+        display: flex;
+        align-items: center;
         margin: 0 15px;
     }
     li:last-child {
@@ -80,36 +82,9 @@ li {
     }
 }
 
-li.wrap-bla {
-  //padding-left: 0.5rem !important;
-  //padding-top: 0 !important;
-  padding-right: 0 !important;
-  //padding-bottom: 0 !important;
-  //background: lime;
-  //margin-left: ;
-  //align-self: flex-start;
-  > a {
-    align-items: center;
-  }
-  > a > span {
-    padding-left: 0.25rem;
-  }
-  > a > span.Icon {
-    padding-left: 0px;
-    width: 1rem !important;
-    height: 1rem !important;
-    svg {
-      width: 1rem !important;
-      height: 1rem !important;
-    }
-  }
-}
 // fixme temporary!
-.TRMenu__item_notification {
-  padding: 1.5rem 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+.TRMenu__notification-item {
+  padding: 15px;
   color: #757575;
   font-size: 18px;
   font-weight: 300;
@@ -121,6 +96,7 @@ li.wrap-bla {
   }
 
   &:hover {
-    color: #3F46AD;
+    background-color: #f0f0f0;
+    border-radius: 8px;
   }
 }

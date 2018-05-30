@@ -12,3 +12,80 @@
   //  fill: black !important;
   //}
 }
+
+.notification-log-item {
+  //background: yellow;
+  display: flex;
+  align-items: center;
+  padding-top: 1rem;
+  font-size: 16px;
+  //
+  &:last-child {
+    padding-bottom: 1rem;
+  }
+  //
+  > svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  > div {
+    display: flex;
+    //align-items: center;
+    //
+    &:last-child {
+      padding-right: 1rem;
+    }
+    padding-left: 1rem;
+  }
+
+  > div, span {
+    > a {
+      border-bottom: 1px dotted #71b4e1;
+    }
+  }
+
+  //& > svg:hover > path {
+  //  fill: black !important;
+  //}
+}
+
+.notification-log-item_stack {
+  > div, span {
+    padding: 0.2rem 0;
+  }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.popup {
+  //
+  .golos-card__item {
+    padding: 0.2rem;
+  }
+  //
+  .notification-log-item {
+    font-size: 12px;
+    //
+    padding-top: 0.4rem;
+    //
+    &:first-child {
+      padding-bottom: 0.4rem;
+    }
+    //
+    &:last-child {
+      padding-bottom: 0.4rem;
+    }
+    //
+    > div {
+      //
+      &:last-child {
+        padding-right: 0.7rem;
+      }
+      //padding-left: 0.8rem;
+    }
+
+  }
+}
+

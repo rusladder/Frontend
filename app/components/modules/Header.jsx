@@ -219,7 +219,7 @@ class Header extends React.Component {
                                 {selected_sort_order && route && route.page !== 'Landing' && <DropdownMenu className="Header__sort-order-menu show-for-small-only" items={sort_order_menu} selected={selected_sort_order[1]} el="li" />}
                             </ul>
                         </div>
-                        <div className="columns shrink">
+                        <div className="columns shrink" style={{height: '100%'}}>
                             <TopRightMenu {...this.props} />
                         </div>
                     </div>

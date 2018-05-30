@@ -3,6 +3,34 @@
   padding-left: 0.45rem !important;
   padding-right: 0.45rem !important;
 }
+//
+.arrow_box {
+  position: relative;
+}
+//
+.arrow_box:after, .arrow_box:before {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+//
+.arrow_box:after {
+  border-bottom-color: #fefefe;
+  border-width: 10px;
+  margin-left: -10px;
+
+}
+//
+.arrow_box:before {
+  border-bottom-color: lightgrey;
+  border-width: 14px;
+  margin-left: -14px;
+}
 // fixme this should be global (theme part)
 .golos-card {
   display: flex;
@@ -18,6 +46,15 @@
   padding: 0rem;
   background-color: #FFFFFF;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+}
+//
+.golos-card.popup {
+  box-shadow: none;
+  border: 4px solid lightgrey;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+  background-color: #fefefe;
+  border-radius: 4px;
+
 }
 //
 .golos-card_padding-no-top {

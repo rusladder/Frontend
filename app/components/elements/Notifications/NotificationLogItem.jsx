@@ -133,34 +133,14 @@ export default function notificationsLogItem(itemTuple) {
 
 
   return (
-    <div style={{
-      display: 'flex',
-      padding: '1.5rem 0.5rem 0',
-      // background: 'green'
-    }}>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: '1rem'}}>
+    <div className="notification-log-item">
+      <div>
         <span className="notification-log-item__type-icon" dangerouslySetInnerHTML={{__html: icon}} />
       </div>
-      <div style={{
-        // background: 'yellow',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingLeft: '1.5rem'
-      }}>
-        {
-          <Userpic width="37" height="37" imageUrl={image} />
-        }
+      <div>
+        <Userpic width="37" height="37" imageUrl={image} />
       </div>
-      <div style={{
-        // background: 'lightblue',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        paddingLeft: '1.2rem',
-        fontSize: '14px',
-        fontWeight: 300
-      }}>
+      <div className="notification-log-item_stack">
           <span style={{verticalAlign: 'top'}}>
             <span style={{fontWeight: 500}}>
               {source}
@@ -169,10 +149,10 @@ export default function notificationsLogItem(itemTuple) {
               {message}
             </span>
           </span>
-          <span style={{
-            fontSize: '12px',
-            fontWeight: 300
-          }}>
+        <span style={{
+          fontSize: '12px',
+          fontWeight: 300
+        }}>
             Два часа назад
           </span>
       </div>

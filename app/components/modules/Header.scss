@@ -38,6 +38,11 @@
 }
 
 .Header__top {
+  //
+  .menu, .menu > li {
+    height: 100%;
+  }
+  //
   background-color: $white;
   border-bottom: 1px solid $light-gray;
 

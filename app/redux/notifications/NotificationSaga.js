@@ -42,9 +42,12 @@ function* userChannelListener(channel) {
     // yield fork(logoutListener)
     while (true) {
       const message = yield call(next);
-      const {notifications: {list}} = message;
+      const {notifications: {list, untouched_count}} = message;
+      yield put(user.actions.notifyHeaderCounterSet(untouched_count))
+
+      console.log(message)
+
       for (const n of list) {
-        console.log(n)
           yield put({
             type: 'ADD_NOTIFICATION',
             payload: NotifyContent(n)

@@ -49,7 +49,7 @@ function* userChannelListener(channel) {
       yield put(user.actions.notificationsListChanged(list));
 
       // yield put(user.actions.notifyListUpdate(list))
-      console.log(message)
+      // console.log(message)
 
 
       for (const n of list) {
@@ -224,6 +224,16 @@ function* onUserLogin() {
   const count = yield getNotificationsCount(authorized_username)
   // refresh the bell counter first
   yield put(user.actions.notifyHeaderCounterSet(count))
+
+  const list = yield select(state => state.user.get('notifications').get('list'));
+  // fixme temporary!!!!!!!!!!!
+  if (!list) {
+    yield put(user.actions.notifyPageMenuSelectorSet('all'));
+    yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
+  }
+
+
+
   // then start listening to pushes
   if (channel_name && push_service_url) {
     try {

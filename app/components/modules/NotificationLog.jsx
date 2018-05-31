@@ -72,21 +72,22 @@ class NotificationLog extends React.Component {
           </li>
           <li key={2}>
             <Link to={`/@${currentUserId}/notifications?type=transfer`}
-                  className={active === 'transfer' ? 'active' : ''}>
+                className={active === 'transfer' ? 'active' : ''}>
               {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
               {tt('NotificationLog_jsx.selector_menu_type_transfers')}
             </Link>
           </li>
           <li key={3}>
-            <Link to={`/@${currentUserId}/notifications?type=upvote`} className={active === 'upvote' ? 'active' : ''}>
+
+            <Link to={`/@${currentUserId}/notifications?type=voteup`} className={active === 'voteup' ? 'active' : ''}>
               {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
 
               {tt('NotificationLog_jsx.selector_menu_type_upvotes')}
             </Link>
           </li>
           <li key={4}>
-            <Link to={`/@${currentUserId}/notifications?type=downvote`}
-                  className={active === 'downvote' ? 'active' : ''}>
+            <Link to={`/@${currentUserId}/notifications?type=votedown`}
+                className={active === 'votedown' ? 'active' : ''}>
               {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
 
               {tt('NotificationLog_jsx.selector_menu_type_downvotes')}
@@ -193,9 +194,16 @@ export default connect(
   // mapStateToProps
   (state, ownProps) => {
     const activeMenuItem = state.user.getIn(['notifications', 'page', 'menu', 'selector'])
+    let list = state.user.getIn(['notifications', 'list'])
+    if (list) {
+      list = activeMenuItem === 'all' ? list : list.filter(item => item.type === activeMenuItem)
+    }
+
+
+    // console.log('@@@@@@@@@@@@@@@@ ', activeMenuItem)
+
     const fetching = state.user.getIn(['notifications', 'fetching'])
     const currentUserId = state.user.getIn(['current', 'username'])
-    const list = state.user.getIn(['notifications', 'list'])
 
     return {
       fetching,

@@ -1,5 +1,5 @@
 import {takeLatest} from 'redux-saga';
-import {take, call, put, select, fork, cancel,} from 'redux-saga/effects';
+import {take, call, put, select, fork, cancel, } from 'redux-saga/effects';
 import {SagaCancellationException} from 'redux-saga';
 import user from 'app/redux/User'
 import client from 'socketcluster-client';
@@ -46,6 +46,9 @@ function* userChannelListener(channel) {
       const message = yield call(next);
       const {notifications: {list, untouched_count}} = message;
       yield put(user.actions.notifyHeaderCounterSet(untouched_count))
+      yield put(user.actions.notificationsListChanged(list));
+
+      // yield put(user.actions.notifyListUpdate(list))
       console.log(message)
 
 
@@ -147,11 +150,13 @@ function* logoutListener(tasks) {
 //
 function* fetchNotifications() {
   const type = yield select(state => state.user.getIn(['notifications', 'page', 'menu', 'selector']));
-  console.log('@@@@@ fetching ', type)
+  // console.log('@@@@@ fetching ', type)
   const authorized_username = yield select(state => state.user.get('current').get('username'));
   yield put(user.actions.notificationsFetching(true));
-  const list = yield getNotificationsList({account: authorized_username, type})
-  console.log('@@@@@ fetched')
+  // {type, list}
+  const {list} = yield getNotificationsList({account: authorized_username, type})
+  // console.log('@@@@@ fetched')
+  // console.log(list)
   yield put(user.actions.notificationsFetching(false));
   yield put(user.actions.notificationsListChanged(list));
 }
@@ -185,7 +190,12 @@ function* onRouteChange({payload}) {
         type = type || 'all';
         // set current notifications type
         yield put(user.actions.notifyPageMenuSelectorSet(type));
-        yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
+        //
+        const list = yield select(state => state.user.get('notifications').get('list'));
+        // fixme temporary!!!!!!!!!!!
+        if (!list) {
+          yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
+        }
       }
     }
   }

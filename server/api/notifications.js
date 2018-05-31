@@ -83,7 +83,7 @@ export default function useNotificationsApi(app) {
     // }
     //
     try {
-      const notifyRestApiUrl = `http://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}:8000/api/v1`
+      const notifyRestApiUrl = `https://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}/api/v1`
       //
       // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
       const url = `${notifyRestApiUrl}/${account}/count`
@@ -106,7 +106,7 @@ export default function useNotificationsApi(app) {
     // }
     //
     try {
-      const notifyRestApiUrl = `http://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}:8000/api/v1`
+      const notifyRestApiUrl = `https://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}/api/v1`
       //
       // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
       const url = `${notifyRestApiUrl}/${account}/${type}`

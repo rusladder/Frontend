@@ -17,15 +17,36 @@ export default [
   {
     action: 'NOTIFICATIONS_LIST_CHANGED',
     reducer: (state, {payload}) => {
+      // console.log('!!!!!!!!!!!!!!!!!!!!! ', payload)
+      state = state.updateIn(['notifications', 'list'], arr => {
+        arr = arr || [];
+        arr = [...arr, ...payload]
+        arr.sort((a, b) => b.timestamp - a.timestamp);
+        return arr;
+      })
+
+      // state = state.setIn(['notifications', 'list'], list)
+
       // fexme type's redundant for now
-      const {type, list} = payload
+      // const {type, list} = payload
+
+
       // sort by timestamp descending
-      list.sort((a, b) => b[2] - a[2]);
+      // list.sort((a, b) => b.timestamp - a.timestamp);
       //
-      state = state.setIn(['notifications', 'list'], list)
       return state
     }
   },
+  {
+    action: 'NOTIFY_LIST_UPDATE',
+    reducer: (state, {payload}) => {
+      // fexme type's redundant for now
+      const {list} = payload
+      console.log('/////////// ', payload)
+      return state
+    }
+  },
+
 //
   {
     action: 'NOTIFICATIONS_FETCHING',

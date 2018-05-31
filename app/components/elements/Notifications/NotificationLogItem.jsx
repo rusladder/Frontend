@@ -6,15 +6,15 @@ import iTransfer from 'app/assets/icons/notification/transfer.svg'
 import iVoteUp from 'app/assets/icons/notification/upvote.svg'
 import iVoteDown from 'app/assets/icons/notification/downvote.svg'
 //
-export default function notificationsLogItem(itemTuple) {
+export default function notificationsLogItem(item) {
   // console.log(`))))))) `, what)
-  let [id, , timestamp, type, , , payload] = itemTuple;
+  let {id, timestamp, type, payload} = item;
   //
   // transform timestamp to readable format
   timestamp = new Date(timestamp).toLocaleString()
 
   // fixme temporary - should not be here
-  payload = JSON.parse(payload)
+  // payload = JSON.parse(payload)
   //
   let icon;
   let image;

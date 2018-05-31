@@ -239,9 +239,9 @@ function* onUserLogin() {
     try {
       //
       const scOptions = {
-        // hostname: pushServiceUrl,
-        // secure: true,
-        port: 8000
+        hostname: push_service_url,
+        secure: true,
+        // port: 8000
       };
       // {socketid: ..., ...}
       const response = yield call(initConnection, channel_name, scOptions)

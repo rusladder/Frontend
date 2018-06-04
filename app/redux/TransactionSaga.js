@@ -8,7 +8,7 @@ import user from 'app/redux/User'
 import tr from 'app/redux/Transaction'
 import getSlug from 'speakingurl'
 import {DEBT_TICKER} from 'app/client_config'
-import {serverApiRecordEvent} from 'app/utils/ServerApiClient'
+import {serverApiRecordEvent, serverApiRecordUserAction} from 'app/utils/ServerApiClient'
 import {PrivateKey, PublicKey} from 'golos-js/lib/auth/ecc'
 import {api, broadcast, auth, memo} from 'golos-js'
 import tt from 'counterpart';
@@ -155,6 +155,7 @@ function* broadcastOperation({payload:
         if (eventType === 'Comment' && !operation.parent_author) eventType = 'Post';
         const page = eventType === 'Vote' ? `@${operation.author}/${operation.permlink}` : '';
         serverApiRecordEvent(eventType, page);
+        recordUserAction(type, operation);
     } catch(error) {
         console.error('TransactionSaga', error)
         if(errorCallback) errorCallback(error.toString())
@@ -708,5 +709,33 @@ function* updateMeta(params) {
     } catch(e) {
       console.error('Update meta', e);
       if(onError) onError(e)
+    }
+}
+
+function recordUserAction(type, operation) {
+    let userAction, user
+    switch(type) {
+        case 'vote':
+            user = operation.author
+            userAction = operation.weight > 0 ? 'vote' : 'flag'
+        break
+
+        case 'comment':
+            user = operation.author
+            userAction = !operation.parent_author ? 'post' : 'comment'
+        break
+
+        case 'transfer':
+            user = operation.from
+            userAction = 'transfer'
+        break
+
+        case 'limit_order_create':
+            user = operation.owner
+            userAction = 'market'
+        break
+    }
+    if (user && userAction) {
+        serverApiRecordUserAction(user, userAction)
     }
 }

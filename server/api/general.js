@@ -3,7 +3,7 @@ import koa_body from 'koa-body';
 import models from 'db/models';
 import findUser from 'db/utils/find_user';
 import config from 'config';
-import recordWebEvent from 'server/record_web_event';
+import recordWebEvent, { recordUserEvent } from 'server/record_web_event';
 import {esc, escAttrs} from 'db/models';
 import {emailRegex, getRemoteIp, rateLimitReq, checkCSRF} from 'server/utils/misc';
 import coBody from 'co-body';
@@ -328,6 +328,24 @@ export default function useGeneralApi(app) {
             this.body = JSON.stringify({status: 'ok'});
         } catch (error) {
             console.error('Error in /record_event api call', error.message);
+            this.body = JSON.stringify({error: error.message});
+            this.status = 500;
+        }
+    });
+
+    router.post('/record_user_event', koaBody, function *() {
+        if (rateLimitReq(this, this.req)) return;
+        try {
+            const params = this.request.body;
+            const {csrf, account, value} = typeof(params) === 'string' ? JSON.parse(params) : params;
+            if (!checkCSRF(this, csrf)) return;
+            console.log('-- /record_user_event -->', this.session.uid, account, value);
+            const str_value = typeof value === 'string' ? value : JSON.stringify(value);
+ 
+            yield recordUserEvent(this, account, str_value);
+            this.body = JSON.stringify({status: 'ok'});
+        } catch (error) {
+            console.error('Error in /record_event api call', error);
             this.body = JSON.stringify({error: error.message});
             this.status = 500;
         }

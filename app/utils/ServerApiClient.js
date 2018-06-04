@@ -32,6 +32,12 @@ export function serverApiRecordEvent(type, val) {
     fetch('/api/v1/record_event', request);
 }
 
+export function serverApiRecordUserAction(account, value) {
+    if (!process.env.BROWSER || window.$STM_ServerBusy) return;
+    const request = Object.assign({}, request_base, {body: JSON.stringify({csrf: $STM_csrf, account, value})});
+    fetch('/api/v1/record_user_event', request);
+}
+
 export function getNotifications(account) {
     if (!process.env.BROWSER || window.$STM_ServerBusy) return Promise.resolve(null);
     const request = Object.assign({}, request_base, {method: 'get'});

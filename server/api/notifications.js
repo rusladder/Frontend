@@ -5,7 +5,9 @@ import config from 'config';
 import webPush from 'web-push';
 import { checkCSRF } from "server/utils/misc";
 import fetch from 'node-fetch';
-
+//
+const notifyRestApiUrl = process.env.SDC_SERVICE_NOTIFICATION_REST_URL;
+//
 if(config.has('notify.gcm_key')) {
     webPush.setGCMAPIKey(config.get('notify.gcm_key'));
 }
@@ -83,7 +85,7 @@ export default function useNotificationsApi(app) {
     // }
     //
     try {
-      const notifyRestApiUrl = `https://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}/api/v1`
+      // const notifyRestApiUrl = `https://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}/api/v1`
       //
       // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
       const url = `${notifyRestApiUrl}/${account}/count`
@@ -106,7 +108,7 @@ export default function useNotificationsApi(app) {
     // }
     //
     try {
-      const notifyRestApiUrl = `https://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}/api/v1`
+      // const notifyRestApiUrl = `https://${process.env.SDC_SERVICE_PUSH_CLIENT_URL}/api/v1`
       //
       // const notifyApiUrl = `http://localhost:8000/api/v1/${account}/count`
       const url = `${notifyRestApiUrl}/${account}/${type}`

@@ -26,7 +26,7 @@ global.$STM_Config = {
     chain_id: config.get('chain_id'),
     lang_server : config.get('lang_server'),
     isTestnet: config.get('is_testnet'),
-    push_server_url: config.get('wss_push_service_url')
+    service_push_notification_url: config.get('service_push_notification_url')
 };
 
 const WebpackIsomorphicTools = require('webpack-isomorphic-tools');

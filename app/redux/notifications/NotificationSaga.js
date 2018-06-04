@@ -1,5 +1,5 @@
 import {takeLatest} from 'redux-saga';
-import {take, call, put, select, fork, cancel, } from 'redux-saga/effects';
+import {take, call, put, select, fork, cancel,} from 'redux-saga/effects';
 import {SagaCancellationException} from 'redux-saga';
 import user from 'app/redux/User'
 import client from 'socketcluster-client';
@@ -207,6 +207,23 @@ function* routerListener() {
 }
 
 //
+function scOptions(uri) {
+  try {
+    const [scheme, path] = uri.split('//')
+    if (scheme && path) {
+      return {
+        hostname: path,
+        secure: scheme === 'wss:',
+      }
+    }
+    return uri
+  } catch (e) {
+    return uri
+  }
+  // return
+}
+
+//
 function* onUserLogin() {
   // first start fetch request listener
   const fetchRequestListenerEffect = yield fork(fetchRequestListener)
@@ -219,7 +236,7 @@ function* onUserLogin() {
   const authorized_user = yield select(state => state.user.get('current'));
   const authorized_username = authorized_user.get('username');
   const channel_name = authorized_username;
-  const push_service_url = yield select(state => state.offchain.get('config').get('push_server_url'));
+  const push_service_options = scOptions(yield select(state => state.offchain.get('config').get('service_push_notification_url')));
   //
   const count = yield getNotificationsCount(authorized_username)
   // refresh the bell counter first
@@ -231,30 +248,20 @@ function* onUserLogin() {
     yield put(user.actions.notifyPageMenuSelectorSet('all'));
     yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
   }
-
-
-
-  // then start listening to pushes
-  if (channel_name && push_service_url) {
-    try {
-      //
-      const scOptions = {
-        hostname: push_service_url,
-        // secure: true,
-        port: 8000
-      };
-      // {socketid: ..., ...}
-      const response = yield call(initConnection, channel_name, scOptions)
-      // start listening to user message channel
-      const chListener = yield fork(userChannelListener, channel_name)
-      // start listening to user logout
-      yield fork(logoutListener, [chListener, fetchRequestListenerEffect, routerListenerEffect])
-      // client notifications service initialized - let redux know
-      yield put(user.actions.notifyStarted())
-      //
-    } catch (e) {
-      // console.log('||||||||||| socket connection error! ', e)
-    }
+  //
+  try {
+    //
+    // {socketid: ..., ...}
+    const response = yield call(initConnection, channel_name, push_service_options)
+    // start listening to user message channel
+    const chListener = yield fork(userChannelListener, channel_name)
+    // start listening to user logout
+    yield fork(logoutListener, [chListener, fetchRequestListenerEffect, routerListenerEffect])
+    // client notifications service initialized - let redux know
+    yield put(user.actions.notifyStarted())
+    //
+  } catch (e) {
+    // console.log('||||||||||| socket connection error! ', e)
   }
 }
 

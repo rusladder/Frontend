@@ -13,11 +13,17 @@ class CircularProgress extends Component {
     percentage: 0,
   }
 
+  timer = null
+
   componentDidMount() {
     const { progress } = this.state
     const { percentage } = this.props
 
     this.animateValue(progress, percentage, animateTime)
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -43,11 +49,11 @@ class CircularProgress extends Component {
 
       this.setState({ progress: value })
       if (value === end) {
-        clearInterval(timer)
+        clearInterval(this.timer)
       }
     }
 
-    const timer = setInterval(run, stepTime)
+    this.timer = setInterval(run, stepTime)
 
     run()
   }

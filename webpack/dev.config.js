@@ -53,7 +53,9 @@ export default {
                     VERSION: JSON.stringify(git.tag())
                 },
                 global: {
-                    'TYPED_ARRAY_SUPPORT': JSON.stringify(false)
+                    Buffer: {
+                        TYPED_ARRAY_SUPPORT: JSON.stringify(false)
+                    }
                 }
             }),
             new webpack.optimize.DedupePlugin(),

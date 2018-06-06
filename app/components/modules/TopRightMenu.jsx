@@ -117,18 +117,18 @@ function TopRightMenu({
     const notificationItem = <li className={scn}>
         <a href="#" title={tt('g.search')} className="number">
           <Icon name="new/bell" size="1_25x" />
-          20
+          {/* <span className="count">20</span> */}
         </a>
       </li>
     ;
 
-    // const messengerItem = <li className={scn}>
-    //     <a href="#" title={tt('g.search')} className="number">
-    //       <Icon name="new/messenger" size="1_5x" />
-    //       18
-    //     </a>
-    //   </li>
-    // ;
+    const messengerItem = <li className={scn}>
+        <a href="#" onClick={showMessages} title={tt('g.search')} className="number">
+          <Icon name="new/messenger" size="1_5x" />
+          {/* <span className="count">18</span> */}
+        </a>
+      </li>
+    ;
 
     const additional_menu = []
     if (!loggedIn) {
@@ -208,8 +208,8 @@ function TopRightMenu({
                 </LinkWithDropdown>
                 {/* <li className={"delim " + scn} /> */}
                 {/* {notificationItem} */}
-                {/* <li className={"delim " + scn} />
-                {messengerItem} */}
+                <li className={"delim " + scn} />
+                {messengerItem}
                 {navAdditional}
             </ul>
         );

@@ -23,7 +23,7 @@ import {detransliterate, capitalizeFirstLetter} from 'app/utils/ParsersAndFormat
 import markdown from './Plugins/extraMarkdown'
 
 import CategorySelector from './CategorySelector'
-import {validateCategory} from './CategorySelector'
+import {validateCategory} from 'app/components/cards/CategorySelector'
 
 //const remarkable = new Remarkable({html: true, linkify: false, breaks: true})
 

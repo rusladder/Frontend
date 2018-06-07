@@ -1,197 +1,315 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import tt from 'counterpart';
-import shouldComponentUpdate from 'app/utils/shouldComponentUpdate';
-import { cleanReduxInput } from 'app/utils/ReduxForms';
+import cn from 'classnames';
 import Icon from 'app/components/elements/Icon.jsx';
 
-class CategorySelector extends React.Component {
+const splitTagsRx = /[,.;\s]/;
+
+export default class CategorySelector extends React.PureComponent {
     static propTypes = {
-        // HTML props
-        id: React.PropTypes.string, // DOM id for active component (focusing, etc...)
-        autoComplete: React.PropTypes.string,
-        placeholder: React.PropTypes.string,
-        onChange: React.PropTypes.func.isRequired,
-        onBlur: React.PropTypes.func.isRequired,
-        isEdit: React.PropTypes.bool,
-        disabled: React.PropTypes.bool,
+        id: React.PropTypes.string,
         value: React.PropTypes.string,
         tabIndex: React.PropTypes.number,
-
-        // redux connect (overwrite in HTML)
-        trending: React.PropTypes.object.isRequired, // Immutable.List
-    };
-
-    static defaultProps = {
-        autoComplete: 'on',
-        id: 'CategorySelectorId',
-        isEdit: false,
+        onBlur: React.PropTypes.func,
+        onChange: React.PropTypes.func.isRequired,
     };
 
     constructor(props) {
         super(props);
-        this.state = {
-            createCategory: true,
-            value: props.value,
-            tagsList: [],
-        };
 
-        this.shouldComponentUpdate = shouldComponentUpdate(
-            this,
-            'CategorySelector'
-        );
+        this.state = {
+            value: '',
+            tagsList: props.value !== '' ? props.value.split(/\s+/) : [],
+            favoriteTags: [],
+        };
+    }
+
+    componentDidMount() {
+        window.addEventListener('mouseup', this._onGlobalMouseUp);
+
+        try {
+            const tagsJson = localStorage['golos.tags'];
+            let tags = [];
+
+            if (tagsJson) {
+                const allTags = JSON.parse(tagsJson);
+                tags = allTags.slice(0, 5).map(tagInfo => tagInfo[0]);
+            }
+
+            this.setState({
+                favoriteTags: tags,
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    componentWillUnmount() {
+        this._unmount = true;
+
+        window.removeEventListener('mouseup', this._onGlobalMouseUp);
+        window.removeEventListener('mousemove', this._onGlobalMouseMove);
+
+        this._toggleDraggingMode(false);
     }
 
     render() {
-        const { trending, tabIndex, disabled } = this.props;
-        const categories = trending
-            .slice(0, 11)
-            .filterNot(c => validateCategory(c));
-        const { createCategory } = this.state;
+        const { id, tabIndex } = this.props;
 
-        const categoryOptions = categories.map((c, idx) => (
-            <option value={c} key={idx}>
-                {c}
-            </option>
-        ));
-
-        let tagsListElement = [];
-
-        this.state.tagsList.forEach((element, index) => {
-            if (element)
-                tagsListElement.push(
-                    <span
-                        className="GolosEditor__tag__label label"
-                        key={'tag_element_' + index}
-                    >
-                        {element}
-                        <a onClick={() => this.removeTag(element)}>
-                            <Icon name="editor/ic-cross-gr-small" size="07x" />
-                        </a>
-                    </span>
-                );
-        });
-
-        const categoryInput = (
-            <div className="GolosEditor__categories__input__block row">
-                <div className="input-group input-group-rounded column small-4">
+        return (
+            <div
+                className={cn(
+                    'CategorySelector CategorySelector_with-input',
+                    {
+                        CategorySelector_drag: this._isDragging,
+                    }
+                )}
+            >
+                <div
+                    className="CategorySelector__input-wrapper"
+                >
                     <input
-                        className="input-group-field"
+                        id={id}
+                        className="CategorySelector__input"
                         value={this.state.value}
                         type="text"
                         ref="categoryRef"
-                        onChange={this.handleChange}
+                        tabIndex={tabIndex}
+                        placeholder={'Добавьте теги (до 5 шт.)'} // FIXME tt()
+                        onChange={this._onInputChange}
+                        onKeyDown={this._onInputKeyDown}
                     />
-                    <a>
-                        <div className="input-group-button">
-                            <Icon name="editor/ic-plus-normal" />
-                        </div>
-                    </a>
+                    <i
+                        className="CategorySelector__input-plus"
+                        onClick={this._onPlusClick}
+                        title="Добавить" // FIXME tt()
+                    >
+                        <Icon name="editor/ic-plus-normal" />
+                    </i>
                 </div>
-                <div className="GolosEditor__tag__label__list column small-8">
-                    {tagsListElement}
+                <div className="CategorySelector__tags-panel">
+                    {this._renderTagList()}
+                    {this._renderPopularList()}
                 </div>
             </div>
         );
-
-        const categorySelect = (
-            <select
-                {...cleanReduxInput(this.props)}
-                onChange={this.categorySelectOnChange}
-                ref="categoryRef"
-                tabIndex={tabIndex}
-                disabled={disabled}
-            >
-                <option value="">
-                    {tt('category_selector_jsx.select_a_tag')}...
-                </option>
-                {categoryOptions}
-                <option value="new">{this.props.placeholder || tt('category_selector_jsx.tag_your_story')}</option>
-            </select>
-        );
-        return <span>{createCategory ? categoryInput : categorySelect}</span>;
     }
 
-    handleChange = e => {
-        e.preventDefault();
-        const _tagsArray = this.state.tagsList;
-        let inputValue = e.target.value;
+    _renderTagList() {
+        const { tagsList } = this.state;
 
-        if (/[,.; ]/g.test(inputValue)) {
-            inputValue = inputValue.replace(/[,.; ]/g, ' ');
-            inputValue.split(' ').forEach(element => {
-                if (element && element.length > 0) {
-                    _tagsArray.push(element);
-                }
-            });
-            this.setState({ value: '' });
-            this.setState({ tagsList: _tagsArray });
-            this.props.onChange(_tagsArray.join(' '));
+        return (
+            <div className="CategorySelector__tag-list">
+                {tagsList.length === 0 ? (
+                    <span className="CategorySelector__tag-list-empty">
+                        Список пуст...
+                    </span>
+                ) : null}
+                {tagsList.map(tag => (
+                    <span
+                        key={tag}
+                        className={cn('CategorySelector__tag', {
+                            CategorySelector__tag_drag:
+                                this._draggingTag === tag,
+                        })}
+                        data-tag={tag}
+                        ref={this._draggingTag === tag ? 'drag-item' : null}
+                        onMouseDown={this._onMouseDown}
+                        onMouseMove={
+                            this._isDragging && this._draggingTag !== tag
+                                ? this._onTagMouseMove
+                                : null
+                        }
+                    >
+                        {tag}
+                        <i
+                            className="CategorySelector__tag-icon"
+                            onClick={() => this._removeTag(tag)}
+                        >
+                            <Icon name="editor/ic-cross-gr-small" size="07x" />
+                        </i>
+                    </span>
+                ))}
+            </div>
+        );
+    }
+
+    _renderPopularList() {
+        const { tagsList, favoriteTags } = this.state;
+
+        return (
+            <div className="CategorySelector__tag-list CategorySelector__tag-list_popular">
+                {favoriteTags
+                    .filter(tag => !tagsList.includes(tag))
+                    .map(tag => (
+                        <span
+                            key={tag}
+                            className="CategorySelector__tag CategorySelector__tag_favorite"
+                            onClick={() => this._addTag(tag)}
+                        >
+                            {tag}
+                            <i className="CategorySelector__tag-icon">
+                                <Icon name="editor/ic-plus-normal" size="07x" />
+                            </i>
+                        </span>
+                    ))}
+            </div>
+        );
+    }
+
+    _onInputChange = e => {
+        const value = e.target.value;
+
+        if (splitTagsRx.test(value)) {
+            this._addTags(value.split(splitTagsRx));
         } else {
-            this.setState({ value: inputValue });
+            this.setState({ value });
         }
     };
 
-    categorySelectOnChange = e => {
-        e.preventDefault();
-        console.log('!!!categorySelectOnChange!!!');
-        const { value } = e.target;
-        const { onBlur } = this.props; // call onBlur to trigger validation immediately
+    _addTags(tags) {
+        const { tagsList } = this.state;
 
-        if (value === 'new') {
-            this.setState({ createCategory: true });
-            setTimeout(() => {
-                if (onBlur) onBlur();
-                this.refs.categoryRef.focus();
-            }, 300);
-        } else this.props.onChange(e);
-    };
+        for (let tag of tags) {
+            if (tag && !tagsList.includes(tag)) {
+                tagsList.push(tag);
+            }
+        }
 
-    removeTag = el => {
-        const _tagsArray = this.state.tagsList;
-        const elementIndex = this.state.tagsList.indexOf(el);
-        _tagsArray.splice(elementIndex, 1);
-        this.setState({ tagsList: _tagsArray });
-        this.props.onChange(_tagsArray.join(' '));
-    };
-}
+        this.setState({
+            value: '',
+        });
 
-export function validateCategory(category, required = true) {
-    if (!category || category.trim() === '') {
-        return required ? tt('g.required') : null;
+        this._tagsChanged();
     }
-    const cats = category.trim().split(/\s+/);
 
-    if (cats.length > 5) {
-        return tt('category_selector_jsx.use_limitied_amount_of_categories', {
-            amount: 5,
+    _tagsChanged(tagsList = this.state.tagsList) {
+        const tagLine = tagsList.join(' ');
+        this.props.onChange(tagLine);
+        setTimeout(() => {
+            if (!this._unmount) {
+                this.props.onChange(tagLine);
+            }
         });
     }
 
-    let error = null;
+    _removeTag = el => {
+        const { tagsList } = this.state;
+        const elementIndex = tagsList.indexOf(el);
 
-    if (cats.find(c => c.length > 24)) {
-        error = 'category_selector_jsx.maximum_tag_length_is_24_characters';
-    } else if (cats.find(c => c.split('-').length > 2)) {
-        error = 'category_selector_jsx.use_one_dash';
-    } else if (cats.find(c => c.indexOf(',') >= 0)) {
-        error = 'category_selector_jsx.use_spaces_to_separate_tags';
-    } else if (cats.find(c => /[A-ZА-ЯЁҐЄІЇ]/.test(c))) {
-        error = 'category_selector_jsx.use_only_lowercase_letters';
-    } else if (cats.find(c => c !== '18+' && !/^[a-zа-яё0-9-ґєії]+$/.test(c))) {
-        error = 'category_selector_jsx.use_only_allowed_characters';
-    } else if (cats.find(c => c !== '18+' && !/^[a-zа-яё-ґєії]/.test(c))) {
-        error = 'category_selector_jsx.must_start_with_a_letter';
-    } else if (cats.find(c => c !== '18+' && !/[a-zа-яё0-9ґєії]$/.test(c))) {
-        error = 'category_selector_jsx.must_end_with_a_letter_or_number';
+        if (elementIndex !== -1) {
+            tagsList.splice(elementIndex, 1);
+            this.forceUpdate();
+            this._tagsChanged();
+        }
+    };
+
+    _addTag = tag => {
+        const { tagsList } = this.state;
+
+        if (!tagsList.includes(tag)) {
+            tagsList.push(tag);
+            this.forceUpdate();
+            this._tagsChanged();
+        }
+    };
+
+    _onMouseDown = e => {
+        e.preventDefault();
+
+        this._toggleDraggingMode(false);
+
+        this._mouseDownPosition = {
+            x: e.clientX,
+            y: e.clientY,
+            tag: e.currentTarget.getAttribute('data-tag'),
+        };
+
+        window.addEventListener('mousemove', this._onGlobalMouseMove);
+    };
+
+    _onGlobalMouseUp = () => {
+        this._toggleDraggingMode(false);
+    };
+
+    _onGlobalMouseMove = e => {
+        if (this._isDragging) {
+            return;
+        }
+
+        const pos = this._mouseDownPosition;
+
+        if (Math.abs(pos.x - e.clientX) + Math.abs(pos.y - e.clientY) > 5) {
+            this._mouseDownPosition = null;
+            this._toggleDraggingMode(true);
+            this._draggingTag = pos.tag;
+
+            window.removeEventListener('mousemove', this._onGlobalMouseMove);
+
+            this.forceUpdate();
+        }
+    };
+
+    _toggleDraggingMode(enable) {
+        window.removeEventListener('mousemove', this._onGlobalMouseMove);
+
+        if (this._isDragging === enable) {
+            return;
+        }
+
+        if (enable) {
+        } else {
+            window.removeEventListener('mousemove', this._onGlobalMouseMove);
+            this._draggingTag = null;
+        }
+
+        this._isDragging = enable;
+
+        if (!this._unmount) {
+            this.forceUpdate();
+        }
     }
 
-    if (error) {
-        return tt(error);
-    }
+    _onInputKeyDown = e => {
+        if (e.which === 13) {
+            e.preventDefault();
+
+            const value = this.refs.categoryRef.value;
+            this._addTags(value.split(splitTagsRx));
+        }
+    };
+
+    _onPlusClick = () => {
+        const value = this.refs.categoryRef.value;
+        this._addTags(value.split(splitTagsRx));
+    };
+
+    _onTagMouseMove = e => {
+        if (!this._isDragging) {
+            return;
+        }
+
+        const target = e.currentTarget;
+
+        const tag = target.dataset['tag'];
+
+        const box = target.getBoundingClientRect();
+        const draggingBox = this.refs['drag-item'].getBoundingClientRect();
+
+        const modifier = box.x > draggingBox.x ? 0.2 : 0.8;
+        const positionShift = e.clientX > box.x + box.width * modifier ? 1 : 0;
+
+        const tagsList = this.state.tagsList.filter(
+            tag => tag !== this._draggingTag
+        );
+
+        const tagIndex = tagsList.indexOf(tag);
+
+        tagsList.splice(tagIndex + positionShift, 0, this._draggingTag);
+
+        this.setState({
+            tagsList,
+        });
+
+        this._tagsChanged(tagsList);
+    };
 }
-
-export default connect((state, ownProps) => {
-    const trending = state.global.getIn(['tag_idx', 'trending']);
-    return { trending, ...ownProps };
-})(CategorySelector);

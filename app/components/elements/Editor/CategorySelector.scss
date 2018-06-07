@@ -1,0 +1,120 @@
+.CategorySelector {
+  $input-height: 40px;
+  $tag-height: 24px;
+
+  display: block;
+
+  &_with-input {
+    display: flex;
+    align-items: center;
+  }
+
+  &_drag {
+    cursor: move !important;
+  }
+
+  &__input-wrapper {
+    position: relative;
+  }
+
+  &__input {
+    width: 240px;
+    height: $input-height;
+    padding: 0 20px 0 18px;
+    border: none !important;
+    border-radius: $input-height/2;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.18);
+    background-color: #FFF;
+
+    &::placeholder {
+      font-size: 15px;
+    }
+}
+
+  &__input-plus {
+    position: absolute;
+    top: 0;
+    right: 12px;
+    height: $input-height;
+    line-height: $input-height - 2px;
+    cursor: pointer;
+  }
+
+  &__tags-panel {
+    flex-grow: 1;
+    padding: 14px 0;
+    margin-left: 20px;
+  }
+
+  &__tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: -5px;
+    background: #fff;
+
+    &_popular {
+      margin-top: 5px;
+    }
+  }
+
+  &__tag-list-empty {
+    font-style: italic;
+    font-size: 15px;
+    color: #a7a7a7;
+    user-select: none;
+  }
+
+  &__tag {
+    display: inline-block;
+    white-space: nowrap;
+    height: $tag-height;
+    line-height: $tag-height - 2px;
+    padding: 0 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #E1E1E1;
+    border-radius: $tag-height/2;
+    font-size: 12px;
+    color: #333;
+    cursor: move;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &_drag {
+      background: #eee;
+    }
+
+    &_favorite {
+      max-width: 100px;
+      border-color: #f3f3f3;
+      color: #C2C2C2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+
+      &:hover {
+        color: #333;
+        border-color: #e1e1e1;
+      }
+    }
+  }
+
+  &__tag-icon {
+    margin-left: 8px;
+    margin-right: -2px;
+    color: #E2E2E2;
+    transition: color 0.1s;
+    cursor: pointer;
+  }
+
+  &__tag-icon:hover,
+  &__tag_favorite:hover &__tag-icon {
+    color: #000;
+  }
+
+  &_drag &__tag-remove:hover {
+    color: #E2E2E2;
+  }
+}

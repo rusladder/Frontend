@@ -102,7 +102,7 @@
 
 .GolosEditor__footer{
     width: 100%;
-    height: 5rem;
+    min-height: 5rem;
     background-color: #ffffff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
     position: fixed;
@@ -113,18 +113,8 @@
         max-width: 88rem;
     }
     .GolosEditor__categories{
-        height: auto;     
-        & span & input {
-            &[type='text']{
-                box-shadow: none;  
-                border: 0px;
-            }
-            &[type='text']:focus{
-                border: 0px;
-                transition: none;
-                box-shadow: none;   
-                border-bottom: 1px solid #dbdbdb;  
-        }}   
+        display: flex;
+        align-items: center;
     }
 
     .GolosEditor__settings__block{

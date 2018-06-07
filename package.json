@@ -187,5 +187,11 @@
   },
   "engines": {
     "node": ">=7.0.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 4,
+    "semi": true,
+    "trailingComma": "es5"
   }
 }

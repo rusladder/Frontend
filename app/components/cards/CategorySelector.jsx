@@ -73,21 +73,38 @@ class CategorySelector extends React.Component {
     }
 }
 export function validateCategory(category, required = true) {
-    if(!category || category.trim() === '') return required ? tt('g.required') : null
-    const cats = category.trim().split(' ')
-    return (
-        // !category || category.trim() === '' ? 'Required' :
-        cats.length > 5 ? tt('category_selector_jsx.use_limitied_amount_of_categories', {amount: 5}) :
-        cats.find(c => c.length > 24)           ? tt('category_selector_jsx.maximum_tag_length_is_24_characters') :
-        cats.find(c => c.split('-').length > 2) ? tt('category_selector_jsx.use_one_dash') :
-        cats.find(c => c.indexOf(',') >= 0)     ? tt('category_selector_jsx.use_spaces_to_separate_tags') :
-        cats.find(c => /[A-ZА-ЯЁҐЄІЇ]/.test(c))      ? tt('category_selector_jsx.use_only_lowercase_letters') :
-        // Check for English and Russian symbols
-        cats.find(c => '18+' !== c && !/^[a-zа-яё0-9-ґєії]+$/.test(c)) ? tt('category_selector_jsx.use_only_allowed_characters') :
-        cats.find(c => '18+' !== c && !/^[a-zа-яё-ґєії]/.test(c)) ? tt('category_selector_jsx.must_start_with_a_letter') :
-        cats.find(c => '18+' !== c && !/[a-zа-яё0-9ґєії]$/.test(c)) ? tt('category_selector_jsx.must_end_with_a_letter_or_number') :
-        null
-    )
+    if (!category || category.trim() === '') {
+        return required ? tt('g.required') : null;
+    }
+    const cats = category.trim().split(/\s+/);
+
+    if (cats.length > 5) {
+        return tt('category_selector_jsx.use_limitied_amount_of_categories', {
+            amount: 5,
+        });
+    }
+
+    let error = null;
+
+    if (cats.find(c => c.length > 24)) {
+        error = 'category_selector_jsx.maximum_tag_length_is_24_characters';
+    } else if (cats.find(c => c.split('-').length > 2)) {
+        error = 'category_selector_jsx.use_one_dash';
+    } else if (cats.find(c => c.indexOf(',') >= 0)) {
+        error = 'category_selector_jsx.use_spaces_to_separate_tags';
+    } else if (cats.find(c => /[A-ZА-ЯЁҐЄІЇ]/.test(c))) {
+        error = 'category_selector_jsx.use_only_lowercase_letters';
+    } else if (cats.find(c => c !== '18+' && !/^[a-zа-яё0-9-ґєії]+$/.test(c))) {
+        error = 'category_selector_jsx.use_only_allowed_characters';
+    } else if (cats.find(c => c !== '18+' && !/^[a-zа-яё-ґєії]/.test(c))) {
+        error = 'category_selector_jsx.must_start_with_a_letter';
+    } else if (cats.find(c => c !== '18+' && !/[a-zа-яё0-9ґєії]$/.test(c))) {
+        error = 'category_selector_jsx.must_end_with_a_letter_or_number';
+    }
+
+    if (error) {
+        return tt(error);
+    }
 }
 export default connect((state, ownProps) => {
     const trending = state.global.getIn(['tag_idx', 'trending'])

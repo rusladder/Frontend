@@ -1,0 +1,58 @@
+
+.Dialog {
+  border-radius: 4px;
+  box-shadow: 0 0 19px 3px rgba(0,0,0, 0.2);
+
+  &__header {
+    padding: 8px 18px;
+    border-radius: 4px 4px 0 0;
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: #d3d3d3;
+  }
+
+  &_alert &__header,
+  &_confirm &__header {
+    color: #606060;
+    background: #ffc1c1;
+  }
+
+  &__wrapper {
+    padding: 0 18px 10px;
+    border-radius: 0 0 4px 4px;
+    background: #fff;
+  }
+
+  &__content {
+    padding: 8px 0;
+    line-height: 1.5em;
+    color: #545454;
+  }
+
+  &__prompt-input {
+    display: block;
+    width: 100%;
+    padding: 5px 6px;
+    margin-top: 4px;
+    border: 1px solid #bdbdbd;
+    border-radius: 3px;
+    outline: none;
+    color: #333;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+
+    BUTTON {
+      padding: 0 4px;
+      border-radius: 0;
+      line-height: 20px;
+      margin: 0 0 0 12px !important;
+      cursor: pointer;
+    }
+  }
+}

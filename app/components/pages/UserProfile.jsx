@@ -402,7 +402,7 @@ export default class UserProfile extends React.Component {
                         {tt('g.replies')} {isMyAccount && <NotifiCounter fields="comment_reply" />}
                     </Link>
                     {isMyAccount &&
-                        <Link to={`/@${accountname}/notifications`} activeClassName="active">
+                        <Link className="UserProfile__menu-item" to={`/@${accountname}/notifications`} activeClassName="active">
                             {tt('g.notifications')} {isMyAccount && <NotifiCounter fields="comment_reply"/>}
                         </Link>
                     }

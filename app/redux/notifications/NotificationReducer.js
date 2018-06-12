@@ -51,7 +51,7 @@ export default [
   {
     action: 'NOTIFICATIONS_FETCHING',
     reducer: (state, {payload}) => {
-      // fexme type's redundant for now
+      // fixme type's redundant for now
       state = state.setIn(['notifications', 'fetching'], payload)
       return state
     }

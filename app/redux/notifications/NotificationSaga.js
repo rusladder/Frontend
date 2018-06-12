@@ -149,6 +149,9 @@ function* logoutListener(tasks) {
 
 //
 function* fetchNotifications() {
+
+    // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ fetching')
+
   const type = yield select(state => state.user.getIn(['notifications', 'page', 'menu', 'selector']));
   // console.log('@@@@@ fetching ', type)
   const authorized_username = yield select(state => state.user.get('current').get('username'));

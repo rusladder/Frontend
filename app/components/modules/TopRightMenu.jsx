@@ -15,6 +15,8 @@ import LocalizedCurrency from 'app/components/elements/LocalizedCurrency';
 import {vestingSteem} from 'app/utils/StateFunctions';
 import { getURL } from 'app/utils/URLConstants'
 import notificationLogItem from "../elements/Notifications/NotificationLogItem";
+import SpinnerBall from '../elements/Notifications/spinner/spinner-ball'
+
 
 const defaultNavigate = (e) => {
     if (e.metaKey || e.ctrlKey) {
@@ -65,7 +67,7 @@ const calculateEstimateOutput = ({ account, price_per_golos, savings_withdraws, 
   return Number(((total_steem * price_per_golos) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({zero, notificationList, notifications_header_counter, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
+function TopRightMenu({zero, notifications_fetching, notificationList, notifications_header_counter, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
     const APP_NAME = tt('g.APP_NAME');
 
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -98,15 +100,17 @@ function TopRightMenu({zero, notificationList, notifications_header_counter, acc
         </a>
       </li>
     ;
-    //
-    const notificationItem =
-      (typeof notifications_header_counter === 'number') && notificationList && notificationList.length > 0 &&
-        <li className={scn} style={{cursor: 'pointer', margin: 0}}>
-          <div className="TRMenu__notification-item" onClick={zero}>
-            {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x" />}
-            {notifications_header_counter}
-          </div>
-        </li>
+    // fixme move the following to NotificationHeaderItem connected to store
+    // this should be a single <NotificationHeaderItem/>
+    const notificationItem = notifications_fetching ?
+        <SpinnerBall/> :
+        (typeof notifications_header_counter === 'number') && notificationList && notificationList.length > 0 &&
+            <li className={scn} style={{cursor: 'pointer', margin: 0}}>
+              <div className="TRMenu__notification-item" onClick={zero}>
+                {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x" />}
+                {notifications_header_counter}
+              </div>
+            </li>
 
 
     const nList =
@@ -291,9 +295,9 @@ export default connect(
         //
         const notifications_header_counter = state.user.getIn(['notifications', 'header', 'counter']);
         //
+        const notifications_fetching = state.user.getIn(['notifications', 'fetching']);
+        //
         const notificationList = state.user.getIn(['notifications', 'list'])
-
-
         //
         return {
             account,
@@ -304,7 +308,8 @@ export default connect(
             globalprops,
             probablyLoggedIn: false,
             notifications_header_counter,
-            notificationList
+            notificationList,
+            notifications_fetching
         }
     },
     dispatch => ({

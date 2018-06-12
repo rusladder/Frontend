@@ -4,8 +4,8 @@
   align-items: center;
 
   > svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
   }
 
   //& > svg:hover > path {
@@ -36,7 +36,7 @@
     &:last-child {
       padding-right: 1rem;
     }
-    padding-left: 1rem;
+    padding-left: 1.8rem;
   }
 
   > div, span {
@@ -53,6 +53,11 @@
 .notification-log-item_stack {
   > div, span {
     padding: 0.2rem 0;
+    color: #757575;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 16px;
   }
   display: flex;
   flex-direction: column;

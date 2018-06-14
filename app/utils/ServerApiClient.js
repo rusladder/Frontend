@@ -108,8 +108,9 @@ export async function getNotificationsCount(account) {
     const response = await fetch(`/api/v1/notifications/${account}/count`, request);
     const {status} = response;
     if (status === 200) {
-      const {count} = await response.json();
-      result = count;
+      // const {count} = await response.json();
+      // result = count;
+        result = await response.json();
     }
   } catch (e) {
   }

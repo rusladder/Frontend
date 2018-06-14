@@ -241,7 +241,7 @@ function render(what) {
   return (
     type === 'comment' ? comment(payload) :
       type === 'transfer' ? transfer(payload) :
-        type === 'voteup' ? upvote(payload) :
+        type === 'upvote' ? upvote(payload) :
           downvote(payload)
   )
 }

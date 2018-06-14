@@ -72,7 +72,7 @@ export default function notificationsLogItem(item) {
       break
     }
     //
-    case 'voteup': {
+    case 'upvote': {
       const {
         voter: {
           account,
@@ -167,7 +167,7 @@ export default function notificationsLogItem(item) {
   // return (
   //   type === 'comment' ? comment(payload) :
   //     type === 'transfer' ? transfer(payload) :
-  //       type === 'voteup' ? upvote(payload) :
+  //       type === 'upvote' ? upvote(payload) :
   //         downvote(payload)
   // )
 }

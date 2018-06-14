@@ -79,7 +79,7 @@ class NotificationLog extends React.Component {
           </li>
           <li key={3}>
 
-            <Link to={`/@${currentUserId}/notifications?type=voteup`} className={active === 'voteup' ? 'active' : ''}>
+            <Link to={`/@${currentUserId}/notifications?type=upvote`} className={active === 'upvote' ? 'active' : ''}>
               {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
 
               {tt('NotificationLog_jsx.selector_menu_type_upvotes')}

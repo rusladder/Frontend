@@ -67,7 +67,7 @@ const calculateEstimateOutput = ({ account, price_per_golos, savings_withdraws, 
   return Number(((total_steem * price_per_golos) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({zero, notifications_fetching, notificationList, notifications_header_counter, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
+function TopRightMenu({zero, notifications_fetching, notificationList, notification_totals, account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
     const APP_NAME = tt('g.APP_NAME');
 
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -102,13 +102,19 @@ function TopRightMenu({zero, notifications_fetching, notificationList, notificat
     ;
     // fixme move the following to NotificationHeaderItem connected to store
     // this should be a single <NotificationHeaderItem/>
+
+    // const {all: nAll} = notification_totals;
+
+    console.log('00000000000000000000000000000000 ', notification_totals)
+
     const notificationItem = notifications_fetching ?
         <SpinnerBall/> :
-        (typeof notifications_header_counter === 'number') && notificationList && notificationList.length > 0 &&
+        // (typeof notifications_header_counter === 'number') && notificationList && notificationList.length > 0 &&
+        notification_totals &&
             <li className={scn} style={{cursor: 'pointer', margin: 0}}>
               <div className="TRMenu__notification-item" onClick={zero}>
                 {vertical ? <span>{tt('g.search')}</span> : <Icon name="new/bell" size="1_5x" />}
-                {notifications_header_counter}
+                {notification_totals.all}
               </div>
             </li>
 
@@ -293,7 +299,8 @@ export default connect(
         }
         const globalprops = state.global.get('props');
         //
-        const notifications_header_counter = state.user.getIn(['notifications', 'header', 'counter']);
+        // const notifications_header_counter = state.user.getIn(['notifications', 'header', 'counter']);
+        const notification_totals = state.user.getIn(['notifications', 'totals']);
         //
         const notifications_fetching = state.user.getIn(['notifications', 'fetching']);
         //
@@ -307,7 +314,8 @@ export default connect(
             price_per_golos,
             globalprops,
             probablyLoggedIn: false,
-            notifications_header_counter,
+            // notifications_header_counter,
+            notification_totals,
             notificationList,
             notifications_fetching
         }
@@ -324,7 +332,7 @@ export default connect(
         // fixme temporary!!!!!!!!!!!!!
         zero: e => {
           if (e) e.preventDefault();
-          dispatch(user.actions.notifyHeaderCounterSet(0))
+          // dispatch(user.actions.notifyHeaderCounterSet(0))
         },
     })
 )(TopRightMenu);

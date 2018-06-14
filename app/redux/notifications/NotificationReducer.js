@@ -23,10 +23,17 @@ export default [
     {
         action: 'NOTIFICATIONS_LIST_CHANGED',
         reducer: (state, {payload}) => {
-            // console.log('!!!!!!!!!!!!!!!!!!!!! ', payload)
+            console.log('!!!!!!!!!!!!!!!!!!!!! ', payload)
             state = state.updateIn(['notifications', 'list'], arr => {
                 arr = arr || [];
+
+                console.log('!!!!!!!!!!!!!!!!!!!!! 1 ', arr)
+
                 arr = [...arr, ...payload]
+
+                console.log('!!!!!!!!!!!!!!!!!!!!! 2 ', arr)
+
+
                 arr.sort((a, b) => b.timestamp - a.timestamp);
                 return arr;
             })

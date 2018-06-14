@@ -103,7 +103,7 @@ export default function notificationsLogItem(item) {
       break
     }
     //
-    case 'votedown': {
+    case 'downvote': {
       const {
         voter: {
           account,
@@ -126,7 +126,7 @@ export default function notificationsLogItem(item) {
           {`поставил флаг на ваш`}
           &nbsp;
           <Link to={parent_url}>
-            {type === 'post' ? `пост` : `комментарий`}
+            {contentType === 'post' ? `пост` : `комментарий`}
           </Link>
         </span>
       )

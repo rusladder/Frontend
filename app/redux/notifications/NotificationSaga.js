@@ -44,27 +44,42 @@ function* userChannelListener(channel) {
         // yield fork(logoutListener)
         while (true) {
             const message = yield call(next);
-            const {notifications} = message;
+            const {notifications: {totals, list}} = message;
             //
             //
             // yield put(user.actions.notifyHeaderCounterSet(untouched_count))
 
-            console.log('********************************** ', notifications)
+            console.log('////////////////////////// totals', totals)
+            console.log('////////////////////////// list', list)
             //
-            yield put(user.actions.notifyHeaderCounterSet(notifications.totals))
+            yield put(user.actions.notifyHeaderCounterSet(totals))
             //
-            yield put(user.actions.notificationsListChanged(notifications.list));
+            for (const n of list) {
+                    yield console.log('///////// n ', n)
 
-            // yield put(user.actions.notifyListUpdate(list))
-            // console.log(message)
-
-
-            for (const n of notifications.list) {
                 yield put({
                     type: 'ADD_NOTIFICATION',
                     payload: NotifyContent(n)
                 })
             }
+            //
+            yield put(user.actions.notificationsListChanged(list));
+
+            // yield put(user.actions.notifyListUpdate(list))
+            // console.log(message)
+
+
+            // for (const n of notifications.list) {
+            //
+            //
+            //     yield put({
+            //         type: 'ADD_NOTIFICATION',
+            //         payload: NotifyContent(n)
+            //     })
+            // }
+
+
+
             // if ('type' in action) {
             //   console.clear()
             //   yield console.log(action)

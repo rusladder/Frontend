@@ -7,7 +7,7 @@ import iVoteUp from 'app/assets/icons/notification/upvote.svg'
 import iVoteDown from 'app/assets/icons/notification/downvote.svg'
 //
 
-export default function notificationsLogItem(item) {
+export default function notificationsLogItem(item, position) {
   // console.log(`))))))) `, what)
   let {id, timestamp, type, payload} = item;
   //
@@ -140,6 +140,9 @@ export default function notificationsLogItem(item) {
 
   return (
     <div key={id} className="notification-log-item">
+      <div style={{paddingLeft: '2px', fontSize: '12px'}}>
+          {`${position + 1}`}
+      </div>
       <div>
         <span className="notification-log-item__type-icon" dangerouslySetInnerHTML={{__html: icon}} />
       </div>

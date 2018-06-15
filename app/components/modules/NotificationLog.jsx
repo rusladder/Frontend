@@ -103,7 +103,7 @@ class NotificationLog extends React.Component {
     const {fetching, list} = this.props;
     return (
       !fetching && list && (
-        list.map(item => notificationLogItem(item))
+        list.map((item, position) => notificationLogItem(item, position))
       )
     )
   }

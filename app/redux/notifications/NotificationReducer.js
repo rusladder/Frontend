@@ -8,6 +8,16 @@ export default [
         reducer: (state, {payload}) => state.setIn(['notifications', 'page', 'menu', 'selector'], payload)
     },
     {
+        action: 'NOTIFY_PAGE_PAGINATION_CURRENT_SET',
+        reducer: (state, {payload}) => {
+            console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
+
+            const st = state.setIn(['notifications', 'page', 'pagination', 'currentPageIndex'], payload)
+            console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS ', st)
+            return st
+        }
+    },
+    {
         action: 'NOTIFY_HEADER_COUNTER_SET',
         reducer: (state, {payload}) => {
             // return state.setIn(['notifications', 'header', 'counter'], payload

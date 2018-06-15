@@ -3,10 +3,15 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import tt from 'counterpart';
 import notificationLogItem from 'app/components/elements/Notifications/NotificationLogItem';
-
+import Pagination from 'app/components/elements/Notifications/NotificationLogPagination'
+//
+//
+//
+// fixme env or user setting?
+const logPageSize = 5;
 //
 const ipsum1 = (
-  <span>
+    <span>
         Lorem ipsum dolor sit amet, ultrices sodales suspendisse ut semper sit nec, eget vitae morbi,
     senectus curae risus leo urna. Lacinia lectus proin adipiscing nec eu neque.
     At lacus, wisi sagittis neque purus feugiat neque amet, nunc id aliquam felis,
@@ -18,7 +23,7 @@ const ipsum1 = (
   </span>)
 //
 const ipsum2 = (
-  <span>
+    <span>
         Viverra risus imperdiet sapien purus a.
     Mauris tristique dui ullamcorper pellentesque tortor rutrum, enim quisque venenatis lacus nec elit.
     Aliquet urna aenean ultricies donec venenatis. Morbi ut faucibus libero imperdiet auctor,
@@ -27,7 +32,7 @@ const ipsum2 = (
   </span>)
 //
 const t1 = (
-  <span>
+    <span>
     <b>
       Краткая информация
     </b>
@@ -35,184 +40,240 @@ const t1 = (
 )
 //
 const t2 = (
-  <span>
+    <span>
     <b>
       Топ авторов
     </b>
 </span>
 )
+
 //
 class NotificationLog extends React.Component {
-  //
-  constructor() {
-    super()
-  }
-
-  //
-  get menu() {
-    // todo optimize this
-    const {
-      activeMenuItem: active,
-      currentUserId
-    } = this.props;
     //
-    return (
-      <div className="columns shrink">
-        <ul className="menu" style={{flexWrap: 'wrap'}}>
-          <li key={0}>
-            <Link to={`/@${currentUserId}/notifications`} className={(active === 'all' || !active) ? 'active' : ''}>
-              {tt('NotificationLog_jsx.selector_menu_type_all')}
-            </Link>
-          </li>
-          <li key={1}>
-            <Link to={`/@${currentUserId}/notifications?type=comment`} className={active === 'comment' ? 'active' : ''}>
-              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
-              {tt('NotificationLog_jsx.selector_menu_type_comments')}
-            </Link>
-          </li>
-          <li key={2}>
-            <Link to={`/@${currentUserId}/notifications?type=transfer`}
-                className={active === 'transfer' ? 'active' : ''}>
-              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
-              {tt('NotificationLog_jsx.selector_menu_type_transfers')}
-            </Link>
-          </li>
-          <li key={3}>
+    constructor() {
+        super()
+    }
 
-            <Link to={`/@${currentUserId}/notifications?type=upvote`} className={active === 'upvote' ? 'active' : ''}>
-              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+    //
+    get menu() {
+        // todo optimize this
+        const {
+            activeMenuItem: active,
+            currentUserId
+        } = this.props;
+        //
+        return (
+            <div className="columns shrink">
+                <ul className="menu" style={{flexWrap: 'wrap'}}>
+                    <li key={0}>
+                        <Link to={`/@${currentUserId}/notifications`}
+                              className={(active === 'all' || !active) ? 'active' : ''}>
+                            {tt('NotificationLog_jsx.selector_menu_type_all')}
+                        </Link>
+                    </li>
+                    <li key={1}>
+                        <Link to={`/@${currentUserId}/notifications?type=comment`}
+                              className={active === 'comment' ? 'active' : ''}>
+                            {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+                            {tt('NotificationLog_jsx.selector_menu_type_comments')}
+                        </Link>
+                    </li>
+                    <li key={2}>
+                        <Link to={`/@${currentUserId}/notifications?type=transfer`}
+                              className={active === 'transfer' ? 'active' : ''}>
+                            {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+                            {tt('NotificationLog_jsx.selector_menu_type_transfers')}
+                        </Link>
+                    </li>
+                    <li key={3}>
 
-              {tt('NotificationLog_jsx.selector_menu_type_upvotes')}
-            </Link>
-          </li>
-          <li key={4}>
-            <Link to={`/@${currentUserId}/notifications?type=downvote`}
-                className={active === 'downvote' ? 'active' : ''}>
-              {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
+                        <Link to={`/@${currentUserId}/notifications?type=upvote`}
+                              className={active === 'upvote' ? 'active' : ''}>
+                            {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
 
-              {tt('NotificationLog_jsx.selector_menu_type_downvotes')}
-            </Link>
-          </li>
-        </ul>
-      </div>
-    )
-  }
+                            {tt('NotificationLog_jsx.selector_menu_type_upvotes')}
+                        </Link>
+                    </li>
+                    <li key={4}>
+                        <Link to={`/@${currentUserId}/notifications?type=downvote`}
+                              className={active === 'downvote' ? 'active' : ''}>
+                            {/*<Link to={`/@a153048/notifications`} activeClassName="active">*/}
 
-  //
-  get log() {
-    const {fetching, list} = this.props;
-    return (
-      !fetching && list && (
-        list.map((item, position) => notificationLogItem(item, position))
-      )
-    )
-  }
-
-  //
-  render() {
-    const {fetching} = this.props;
-    return (
-      <div className="row">
-
-        <div className="column small-12 medium-3 nlog_column">
-          <div className={'golos-card'}>
-            <div className={'golos-card__item'}>
-              <div style={{
-                padding: '0 1rem',
-                display: 'flex',
-                alignItems: 'center',
-                minHeight: '3rem',
-                textTransform: 'uppercase',
-                fontWeight: 'bold'
-              }}>
-                {t1}
-              </div>
+                            {tt('NotificationLog_jsx.selector_menu_type_downvotes')}
+                        </Link>
+                    </li>
+                </ul>
             </div>
-            <div className={'golos-card__item'}>
-              <div className={'golos-card__divider_horizontal'}></div>
-            </div>
-            <div className={'golos-card__item golos-card__item_color-light-grey golos-card_padding-all'}>
-              {ipsum1}
-            </div>
-          </div>
-        </div>
+        )
+    }
 
-        <div className="column small-12 medium-6 nlog_column">
-          <div className={'golos-card'}>
-            <div className={'golos-card__item'}>
-              <div style={{minHeight: '3rem'}}>
-                {this.menu}
-              </div>
-            </div>
-            <div className={'golos-card__item'}>
-              <div className={'golos-card__divider_horizontal'}></div>
-            </div>
-            <div className={'golos-card__item'}>
-              {this.log}
-            </div>
-          </div>
+    //
+    get log() {
+        const {fetching, list, currentPageIndex, pageSize} = this.props;
+        //
+        const b = (index, offset) => {
+            let begin = (index > 1 ? index * offset : index) - 1;
+            let end = index * offset;
+            return {
+                begin,
+                end
+            }
+        }
+        //
+        if (list) {
+            if (fetching) {
+                return null
+            }
+            else {
+                const bounds = b(currentPageIndex, pageSize);
+
+                console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ ', list)
+                console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ ', bounds)
+
+                const page = list.slice(bounds.begin, bounds.end)
+                    .map((item, position) => notificationLogItem(item, position))
+                return page
+            }
+        }
+        else {
+            return null
+        }
 
 
-          {/*{this.log}*/}
-          {/*{fetching && (*/}
-          {/*<div className="row" style={{justifyContent: 'center', alignItems: 'center', padding: '10rem'}}>*/}
-          {/*<div style={{color: '#d3d3d3'}} className="la-ball-clip-rotate-multiple la-3x">*/}
-          {/*<div></div>*/}
-          {/*<div></div>*/}
-          {/*</div>*/}
-          {/*</div>*/}
-          {/*)}*/}
-        </div>
-        <div className="column small-12 medium-3 nlog_column">
-          <div className={'golos-card'}>
-            <div className={'golos-card__item'}>
-              <div style={{
-                padding: '0 1rem',
-                display: 'flex',
-                alignItems: 'center',
-                minHeight: '3rem',
-                textTransform: 'uppercase',
-                fontWeight: 'bold'
-              }}>
-                {t2}
-              </div>
+        // return (
+        //     !fetching && list && (
+        //         list.map((item, position) => notificationLogItem(item, position))
+        //     )
+        // )
+    }
+
+    get pagination() {
+        const {list} = this.props;
+        //
+        if (list) {
+            const {list: {length: total}, currentPageIndex, pageSize} = this.props;
+            console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ ', total, currentPageIndex, pageSize)
+            const pProps = {currentPageIndex, total, pageSize}
+            return (
+                <Pagination {...pProps}/>
+            )
+        }
+        else {
+            return null
+        }
+    }
+
+    //
+    render() {
+
+        const {fetching, list} = this.props;
+        return (
+            <div className="row">
+
+                <div className="column small-12 medium-3 nlog_column">
+                    <div className={'golos-card'}>
+                        <div className={'golos-card__item'}>
+                            <div style={{
+                                padding: '0 1rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minHeight: '3rem',
+                                textTransform: 'uppercase',
+                                fontWeight: 'bold'
+                            }}>
+                                {t1}
+                            </div>
+                        </div>
+                        <div className={'golos-card__item'}>
+                            <div className={'golos-card__divider_horizontal'}></div>
+                        </div>
+                        <div className={'golos-card__item golos-card__item_color-light-grey golos-card_padding-all'}>
+                            {ipsum1}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="column small-12 medium-6 nlog_column">
+                    <div className={'golos-card'}>
+                        <div className={'golos-card__item'}>
+                            <div style={{minHeight: '3rem'}}>
+                                {this.menu}
+                            </div>
+                        </div>
+                        <div className={'golos-card__divider_horizontal'}></div>
+                        {/* renders  class golos-card__item*/}
+                        {this.pagination}
+                        <div className={'golos-card__item'}>
+                            {this.log}
+                        </div>
+                    </div>
+
+
+                    {/*{this.log}*/}
+                    {/*{fetching && (*/}
+                    {/*<div className="row" style={{justifyContent: 'center', alignItems: 'center', padding: '10rem'}}>*/}
+                    {/*<div style={{color: '#d3d3d3'}} className="la-ball-clip-rotate-multiple la-3x">*/}
+                    {/*<div></div>*/}
+                    {/*<div></div>*/}
+                    {/*</div>*/}
+                    {/*</div>*/}
+                    {/*)}*/}
+                </div>
+                <div className="column small-12 medium-3 nlog_column">
+                    <div className={'golos-card'}>
+                        <div className={'golos-card__item'}>
+                            <div style={{
+                                padding: '0 1rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minHeight: '3rem',
+                                textTransform: 'uppercase',
+                                fontWeight: 'bold'
+                            }}>
+                                {t2}
+                            </div>
+                        </div>
+                        <div className={'golos-card__item'}>
+                            <div className={'golos-card__divider_horizontal'}></div>
+                        </div>
+                        <div className={'golos-card__item golos-card__item_color-light-grey golos-card_padding-all'}>
+                            {ipsum2}
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className={'golos-card__item'}>
-              <div className={'golos-card__divider_horizontal'}></div>
-            </div>
-            <div className={'golos-card__item golos-card__item_color-light-grey golos-card_padding-all'}>
-              {ipsum2}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+        )
+    }
 }
+
 //
 export default connect(
-  // mapStateToProps
-  (state, ownProps) => {
-    const activeMenuItem = state.user.getIn(['notifications', 'page', 'menu', 'selector'])
-    let list = state.user.getIn(['notifications', 'list'])
-    if (list) {
-      list = activeMenuItem === 'all' ? list : list.filter(item => item.type === activeMenuItem)
-    }
+    // mapStateToProps
+    (state, ownProps) => {
+        let list = state.user.getIn(['notifications', 'list'])
+        //
+        const activeMenuItem = state.user.getIn(['notifications', 'page', 'menu', 'selector']) || 'all'
+        const currentPageIndex = state.user.getIn(['notifications', 'page', 'pagination', 'currentPageIndex']) || 1
+        // see the module top
+        const pageSize = logPageSize;
+        //
+        if (list) {
+            list = activeMenuItem === 'all' ? list : list.filter(item => item.type === activeMenuItem)
+        }
+        // console.log('@@@@@@@@@@@@@@@@ ', activeMenuItem)
+        const fetching = state.user.getIn(['notifications', 'fetching'])
+        const currentUserId = state.user.getIn(['current', 'username'])
 
-
-    // console.log('@@@@@@@@@@@@@@@@ ', activeMenuItem)
-
-    const fetching = state.user.getIn(['notifications', 'fetching'])
-    const currentUserId = state.user.getIn(['current', 'username'])
-
-    return {
-      fetching,
-      activeMenuItem,
-      currentUserId,
-      list,
-      ...ownProps
-    }
-  },
-  // mapDispatchToProps
-  dispatch => ({})
+        return {
+            activeMenuItem,
+            currentPageIndex,
+            pageSize,
+            fetching,
+            currentUserId,
+            list,
+            ...ownProps
+        }
+    },
+    // mapDispatchToProps
+    dispatch => ({})
 )(NotificationLog)

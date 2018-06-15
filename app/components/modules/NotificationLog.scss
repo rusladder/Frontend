@@ -68,12 +68,18 @@
 .golos-card__divider_horizontal {
   //
   height: 1px;
-  border-bottom: 1px solid #E9E9E9;
+  background: #E9E9E9;
 }
 //
 .golos-card__item {
   //
   ul.menu > li {
+    padding-left: 0.5rem;
+    //
+    &:first-child {
+      padding-left: 0;
+    }
+    //
     display: flex;
     justify-content: center;
     align-items: center;

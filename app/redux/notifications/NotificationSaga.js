@@ -275,7 +275,9 @@ function* onUserLogin() {
     const list = yield select(state => state.user.get('notifications').get('list'));
     // fixme temporary!!!!!!!!!!!
     if (!list) {
+        // init
         yield put(user.actions.notifyPageMenuSelectorSet('all'));
+        yield put(user.actions.notifyPagePaginationCurrentSet(1));
         yield put({type: 'NOTIFY_REQUEST_DATA_FETCH'})
     }
     //

@@ -141,7 +141,7 @@ export default function notificationsLogItem(item, position) {
   return (
     <div key={id} className="notification-log-item">
       <div style={{paddingLeft: '2px', fontSize: '12px'}}>
-          {`${position + 1}`}
+          {`${position} ${id}`}
       </div>
       <div>
         <span className="notification-log-item__type-icon" dangerouslySetInnerHTML={{__html: icon}} />

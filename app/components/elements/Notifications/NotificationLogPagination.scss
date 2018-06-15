@@ -1,0 +1,58 @@
+.golos-card__item .nlog__pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+
+  .number-button.active {
+    background: red;
+  }
+
+  .number-button {
+    margin: 0 0.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    border-radius: 50%;
+
+    font-family: Roboto;
+    font-size: 1rem;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1.4px;
+    padding: 0rem;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  .nav-button {
+    margin: 0 0.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    border-radius: 50%;
+
+    font-family: Roboto;
+    font-size: 1rem;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1.4px;
+    padding: 0rem;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+  }
+
+
+
+}
+

@@ -2,7 +2,7 @@ import React from 'react';
 import Pagination from "react-paginating";
 //
 // fixme env or user setting?
-const pageCount = 8;
+const pageCount = 5;
 const currentPage = 1;
 
 //

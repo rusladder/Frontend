@@ -167,7 +167,7 @@ function* logoutListener(tasks) {
 //
 function* fetchNotifications() {
 
-    // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ fetching')
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ fetching')
 
     const type = yield select(state => state.user.getIn(['notifications', 'page', 'menu', 'selector']));
     // console.log('@@@@@ fetching ', type)
@@ -189,6 +189,9 @@ function* fetchRequestListener() {
 //
 function* onRouteChange({payload}) {
     const {pathname, query} = payload;
+
+    console.log('-------------------------------- ', pathname, query)
+
     // track notifications section for an authorized user
     const uProfile = pathname.match(routeRegex.UserProfile2);
     // we're under some user profile route
@@ -245,6 +248,8 @@ function scOptions(uri) {
 
 //
 function* onUserLogin() {
+    // fetch data first
+    yield call(fetchNotifications)
     // first start fetch request listener
     const fetchRequestListenerEffect = yield fork(fetchRequestListener)
     // then check current route on login since @@router/LOCATION_CHANGE has already fired

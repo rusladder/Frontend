@@ -364,7 +364,7 @@ export default class UserProfile extends React.Component {
               section === 'assets'||
               section === 'create-asset')) {
             tab_content = <div className="row">
-                <div className="UserProfile__tab_content column">
+                <div className="UserProfile__tab_content column" style={{minHeight: '722px'}}>
                     {tab_content}
                 </div>
             </div>;

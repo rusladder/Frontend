@@ -48,15 +48,10 @@ function* userChannelListener(channel) {
             //
             //
             // yield put(user.actions.notifyHeaderCounterSet(untouched_count))
-
-            console.log('////////////////////////// totals', totals)
-            console.log('////////////////////////// list', list)
             //
             yield put(user.actions.notifyHeaderCounterSet(totals))
             //
             for (const n of list) {
-                    yield console.log('///////// n ', n)
-
                 yield put({
                     type: 'ADD_NOTIFICATION',
                     payload: NotifyContent(n)
@@ -264,10 +259,6 @@ function* onUserLogin() {
     const push_service_options = scOptions(yield select(state => state.offchain.get('config').get('service_push_notification_url')));
     // these fields are mandatory in response!
     const {notifications} = yield getNotificationsCount(authorized_username)
-
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ', notifications)
-    // console.log('}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ', totals)
-
     // refresh the bell counter first
     // fixme make it common notificationMessage {list, totals, etc....}
     yield put(user.actions.notifyHeaderCounterSet(notifications.totals))

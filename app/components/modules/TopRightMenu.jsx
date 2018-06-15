@@ -105,8 +105,6 @@ function TopRightMenu({zero, notifications_fetching, notificationList, notificat
 
     // const {all: nAll} = notification_totals;
 
-    console.log('00000000000000000000000000000000 ', notification_totals)
-
     const notificationItem = notifications_fetching ?
         <SpinnerBall/> :
         // (typeof notifications_header_counter === 'number') && notificationList && notificationList.length > 0 &&

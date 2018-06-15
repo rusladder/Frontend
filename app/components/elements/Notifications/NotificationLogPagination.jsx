@@ -7,7 +7,6 @@ const currentPage = 1;
 
 //
 export default function NotificationLogPagination(props) {
-    console.log('VVVVVVVVVVVVVVVVVVVVVVV ', props)
     //
     const {currentPageIndex, total, pageSize} = props
     //

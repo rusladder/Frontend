@@ -19,7 +19,6 @@ const actionStyle = {
 const cross = () => <span className="NotificationContent__action" dangerouslySetInnerHTML={{__html: iconCross}} />
 //
 const transfer = data => {
-  console.log('~~~~~~~~~~~~ ', data)
   const {
     from: {
       account,

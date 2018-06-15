@@ -8,7 +8,7 @@ import Pagination from 'app/components/elements/Notifications/NotificationLogPag
 //
 //
 // fixme env or user setting?
-const logPageSize = 5;
+const logPageSize = 10;
 //
 const ipsum1 = (
     <span>
@@ -127,9 +127,6 @@ class NotificationLog extends React.Component {
             else {
                 const bounds = b(currentPageIndex, pageSize);
 
-                console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ ', list)
-                console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ ', bounds)
-
                 const page = list.slice(bounds.begin, bounds.end)
                     .map((item, position) => notificationLogItem(item, position))
                 return page
@@ -152,7 +149,6 @@ class NotificationLog extends React.Component {
         //
         if (list) {
             const {list: {length: total}, currentPageIndex, pageSize} = this.props;
-            console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ ', total, currentPageIndex, pageSize)
             const pProps = {currentPageIndex, total, pageSize}
             return (
                 <Pagination {...pProps}/>

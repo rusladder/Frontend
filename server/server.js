@@ -52,11 +52,20 @@ csrf(app);
 // app.use(csrf.middleware);
 app.use(flash({ key: 'flash' }));
 
-function convertEntriesToArrays(obj) {
-    return Object.keys(obj).reduce((result, key) => {
-        result[key] = obj[key].split(/\s+/);
-        return result;
-    }, {});
+// helmet wants some things as bools and some as lists, makes config difficult.
+// our config uses strings, this splits them to lists on whitespace.
+function processHelmetDirectives(obj) {
+    const data = {};
+
+    for (let key of Object.keys(obj)) {
+        if (key === 'reportUri') {
+            data[key] = obj[key];
+        } else {
+            data[key] = obj[key].split(/\s+/);
+        }
+    }
+
+    return data;
 }
 
 // some redirects
@@ -205,27 +214,14 @@ useRatesRoutes(app);
 //     useTestnetApi(app);
 // }
 
-// helmet wants some things as bools and some as lists, makes config difficult.
-// our config uses strings, this splits them to lists on whitespace.
-
-if (env === 'production') {
-    const helmetConfig = {
-        directives: convertEntriesToArrays(config.get('helmet.directives')),
-        reportOnly: config.get('helmet.reportOnly'),
-        setAllHeaders: config.get('helmet.setAllHeaders')
-    };
-    helmetConfig.directives.reportUri = '/api/v1/csp_violation';
-    app.use(helmet.contentSecurityPolicy(helmetConfig));
-}
-
 app.use(favicon(path.join(__dirname, '../app/assets/images/favicons/favicon.ico')));
 app.use(mount('/favicons', staticCache(path.join(__dirname, '../app/assets/images/favicons'), cacheOpts)));
 app.use(mount('/images', staticCache(path.join(__dirname, '../app/assets/images'), cacheOpts)));
 app.use(mount('/legal', staticCache(path.join(__dirname, '../app/assets/legal'), cacheOpts)));
 app.use(mount('/sitemap.xml', staticCache(path.join(__dirname, '../app/assets/sitemap.xml'), cacheOpts)));
 app.use(mount('/robots.txt', staticCache(path.join(__dirname, '../app/assets/robots.txt'), cacheOpts)));
-app.use(isBot());
 
+app.use(isBot());
 
 // Proxy asset folder to webpack development server in development mode
 if (env === 'development') {
@@ -241,6 +237,14 @@ if (env === 'development') {
     app.use(mount('/assets', proxy));
 } else {
     app.use(mount('/assets', staticCache(path.join(__dirname, '../dist'), cacheOpts)));
+}
+
+if (env === 'production') {
+    app.use(helmet.contentSecurityPolicy({
+        directives: processHelmetDirectives(config.get('helmet.directives')),
+        reportOnly: config.get('helmet.reportOnly'),
+        setAllHeaders: config.get('helmet.setAllHeaders')
+    }));
 }
 
 if (env !== 'test') {

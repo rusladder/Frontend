@@ -85,7 +85,7 @@ async function run() {
     let tagName = `${ver}.${minor}`;
 
     if (result.type && result.type !== '--EMPTY--') {
-        tagName += '.' + result.type;
+        tagName += '_' + result.type;
     }
 
     const commands = [

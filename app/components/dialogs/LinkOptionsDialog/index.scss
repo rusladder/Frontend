@@ -1,0 +1,23 @@
+
+.LinkOptionsDialog {
+
+  &__label {
+    text-transform: none;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__input {
+    display: block;
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    color: #333;
+  }
+}

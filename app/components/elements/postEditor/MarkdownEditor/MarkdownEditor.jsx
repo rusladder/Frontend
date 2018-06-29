@@ -222,13 +222,31 @@ export default class MarkdownEditor extends React.Component {
                 const match = attrsStr.match(/src="([^"]+)"/);
 
                 if (match) {
-                    const match2 = match[1].match(
-                        /https:\/\/www\.youtube\.com\/embed\/([A-Za-z0-9_-]+)/
+                    let match2 = match[1].match(
+                        /^https:\/\/www\.youtube\.com\/embed\/([A-Za-z0-9_-]+)/
                     );
 
                     if (match2) {
                         updated = true;
                         return `https://youtube.com/watch?v=${match2[1]}`;
+                    }
+
+                    match2 = match[1].match(
+                        /^(?:https?:)?\/\/rutube\.ru\/play\/embed\/([A-Za-z0-9_-]+)/
+                    );
+
+                    if (match2) {
+                        updated = true;
+                        return `https://rutube.ru/video/${match2[1]}/`;
+                    }
+
+                    match2 = match[1].match(
+                        /^(?:https?:)?\/\/ok\.ru\/videoembed\/([A-Za-z0-9_-]+)/
+                    );
+
+                    if (match2) {
+                        updated = true;
+                        return `https://ok.ru/live/${match2[1]}`;
                     }
                 }
             }

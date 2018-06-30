@@ -57,7 +57,7 @@ const calculateEstimateOutput = ({ account, price_per_golos, savings_withdraws, 
   return Number(((total_steem * price_per_golos) + total_sbd).toFixed(2) );
 }
 
-function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams}) {
+function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops, username, showLogin, logout, loggedIn, vertical, navigate, probablyLoggedIn, location, locationQueryParams, showMessages}) {
     const APP_NAME = tt('g.APP_NAME');
     
     const mcn = 'menu' + (vertical ? ' vertical show-for-small-only' : '');
@@ -140,6 +140,7 @@ function TopRightMenu({account, savings_withdraws, price_per_golos, globalprops,
         const user_menu = [
             {link: feedLink, icon: 'new/home', iconSize: '1_25x', value: tt('g.feed'), addon: <NotifiCounter fields="feed" />},
             {link: accountLink, icon: 'new/blogging', value: tt('g.blog')},
+            {link: '#', icon: 'chatboxes', onClick: showMessages, value: tt('g.messages')},
             {link: commentsLink, icon: 'new/comment', value: tt('g.comments')},
             {link: repliesLink, icon: 'new/answer', value: tt('g.replies'), addon: <NotifiCounter fields="comment_reply" />},
             {link: walletLink, icon: 'new/wallet', value: tt('g.wallet'), addon: <NotifiCounter fields="follow,send,receive,account_update" />},
@@ -273,6 +274,10 @@ export default connect(
         logout: e => {
             if (e) e.preventDefault();
             dispatch(user.actions.logout())
+        },
+        showMessages: (e) => {
+            if (e) e.preventDefault();
+            dispatch(user.actions.showMessages())
         }
     })
 )(TopRightMenu);

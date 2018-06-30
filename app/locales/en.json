@@ -82,6 +82,7 @@
     "login": "Login",
     "logout": "Logout",
     "memo": "Memo",
+    "messages": "Messages",
     "more": "more",
     "mute": "Mute",
     "new": "new",
@@ -977,5 +978,8 @@
   "delegatevestingshares_jsx" :{
     "form_title" : "Delegate %(VESTING_TOKEN2)s",
     "button_title": "Delegate"
+  },
+  "messages_jsx": {
+    "start_conversation": "Start conversation"
   }
 }

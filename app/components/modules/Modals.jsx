@@ -11,7 +11,7 @@ import user from 'app/redux/User';
 import tr from 'app/redux/Transaction';
 import shouldComponentUpdate from 'app/utils/shouldComponentUpdate';
 import {NotificationStack} from 'react-notification';
-import {OrderedSet} from 'immutable';
+import MessageBox from 'app/components/modules/Messages';
 
 class Modals extends React.Component {
     static propTypes = {
@@ -27,6 +27,8 @@ class Modals extends React.Component {
         hidePromotePost: PropTypes.func.isRequired,
         notifications: PropTypes.object,
         removeNotification: PropTypes.func,
+        show_messages_modal: PropTypes.bool,
+        hideMessages: PropTypes.func.isRequired,
     };
 
     constructor() {
@@ -38,7 +40,8 @@ class Modals extends React.Component {
         const {
             show_login_modal, show_confirm_modal, show_transfer_modal, show_signup_modal,
             hideLogin, hideTransfer, hideConfirm, hideSignUp,
-            notifications, removeNotification, hidePromotePost, show_promote_post_modal
+            notifications, removeNotification, hidePromotePost, show_promote_post_modal,
+            show_messages_modal, hideMessages
         } = this.props;
 
         const notifications_array = notifications ? notifications.toArray().map(n => {
@@ -63,6 +66,10 @@ class Modals extends React.Component {
                     <CloseButton onClick={hideSignUp} />
                     <SignUp />
                 </Reveal>}
+                {show_messages_modal && <Reveal onHide={hideMessages} show={show_messages_modal} size="large" revealClassName="MessagesBox">
+                    <CloseButton onClick={hideMessages} />
+                    <MessageBox />
+                </Reveal>}   
                 <NotificationStack
                     style={false}
                     notifications={notifications_array}
@@ -81,7 +88,8 @@ export default connect(
             show_transfer_modal: state.user.get('show_transfer_modal'),
             show_promote_post_modal: state.user.get('show_promote_post_modal'),
             show_signup_modal: state.user.get('show_signup_modal'),
-            notifications: state.app.get('notifications')
+            notifications: state.app.get('notifications'),
+            show_messages_modal: state.user.get('show_messages_modal')
         }
     },
     dispatch => ({
@@ -106,6 +114,10 @@ export default connect(
             dispatch(user.actions.hideSignUp())
         },
         // example: addNotification: ({key, message}) => dispatch({type: 'ADD_NOTIFICATION', payload: {key, message}}),
-        removeNotification: (key) => dispatch({type: 'REMOVE_NOTIFICATION', payload: {key}})
+        removeNotification: (key) => dispatch({type: 'REMOVE_NOTIFICATION', payload: {key}}),
+        hideMessages: e => {
+            if (e) e.preventDefault();
+            dispatch(user.actions.hideMessages())
+        }
     })
 )(Modals)

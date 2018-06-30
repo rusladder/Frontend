@@ -224,6 +224,7 @@
     "login": "Войти",
     "logout": "Выйти",
     "memo": "Ключ заметок",
+    "messages": "Сообщения",
     "more": "больше",
     "mute": "Заблокировать",
     "new": "Новое",
@@ -989,5 +990,8 @@
   "delegatevestingshares_jsx" :{
     "form_title" : "Делегировать %(VESTING_TOKEN2)s",
     "button_title": "Делегировать"
+  },
+  "messages_jsx": {
+    "start_conversation": "Написать сообщение"
   }
 }

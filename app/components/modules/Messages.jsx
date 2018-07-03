@@ -103,12 +103,12 @@ class MessageBox extends Component {
 
     dispatchSubmit = (formPayload) => {
         const {dispatchSendMessage, username} = this.props;
-        const {selected} = this.state;
-        const memo = formPayload.memo;
+        const { to, memo } = formPayload
+
         dispatchSendMessage({
             operation: {
                 from: username,
-                to: selected,
+                to,
                 amount: '0.001 GOLOS',
                 memo: (memo ? memo : '')
             },
@@ -197,7 +197,7 @@ class MessageBox extends Component {
           (a, b) => new Date(a.getIn([0, 'timestamp'])) < new Date(b.getIn([0, 'timestamp']))
         );
         let selectedKey = selected;
-        if (! selectedKey) {
+        if (!selectedKey) {
             selectedKey = result.keySeq().first();
         }
         const conversationsList = result.map((value, key) => {
@@ -266,7 +266,7 @@ class MessageBox extends Component {
                     {conversantionBody}
                 </ul>
                 <div className="bottombar">
-                  <form onSubmit={handleSubmit(({data}) => {this.dispatchSubmit({...data})})}>
+                  <form onSubmit={handleSubmit(({data}) => {this.dispatchSubmit({...data, to: selectedKey})})}>
                     <div className="row">
                         <div className="column small-10">
                             <input

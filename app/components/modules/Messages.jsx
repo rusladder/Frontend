@@ -53,7 +53,7 @@ class MessageBox extends Component {
     }
 
     prepareConversations(np, ns) {
-        const { history, username, memo_private } = np;
+        const { history, username } = np;
         if (history && history.size) {
             let tmp = {};
             history.reverse().map(item => {
@@ -61,14 +61,16 @@ class MessageBox extends Component {
                 const data = item.getIn([1, 'op', 1]).toJS();
                 const conversant = username === data.from ? data.to : data.from;
                 if (typeof tmp[conversant] !== 'object') tmp[conversant] = [];
-                tmp[conversant].push({
-                    isnew: false,
-                    from: data.from,
-                    to: data.to,
-                    amount: data.amount,
-                    memo: data.memo ? memoFunc.decode(memo_private, data.memo).substr(1) : data.memo,
-                    timestamp: item.getIn([1, 'timestamp'])
-                });
+                if (/^#/.test(data.memo)) {
+                    tmp[conversant].push({
+                        isnew: false,
+                        from: data.from,
+                        to: data.to,
+                        amount: data.amount,
+                        memo: data.memo,
+                        timestamp: item.getIn([1, 'timestamp'])
+                    });
+                }
             });
             this.setState({conversations: Map(fromJS(tmp))});
         }
@@ -190,7 +192,7 @@ class MessageBox extends Component {
             memo,
             converstaionForm : {handleSubmit}
         } = this.state;
-        const {history, username} = this.props;
+        const { username, memo_private } = this.props;
         const fetching = this.props.loading || this.props.fetching || false;
 
         let result = Map(fromJS(this.fillLookupObject(lookupValues, username))).merge(searchField.length ? filtered : conversations).sort(
@@ -200,33 +202,45 @@ class MessageBox extends Component {
         if (!selectedKey) {
             selectedKey = result.keySeq().first();
         }
-        const conversationsList = result.map((value, key) => {
+        const conversationsList = [];
+        result.map((value, key) => {
             const isNew = value.getIn([0, 'isnew']);
-            const memo = value.getIn([0, 'memo']);
-            return <li key={`conversant-${key}`} className={key == selectedKey ? 'selected' : ''} onClick={() => this.onSelectListItem(key)}>
-                <Tooltip className="timestamp" t={new Date(value.getIn([0, 'timestamp'])).toLocaleString()}>
-                    <TimeAgoWrapper date={value.getIn([0, 'timestamp'])} />
-                </Tooltip>
-                <Userpic account={key} />
-                <div className="right-side">
-                    <strong>{key}</strong>
-                    <small>{isNew ? '*' : typeof memo !== 'string' ? JSON.stringify(memo) : memo}</small>
-                </div>
-            </li>
+            let memo = value.getIn([0, 'memo']);
+            memo = typeof memo !== 'string' ? JSON.stringify(memo) : memo;
+            if (/^#/.test(memo)) {
+                const memoStr = memoFunc.decode(memo_private, memo).substr(1);
+                conversationsList.push(
+                    <li key={`conversant-${key}`} className={key == selectedKey ? 'selected' : ''} onClick={() => this.onSelectListItem(key)}>
+                        <Tooltip className="timestamp" t={new Date(value.getIn([0, 'timestamp'])).toLocaleString()}>
+                            <TimeAgoWrapper date={value.getIn([0, 'timestamp'])} />
+                        </Tooltip>
+                        <Userpic account={key} />
+                        <div className="right-side">
+                            <strong>{key}</strong>
+                            <small>{isNew ? '*' : memoStr}</small>
+                        </div>
+                    </li>
+                )
+            }
         });
 
-        const conversantionBody = result.get(selectedKey, Map()).reverse().map((value, key) => {
+        const conversantionBody = [];
+        result.get(selectedKey, Map()).reverse().map((value, key) => {
             const isNew = value.get('isnew');
-            return <li key={`conversation-item-${key}`}>
-                {isNew ? null : <Userpic account={value.get('from')} width="36" height="36"/>}
-                {isNew ? null : <div className="right-side">
-                    <strong>{value.get('from')}</strong>
-                    <Tooltip className="timestamp" t={new Date(value.get('timestamp')).toLocaleString()}>
-                        <TimeAgoWrapper date={value.get('timestamp')} />
-                    </Tooltip>
-                    <small>{value.get('memo')}</small>
-                </div>}
-            </li>
+            const memo = value.get('memo');
+            const memoStr = memoFunc.decode(memo_private, memo).substr(1);
+            conversantionBody.push( 
+                <li key={`conversation-item-${key}`}>
+                    {isNew ? null : <Userpic account={value.get('from')} width="36" height="36"/>}
+                    {isNew ? null : <div className="right-side">
+                        <strong>{value.get('from')}</strong>
+                        <Tooltip className="timestamp" t={new Date(value.get('timestamp')).toLocaleString()}>
+                            <TimeAgoWrapper date={value.get('timestamp')} />
+                        </Tooltip>
+                        <small>{memoStr}</small>
+                    </div>}
+                </li>
+            )
         });
 
         return (<div className={'Messages row' + (fetching ? ' fetching' : '')}>

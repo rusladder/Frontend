@@ -13,7 +13,7 @@ import Userpic from 'app/components/elements/Userpic';
 import TimeAgoWrapper from 'app/components/elements/TimeAgoWrapper';
 import Tooltip from 'app/components/elements/Tooltip';
 import tt from 'counterpart';
-import {api} from 'golos-js'
+import { api, memo as memoFunc } from 'golos-js'
 
 
 class MessageBox extends Component {
@@ -21,9 +21,9 @@ class MessageBox extends Component {
     static propTypes = {
         // connector props
         username: PropTypes.string,
-        history: PropTypes.object.isRequired,
-        loading: PropTypes.bool.isRequired,
-        fetching: PropTypes.bool.isRequired,
+        history: PropTypes.object,
+        loading: PropTypes.bool,
+        fetching: PropTypes.bool,
     };
 
     constructor(props) {
@@ -53,8 +53,8 @@ class MessageBox extends Component {
     }
 
     prepareConversations(np, ns) {
-        const {history, username} = np;
-        if (history.size) {
+        const { history, username, memo_private } = np;
+        if (history && history.size) {
             let tmp = {};
             history.reverse().map(item => {
                 if (item.getIn([1, 'op', 0]) !== 'transfer') return;
@@ -66,7 +66,7 @@ class MessageBox extends Component {
                     from: data.from,
                     to: data.to,
                     amount: data.amount,
-                    memo: data.memo,
+                    memo: data.memo ? memoFunc.decode(memo_private, data.memo).substr(1) : data.memo,
                     timestamp: item.getIn([1, 'timestamp'])
                 });
             });
@@ -102,15 +102,15 @@ class MessageBox extends Component {
     }
 
     dispatchSubmit = (formPayload) => {
-        const {dispatchSendMessage, username} = this.props;
+        const { dispatchSendMessage, username } = this.props
         const { to, memo } = formPayload
-
+        let memoStr = `# ${memo}`
         dispatchSendMessage({
             operation: {
                 from: username,
                 to,
                 amount: '0.001 GOLOS',
-                memo: (memo ? memo : '')
+                memo: memoStr
             },
             errorCallback: this.errorCallback
         });
@@ -309,9 +309,8 @@ export default connect(
         const history  = state.global.getIn(['accounts', username, 'transfer_history']);
         const loading  = state.app.get('loading');
         const fetching = state.global.get('fetching');
-        const initialValues = {
-            memo: null,
-        }
+        const memo_private = state.user.getIn(['current', 'private_keys', 'memo_private'])
+        const initialValues = { memo: null }
         return {
             ...ownProps,
             initialValues,
@@ -319,6 +318,7 @@ export default connect(
             history,
             loading,
             fetching,
+            memo_private
         }
     },
     dispatch => ({

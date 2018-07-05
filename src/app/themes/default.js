@@ -1,5 +1,7 @@
 export default {
-    fontFamilyBold: "Roboto, 'Helvetica Neue', Arial, sans-serif"
+    fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif",
+    fontFamilyBold: "Roboto Slab, 'Helvetica Neue', Arial, sans-serif"
+    
     // breakpoints: {
     //     xs: 0,
     //     sm: 576,

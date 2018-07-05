@@ -34,11 +34,16 @@ const IconLink = styled(Link)`
     ${SettingsIcon} {
         color: #b7b7b9;
 
+        &.${props => props.activeClassName},
         &:hover {
             color: #333;
         }
     }
 `;
+IconLink.defaultProps = {
+    activeClassName: 'active'
+};
+
 
 export default class UserNavigation extends PureComponent {
     propTypes = {
@@ -69,12 +74,10 @@ export default class UserNavigation extends PureComponent {
             {
                 link: `/@${accountName}/curation-rewards`,
                 label: tt('g.curation_rewards'),
-                value: tt('g.curation_rewards'),
             },
             {
                 link: `/@${accountName}/author-rewards`,
                 label: tt('g.author_rewards'),
-                value: tt('g.author_rewards'),
             },
         ];
 

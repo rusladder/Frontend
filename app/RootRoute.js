@@ -50,7 +50,7 @@ export default {
         // } else if (route.page === 'UserProfile') {
         //     cb(null, [require('@pages/UserProfile')]);
         } else if (route.page === 'UserProfile') {
-            cb(null, [require('src/app/containers/UserProfile').default]);
+            cb(null, [require('src/app/containers/userProfile').UserProfileContainer]);
         } else if (route.page === 'Market') {
             cb(null, [require('@pages/Market')]);
         } else if (route.page === 'Post') {

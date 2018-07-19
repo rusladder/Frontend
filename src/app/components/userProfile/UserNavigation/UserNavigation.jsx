@@ -2,22 +2,21 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import tt from 'counterpart';
-
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { TabLink } from 'golos-ui/Tab';
 import Icon from 'golos-ui/Icon';
-
 import { LinkWithDropdown } from 'react-foundation-components/lib/global/dropdown';
 import VerticalMenu from 'app/components/elements/VerticalMenu';
-
 import Container from 'src/app/components/common/Container';
+import { CHANGE_LAYOUT } from 'app/redux/ProfileReducer';
 
 const Wrapper = styled.div`
     position: relative;
     flex-wrap: wrap;
     min-height: 50px;
-    background-color: #ffffff;
+    background-color: #fff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
     z-index: 1;
 `;
@@ -32,6 +31,7 @@ const SettingsIcon = styled(Icon)``;
 
 const IconLink = styled(Link)`
     display: flex;
+    padding: 4px;
     color: #b7b7b9;
 
     &.${props => props.activeClassName}, &:hover {
@@ -42,14 +42,36 @@ IconLink.defaultProps = {
     activeClassName: 'active',
 };
 
-export default class UserNavigation extends PureComponent {
+const IconWrap = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 32px;
+    margin-right: 15px;
+    cursor: pointer;
+    color: ${a => (a.active ? '#393636' : '#b7b7b9')};
+    transition: color 0.15s;
+
+    &:hover {
+        color: #393636;
+    }
+`;
+
+const SimpleIcon = Icon.extend`
+    width: 20px;
+    height: 20px;
+`;
+
+class UserNavigation extends PureComponent {
     static propTypes = {
         accountName: PropTypes.string,
         isOwner: PropTypes.bool,
+        layout: PropTypes.oneOf(['list', 'grid']).isRequired,
     };
 
     render() {
-        const { accountName, isOwner, section } = this.props;
+        const { accountName, section } = this.props;
 
         // const items = [
         //     { value: 'Посты', to: `/@${accountName}` },
@@ -78,9 +100,7 @@ export default class UserNavigation extends PureComponent {
             },
         ];
 
-        const rewardsActive = ['curation-rewards', 'author-rewards'].includes(
-            section
-        );
+        const rewardsActive = ['curation-rewards', 'author-rewards'].includes(section);
 
         return (
             <Wrapper>
@@ -95,23 +115,74 @@ export default class UserNavigation extends PureComponent {
                         dropdownPosition="bottom"
                         dropdownContent={<VerticalMenu items={rewardsMenu} />}
                     >
-                        <TabLink active={rewardsActive ? 1 : 0}>
-                            {tt('g.rewards')}
-                        </TabLink>
+                        <TabLink active={rewardsActive ? 1 : 0}>{tt('g.rewards')}</TabLink>
                     </LinkWithDropdown>
-
-                    <RightIcons>
-                        {isOwner && (
-                            <IconLink
-                                to={`/@${accountName}/settings`}
-                                title={tt('g.settings')}
-                            >
-                                <SettingsIcon name="setting" size="24px" />
-                            </IconLink>
-                        )}
-                    </RightIcons>
+                    {this._renderRightIcons()}
                 </Container>
             </Wrapper>
         );
     }
+
+    _renderRightIcons() {
+        const { accountName, isOwner, layout } = this.props;
+
+        const icons = [];
+
+        icons.push(
+            <IconWrap
+                key="l-list"
+                active={layout === 'list'}
+                data-tooltip="Список"
+                onClick={this._onListClick}
+            >
+                <SimpleIcon name="layout_list" />
+            </IconWrap>,
+            <IconWrap
+                key="l-grid"
+                active={layout === 'grid'}
+                data-tooltip="Сетка"
+                onClick={this._onGridClick}
+            >
+                <SimpleIcon name="layout_grid" />
+            </IconWrap>
+        );
+
+        if (isOwner) {
+            icons.push(
+                <IconLink
+                    key="settings"
+                    to={`/@${accountName}/settings`}
+                    data-tooltip={tt('g.settings')}
+                >
+                    <SettingsIcon name="setting" size="24px" />
+                </IconLink>
+            );
+        }
+
+        if (icons.length) {
+            return <RightIcons>{icons}</RightIcons>;
+        }
+    }
+
+    _onGridClick = () => {
+        this.props.onLayoutChange('grid');
+    };
+
+    _onListClick = () => {
+        this.props.onLayoutChange('list');
+    };
 }
+
+export default connect(
+    state => ({
+        layout: state.profile.get('layout'),
+    }),
+    {
+        onLayoutChange: layout => ({
+            type: CHANGE_LAYOUT,
+            payload: {
+                layout,
+            },
+        }),
+    }
+)(UserNavigation);

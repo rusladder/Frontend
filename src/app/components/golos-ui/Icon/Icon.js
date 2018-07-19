@@ -7,7 +7,7 @@ if (process.env.BROWSER) {
     files.keys().forEach(files);
 }
 
-const Icon = ({ name, size, height, width, ...props = {} }) => {
+const Icon = ({ name, size, height, width, ...props }) => {
     props.height = size || height;
     props.width = size || width;
 

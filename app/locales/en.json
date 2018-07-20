@@ -762,6 +762,7 @@
     "profile_name": "Display Name",
     "profile_website": "Website",
     "public_profile_settings": "Public Profile Settings",
+    "reset": "Reset",
     "update": "Update",
     "website_url_is_too_long": "Website URL is too long"
   },

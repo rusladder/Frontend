@@ -750,6 +750,7 @@
     "not_safe_for_work_nsfw_content": "Not safe for work (NSFW) content",
     "private_post_display_settings": "Private Post Display Settings",
     "profile_about": "About",
+    "profile_email": "Email",
     "profile_gender": {
       "genders": {
         "female": "Female",

@@ -11,12 +11,14 @@ export default {
             cb(null, [require('@pages/Landing')]);
         } else if (route.page === 'Welcome') {
             if (process.env.BROWSER) {
-                cb(null, [require('@pages/WelcomeLoader')])
+                cb(null, [require('@pages/WelcomeLoader')]);
             } else {
-                cb(null, [{
-                    path: 'welcome',
-                    component: require('@pages/Welcome').default,
-                }]);
+                cb(null, [
+                    {
+                        path: 'welcome',
+                        component: require('@pages/Welcome').default,
+                    },
+                ]);
             }
         } else if (route.page === 'Start') {
             cb(null, [require('@pages/Landings/Start')]);
@@ -55,8 +57,14 @@ export default {
             if (process.env.BROWSER) cb(null, [require('@pages/SubmitPost')]);
             else cb(null, [require('@pages/SubmitPostServerRender')]);
         } else if (route.page === 'UserProfile') {
-            //cb(null, [require('@pages/UserProfile')]);
-            cb(null, [require('src/app/containers/userProfile').UserProfileContainer]);
+            if (process.env.NODE_ENV === 'development') {
+                cb(null, [
+                    require('src/app/containers/userProfile')
+                        .UserProfileContainer,
+                ]);
+            } else {
+                cb(null, [require('@pages/UserProfile')]);
+            }
         } else if (route.page === 'Market') {
             cb(null, [require('@pages/MarketLoader')]);
         } else if (route.page === 'Post') {

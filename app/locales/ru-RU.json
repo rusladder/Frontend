@@ -755,7 +755,7 @@
     "muted_users": "Заблокированные пользователи",
     "name_is_too_long": "Имя слишком длинное",
     "name_must_not_begin_with": "Имя не должно начинаться с @",
-    "not_safe_for_work_nsfw_content": "Контент для взрослых",
+    "not_safe_for_work_nsfw_content": "Отображение NSFW контента",
     "private_post_display_settings": "Настройки отображения приватных постов",
     "profile_about": "О себе",
     "profile_email": "Электронная почта",

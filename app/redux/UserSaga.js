@@ -4,7 +4,7 @@ import {accountAuthLookup} from 'app/redux/AuthSaga'
 import user from 'app/redux/User'
 import {getAccount} from 'app/redux/SagaShared'
 import {browserHistory} from 'react-router'
-import {serverApiLogin, serverApiLogout} from 'app/utils/ServerApiClient';
+import {serverApiLogin, serverApiLogout, serverApiRecordUserAction} from 'app/utils/ServerApiClient';
 import {serverApiRecordEvent} from 'app/utils/ServerApiClient';
 import {loadFollows} from 'app/redux/FollowSaga'
 import {PrivateKey, Signature, hash} from 'golos-js/lib/auth/ecc'
@@ -210,7 +210,7 @@ function* usernamePasswordLogin2({payload: {username, password, saveLogin,
     if (memoWif)
         private_keys = private_keys.set('memo_private', PrivateKey.fromWif(memoWif))
 
-    yield call(accountAuthLookup, {payload: {account, private_keys, highSecurityLogin, login_owner_pubkey}})
+        yield call(accountAuthLookup, {payload: {account, private_keys, highSecurityLogin, login_owner_pubkey}})
     let authority = yield select(state => state.user.getIn(['authority', username]))
     const hasActiveAuth = authority.get('active') === 'full'
     if(!highSecurityLogin) {
@@ -326,8 +326,8 @@ function* usernamePasswordLogin2({payload: {username, password, saveLogin,
             if (res.guid) {
                 localStorage.setItem('guid', res.guid)
             }
-            serverApiLogin(username, signatures);
         }
+        serverApiRecordUserAction(username, 'login')
     } catch(error) {
         // Does not need to be fatal
         console.error('Server Login Error', error);

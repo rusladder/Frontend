@@ -1,4 +1,5 @@
 import {WebEvent, esc} from 'db/models';
+import Tarantool from 'db/tarantool';
 
 export default function recordWebEvent(ctx, event_type, value) {
     if (ctx.state.isBot) return;
@@ -33,4 +34,13 @@ export default function recordWebEvent(ctx, event_type, value) {
     }).catch(error => {
         console.error('!!! Can\'t create web event record', error);
     });
+}
+
+export function* recordUserEvent(ctx, account, type) {
+    console.log(account, type)
+    try {
+        yield Tarantool.instance('tarantool').call('update_actions', account, type, new Date().getTime())
+    } catch(err) {
+        console.error('!!! Can\'t create user event record', err)
+    }
 }

@@ -39,7 +39,7 @@ export default function recordWebEvent(ctx, event_type, value) {
 export function* recordUserEvent(ctx, account, type) {
     console.log(account, type)
     try {
-        yield Tarantool.instance('tarantool').call('update_actions', account, type, new Date().getTime())
+        yield Tarantool.instance('tarantool').call('update_actions', account, type)
     } catch(err) {
         console.error('!!! Can\'t create user event record', err)
     }

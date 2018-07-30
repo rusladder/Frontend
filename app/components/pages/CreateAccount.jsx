@@ -15,6 +15,7 @@ import { APP_DOMAIN, SUPPORT_EMAIL, SMS_SERVICES } from 'app/client_config';
 import tt from 'counterpart';
 import {api} from 'golos-js';
 import SignupProgressBar from '@elements/SignupProgressBar';
+import { serverApiRecordUserAction } from 'app/utils/ServerApiClient';
 import { successReg } from 'app/utils/Analytics';
 
 class CreateAccount extends React.Component {
@@ -127,6 +128,7 @@ class CreateAccount extends React.Component {
                 this.setState({server_error: res.error || tt('g.unknown'), loading: false});
             } else {
                 successReg()
+                serverApiRecordUserAction(name, 'registered')
                 window.location = `/login.html#account=${name}&msg=accountcreated`;
             }
         }).catch(error => {

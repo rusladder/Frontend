@@ -709,7 +709,7 @@ function recordUserAction(type, operation) {
     let userAction, user
     switch(type) {
         case 'vote':
-            user = operation.author
+            user = operation.voter
             userAction = operation.weight > 0 ? 'vote' : 'flag'
         break
 

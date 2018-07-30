@@ -839,7 +839,6 @@
   "transfer_jsx": {
     "advanced": "Расширенные опции",
     "amount_is_in_form": "Сумма должна быть в формате 99999.999",
-    "asset": "Актив",
     "balance": "Баланс",
     "balance_subject_to_3_day_withdraw_waiting_period": "Вывод баланса из сейфа на обычный счет, занимает 3 дня.",
     "basic": "Основные",
